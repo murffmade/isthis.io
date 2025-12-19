@@ -179,9 +179,9 @@ export default function HolidayGift() {
                 </div>
               </div>
 
-              {/* Overlay Message */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border-4 border-blue-500 max-w-xs text-center">
+              {/* Message Below Images */}
+              <div className="mt-4 text-center">
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border-4 border-blue-500 inline-block">
                   <p className="text-lg font-bold text-slate-900 mb-1">Can you tell the difference?</p>
                   <p className="text-sm text-slate-600">They'll know instantly ✨</p>
                 </div>
