@@ -149,16 +149,16 @@ export default function HolidayGift() {
                 {/* AI Image 1 */}
                 <div className="relative rounded-xl overflow-hidden border-2 border-amber-500/50 shadow-lg group">
                   <img 
-                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&q=80" 
-                    alt="Example image"
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6944863d2abd893ac6b0098f/21d760444_image.png" 
+                    alt="AI generated image"
                     className="w-full h-48 object-cover"
                   />
                   <div className="absolute top-2 right-2 px-3 py-1 bg-amber-500 rounded-full shadow-lg">
                     <span className="text-xs font-bold text-white">⚠️ AI</span>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-xs text-white font-medium">Overly smooth skin texture</p>
-                    <p className="text-xs text-amber-300">Unnatural eye symmetry</p>
+                    <p className="text-xs text-white font-medium">Artificial skin smoothing</p>
+                    <p className="text-xs text-amber-300">Unrealistic details</p>
                   </div>
                 </div>
 
@@ -178,19 +178,19 @@ export default function HolidayGift() {
                   </div>
                 </div>
 
-                {/* AI Image 2 */}
-                <div className="relative rounded-xl overflow-hidden border-2 border-amber-500/50 shadow-lg group">
+                {/* Real Image 3 */}
+                <div className="relative rounded-xl overflow-hidden border-2 border-emerald-500/50 shadow-lg group">
                   <img 
-                    src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80" 
-                    alt="Example image"
+                    src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&q=80" 
+                    alt="Real Tuscany landscape"
                     className="w-full h-48 object-cover"
                   />
-                  <div className="absolute top-2 right-2 px-3 py-1 bg-amber-500 rounded-full shadow-lg">
-                    <span className="text-xs font-bold text-white">⚠️ AI</span>
+                  <div className="absolute top-2 right-2 px-3 py-1 bg-emerald-500 rounded-full shadow-lg">
+                    <span className="text-xs font-bold text-white">✓ REAL</span>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-xs text-white font-medium">Blurred background artifacts</p>
-                    <p className="text-xs text-amber-300">Perfect teeth alignment</p>
+                    <p className="text-xs text-white font-medium">Natural landscape depth</p>
+                    <p className="text-xs text-emerald-300">Authentic atmospheric haze</p>
                   </div>
                 </div>
               </div>
