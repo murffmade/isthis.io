@@ -49,35 +49,36 @@ export default function HolidayGift() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 relative">
+    <div className="min-h-screen bg-gradient-to-br from-red-900 via-emerald-900 to-blue-900 relative">
       <Snowflakes />
       
       {/* Festive Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-40 right-20 w-40 h-40 bg-red-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-1/3 w-36 h-36 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-10 w-64 h-64 bg-red-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-40 right-20 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-1/3 w-56 h-56 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 right-1/4 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl" />
       </div>
 
       {/* Header */}
-      <header className="relative border-b border-white/10 bg-white/5 backdrop-blur-sm">
+      <header className="relative border-b border-white/20 bg-gradient-to-r from-red-500/10 via-emerald-500/10 to-blue-500/10 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <a 
               href={createPageUrl('Home')}
               className="flex items-center gap-3"
             >
-              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center">
-                <Shield className="w-5 h-5 text-slate-900" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h1 className="text-lg font-bold text-white leading-tight">Is This Real?</h1>
-                <p className="text-xs text-slate-400">AI content verification</p>
+                <p className="text-xs text-emerald-300">AI content verification</p>
               </div>
             </a>
             <a
               href={createPageUrl('Home')}
-              className="flex items-center gap-2 text-slate-300 hover:text-white text-sm font-medium"
+              className="flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
@@ -95,19 +96,30 @@ export default function HolidayGift() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-500/20 to-green-500/20 text-white text-sm mb-6 border border-white/20">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-red-500 via-amber-500 to-emerald-500 text-white text-sm font-semibold mb-6 shadow-lg">
                 <Clock className="w-4 h-4" />
-                Last-Minute Gift Solution
+                Last-Minute Gift Solution 🎁
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                The Perfect Gift for<br />Parents & Grandparents
+                The Perfect Gift for<br />
+                <span className="bg-gradient-to-r from-red-400 via-amber-300 to-emerald-400 bg-clip-text text-transparent">
+                  Parents & Grandparents
+                </span>
               </h2>
-              <p className="text-xl text-slate-300 mb-4">
+              <p className="text-xl text-white/90 mb-4">
                 Help them navigate an AI-generated world. Give them confidence to verify what's real online.
               </p>
-              <p className="text-lg text-emerald-400 mb-8">
-                Instant digital delivery • Perfect for white elephant • Actually useful
-              </p>
+              <div className="flex flex-wrap gap-3 text-base mb-8">
+                <span className="px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  ⚡ Instant digital delivery
+                </span>
+                <span className="px-4 py-2 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                  🎉 Perfect for white elephant
+                </span>
+                <span className="px-4 py-2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  ✨ Actually useful
+                </span>
+              </div>
             </motion.div>
 
             {/* Right: Hero Image */}
@@ -117,26 +129,27 @@ export default function HolidayGift() {
               transition={{ delay: 0.2 }}
               className="relative"
             >
-              <div className="relative rounded-2xl overflow-hidden border-4 border-white/20 shadow-2xl">
+              <div className="relative rounded-2xl overflow-hidden border-4 border-gradient-to-r from-red-500 via-emerald-500 to-blue-500 shadow-2xl shadow-emerald-500/20">
                 <img 
                   src="https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?w=800&q=80" 
                   alt="Grandparents using technology"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/60 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
-                  <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+                  <div className="bg-gradient-to-r from-emerald-500 to-green-500 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-white/30">
                     <div className="flex items-center gap-3 mb-2">
-                      <Shield className="w-5 h-5 text-emerald-600" />
-                      <span className="font-bold text-slate-900">Verified: Real Photo</span>
+                      <Shield className="w-5 h-5 text-white" />
+                      <span className="font-bold text-white">✓ Verified: Real Photo</span>
                     </div>
-                    <p className="text-sm text-slate-600">Help them spot the difference</p>
+                    <p className="text-sm text-white/90">Help them spot the difference</p>
                   </div>
                 </div>
               </div>
               {/* Decorative Elements */}
-              <div className="absolute -top-6 -right-6 text-6xl">🎁</div>
+              <div className="absolute -top-6 -right-6 text-6xl animate-bounce">🎁</div>
               <div className="absolute -bottom-4 -left-4 text-5xl">🎄</div>
+              <div className="absolute top-1/2 -left-8 text-4xl">⭐</div>
             </motion.div>
           </div>
         </div>
@@ -159,9 +172,9 @@ export default function HolidayGift() {
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-amber-500 via-red-500 to-pink-500 rounded-full shadow-lg animate-pulse">
                     <span className="text-xs font-bold text-white flex items-center gap-1">
-                      <Star className="w-3 h-3" />
+                      <Star className="w-3 h-3 fill-white" />
                       MOST POPULAR
                     </span>
                   </div>
@@ -170,10 +183,10 @@ export default function HolidayGift() {
                 <div className="mb-6">
                   <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-bold text-white">{plan.price}</span>
-                    <span className="text-slate-400">one-time</span>
+                    <span className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">{plan.price}</span>
+                    <span className="text-white/70">one-time</span>
                   </div>
-                  <p className="text-emerald-400 font-medium mt-2">{plan.duration} of access</p>
+                  <p className="text-emerald-300 font-semibold mt-2">✨ {plan.duration} of access</p>
                 </div>
 
                 <ul className="space-y-3 mb-8">
@@ -247,19 +260,19 @@ export default function HolidayGift() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="relative rounded-2xl overflow-hidden"
+            className="relative rounded-2xl overflow-hidden border-4 border-blue-500/30 shadow-xl"
           >
             <img 
               src="https://images.unsplash.com/photo-1609220136736-443140cffec6?w=1200&q=80"
               alt="Senior couple confidently using mobile device"
               className="w-full h-80 object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 to-slate-900/40 flex items-center">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-purple-900/80 to-blue-900/40 flex items-center">
               <div className="px-8 md:px-12 max-w-xl">
                 <h4 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                  Browse with Confidence
+                  🛡️ Browse with Confidence
                 </h4>
-                <p className="text-slate-200 text-lg">
+                <p className="text-blue-100 text-lg">
                   No more second-guessing what's real. They'll feel secure knowing they can verify anything in seconds.
                 </p>
               </div>
