@@ -414,7 +414,7 @@ Provide a thorough but accessible analysis.`,
               <span>AI analysis isn't perfect and may be wrong</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-slate-400">
-              <span>© 2024 Is This Real?</span>
+              <span>© 2026 Is This Real?</span>
             </div>
           </div>
         </div>

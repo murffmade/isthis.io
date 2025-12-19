@@ -349,7 +349,7 @@ const result = await response.json();
       {/* Footer */}
       <footer className="border-t border-slate-200 py-8 px-6">
         <div className="max-w-6xl mx-auto text-center text-sm text-slate-500">
-          <p>© 2024 Is This Real? • Enterprise Solutions</p>
+          <p>© 2026 Is This Real? • Enterprise Solutions</p>
         </div>
       </footer>
     </div>

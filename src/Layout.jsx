@@ -121,7 +121,7 @@ export default function Layout({ children, currentPageName }) {
           {/* Bottom */}
           <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-400">
-              © 2024 Is This Real? All rights reserved.
+              © 2026 Is This Real? All rights reserved.
             </p>
             <div className="flex items-center gap-6">
               <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
