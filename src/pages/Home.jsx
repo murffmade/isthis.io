@@ -4,6 +4,7 @@ import { Shield, History, Info, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { createPageUrl } from '@/utils';
 
 import UploadZone from '@/components/verification/UploadZone';
 import AnalysisLoader from '@/components/verification/AnalysisLoader';
