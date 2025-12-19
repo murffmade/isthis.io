@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, AlertTriangle, HelpCircle, ChevronRight, Info } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, HelpCircle, ChevronRight, Info, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ShareModal from './ShareModal';
 
 const resultConfig = {
   likely_real: {
@@ -37,6 +38,7 @@ const severityColors = {
 };
 
 export default function ResultCard({ result, onTakeAction, onStartOver }) {
+  const [showShareModal, setShowShareModal] = useState(false);
   const config = resultConfig[result.result] || resultConfig.uncertain;
   const Icon = config.icon;
   const showActionButton = result.result === 'likely_ai' && result.claims_to_be_real;
@@ -138,6 +140,14 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
           </Button>
         )}
         <Button 
+          onClick={() => setShowShareModal(true)}
+          variant="outline"
+          className="flex-1 h-12 border-slate-200 hover:bg-slate-50"
+        >
+          <Share2 className="w-4 h-4 mr-2" />
+          Share Result
+        </Button>
+        <Button 
           onClick={onStartOver}
           variant="outline"
           className="flex-1 h-12 border-slate-200 hover:bg-slate-50"
@@ -145,6 +155,14 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
           Check Another
         </Button>
       </div>
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <ShareModal 
+          result={result}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </motion.div>
   );
 }
