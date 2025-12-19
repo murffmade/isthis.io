@@ -285,7 +285,7 @@ Provide a thorough but accessible analysis.`,
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Info className="w-4 h-4" />
-              <span>AI analysis is probabilistic and may be incorrect</span>
+              <span>AI analysis isn't perfect and may be wrong</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-slate-400">
               <span>© 2024 Is This Real?</span>

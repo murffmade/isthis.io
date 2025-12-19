@@ -261,7 +261,7 @@ export default function ActionPanel({ result, onBack }) {
       <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 mt-6">
         <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
         <p className="text-xs text-amber-700 leading-relaxed">
-          Please report responsibly. False reports may have consequences. This tool provides analysis assistance only and does not make accusations or legal determinations.
+          Please report responsibly. False reports may have consequences. This tool helps with analysis only and doesn't make accusations or legal decisions.
         </p>
       </div>
     </motion.div>

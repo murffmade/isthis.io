@@ -122,7 +122,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 mb-6">
         <Info className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
         <p className="text-xs text-slate-500 leading-relaxed">
-          AI analysis is probabilistic and may be incorrect. This assessment should not be used as definitive proof. Always consider multiple sources when evaluating content authenticity.
+          AI analysis isn't perfect and may be wrong. This assessment should not be used as proof. Always check multiple sources when evaluating if content is real.
         </p>
       </div>
 
