@@ -393,7 +393,7 @@ export default function HolidayGift() {
       {/* Footer */}
       <footer className="relative border-t border-white/10 py-8 px-6">
         <div className="max-w-4xl mx-auto text-center text-sm text-slate-400">
-          <p>© 2024 Is This Real? • The gift that keeps them safe online</p>
+          <p>© 2026 Is This Real? • The gift that keeps them safe online</p>
         </div>
       </footer>
 
