@@ -174,6 +174,12 @@ Provide a thorough but accessible analysis.`,
 
             <div className="flex items-center gap-2">
               <button
+                onClick={() => window.location.href = createPageUrl('Enterprise')}
+                className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors text-sm font-medium hidden sm:block"
+              >
+                Enterprise
+              </button>
+              <button
                 onClick={() => window.location.href = createPageUrl('HolidayGift')}
                 className="px-3 py-2 rounded-xl bg-gradient-to-r from-red-500 to-green-500 text-white hover:from-red-600 hover:to-green-600 transition-colors text-sm font-medium"
               >
