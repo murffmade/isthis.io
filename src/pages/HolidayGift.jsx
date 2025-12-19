@@ -133,7 +133,7 @@ export default function HolidayGift() {
                 {/* Real Image 1 */}
                 <div className="relative rounded-xl overflow-hidden border-2 border-emerald-500/50 shadow-lg group">
                   <img 
-                    src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&q=80" 
+                    src="https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?w=400&q=80" 
                     alt="Real photo"
                     className="w-full h-48 object-cover"
                   />
@@ -162,19 +162,19 @@ export default function HolidayGift() {
                   </div>
                 </div>
 
-                {/* Real Image 2 */}
-                <div className="relative rounded-xl overflow-hidden border-2 border-emerald-500/50 shadow-lg group">
+                {/* AI Image 3 */}
+                <div className="relative rounded-xl overflow-hidden border-2 border-amber-500/50 shadow-lg group">
                   <img 
-                    src="https://images.unsplash.com/photo-1609220136736-443140cffec6?w=400&q=80" 
-                    alt="Real photo"
+                    src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400&q=80" 
+                    alt="AI generated city"
                     className="w-full h-48 object-cover"
                   />
-                  <div className="absolute top-2 right-2 px-3 py-1 bg-emerald-500 rounded-full shadow-lg">
-                    <span className="text-xs font-bold text-white">✓ REAL</span>
+                  <div className="absolute top-2 right-2 px-3 py-1 bg-amber-500 rounded-full shadow-lg">
+                    <span className="text-xs font-bold text-white">⚠️ AI</span>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-xs text-white font-medium">Authentic background details</p>
-                    <p className="text-xs text-emerald-300">Natural facial expressions</p>
+                    <p className="text-xs text-white font-medium">Impossible architecture</p>
+                    <p className="text-xs text-amber-300">Repeating patterns</p>
                   </div>
                 </div>
 
