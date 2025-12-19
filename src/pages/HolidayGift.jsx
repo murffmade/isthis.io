@@ -133,7 +133,7 @@ export default function HolidayGift() {
                 {/* Real Image 1 */}
                 <div className="relative rounded-xl overflow-hidden border-2 border-emerald-500/50 shadow-lg group">
                   <img 
-                    src="https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?w=400&q=80" 
+                    src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&q=80" 
                     alt="Real photo"
                     className="w-full h-48 object-cover"
                   />
