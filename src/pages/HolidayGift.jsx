@@ -210,7 +210,7 @@ export default function HolidayGift() {
             <p className="text-slate-300">A gift that actually helps them stay safe and informed online</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
             {[
               {
                 icon: Shield,
@@ -241,6 +241,30 @@ export default function HolidayGift() {
               </motion.div>
             ))}
           </div>
+
+          {/* Security Image */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="relative rounded-2xl overflow-hidden"
+          >
+            <img 
+              src="https://images.unsplash.com/photo-1609220136736-443140cffec6?w=1200&q=80"
+              alt="Senior couple confidently using mobile device"
+              className="w-full h-80 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 to-slate-900/40 flex items-center">
+              <div className="px-8 md:px-12 max-w-xl">
+                <h4 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                  Browse with Confidence
+                </h4>
+                <p className="text-slate-200 text-lg">
+                  No more second-guessing what's real. They'll feel secure knowing they can verify anything in seconds.
+                </p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
