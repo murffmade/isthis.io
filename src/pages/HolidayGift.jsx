@@ -204,7 +204,7 @@ export default function HolidayGift() {
               </div>
 
               {/* Decorative Elements */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl animate-bounce pointer-events-none">🎁</div>
+              <div className="absolute -top-6 -right-6 text-6xl animate-bounce">🎁</div>
               <div className="absolute -bottom-4 -left-4 text-5xl">🎄</div>
               <div className="absolute top-1/2 -left-8 text-4xl">⭐</div>
             </motion.div>
