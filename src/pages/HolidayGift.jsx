@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 import GiftCardModal from '@/components/gift/GiftCardModal';
 import Snowflakes from '@/components/effects/Snowflakes';
+import InteractiveSteps from '@/components/gift/InteractiveSteps';
 
 const plans = [
   {
@@ -213,7 +214,7 @@ export default function HolidayGift() {
       </section>
 
       {/* Pricing Cards */}
-      <section className="relative py-12 px-6">
+      <section id="pricing-section" className="relative py-12 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-6 mb-12">
             {plans.map((plan, i) => (
@@ -340,29 +341,11 @@ export default function HolidayGift() {
 
       {/* How It Works */}
       <section className="relative py-16 px-6">
-        <div className="max-w-3xl mx-auto">
-          <h3 className="text-3xl font-bold text-white text-center mb-12">Three Simple Steps</h3>
-          <div className="space-y-6">
-            {[
-              { step: '1', text: 'Pick 1 Year or Lifetime access - both include everything' },
-              { step: '2', text: 'Personalize a beautiful holiday card (optional message)' },
-              { step: '3', text: 'Email, text, or print it - delivered instantly!' }
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="flex items-center gap-4 bg-white/5 rounded-xl p-4 border border-white/10"
-              >
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 flex items-center justify-center font-bold text-white flex-shrink-0">
-                  {item.step}
-                </div>
-                <p className="text-slate-200">{item.text}</p>
-              </motion.div>
-            ))}
-          </div>
+        <div className="text-center mb-12">
+          <h3 className="text-3xl font-bold text-white mb-4">How It Works</h3>
+          <p className="text-slate-300">Click through each step to learn more</p>
         </div>
+        <InteractiveSteps />
       </section>
 
       {/* Testimonial with Images */}
