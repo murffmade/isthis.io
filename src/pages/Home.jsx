@@ -21,6 +21,22 @@ export default function Home() {
 
   const queryClient = useQueryClient();
 
+  // Check for bookmarklet URL parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const imageUrl = urlParams.get('url');
+    if (imageUrl) {
+      handleFileReady({
+        type: 'url',
+        source_url: decodeURIComponent(imageUrl),
+        platform: 'unknown',
+        source: 'bookmarklet'
+      });
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
   const { data: history = [] } = useQuery({
     queryKey: ['analysisHistory'],
     queryFn: () => AnalysisRecord.list('-created_date', 20)
@@ -157,6 +173,12 @@ Provide a thorough but accessible analysis.`,
             </button>
 
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => window.location.href = '/Bookmarklet'}
+                className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors text-sm font-medium"
+              >
+                Get Bookmarklet
+              </button>
               <button
                 onClick={() => setStep(step === 'history' ? 'upload' : 'history')}
                 className={`p-2.5 rounded-xl transition-colors ${
