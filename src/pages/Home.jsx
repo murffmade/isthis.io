@@ -291,6 +291,106 @@ Provide a thorough but accessible analysis.`,
         </AnimatePresence>
       </main>
 
+      {/* Pricing Section */}
+      {step === 'upload' && (
+        <section className="max-w-4xl mx-auto px-6 py-16 border-t border-slate-100">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-bold text-slate-900 mb-4">Choose Your Plan</h3>
+            <p className="text-lg text-slate-600">Free basic verification or unlock premium features</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Free */}
+            <div className="bg-white rounded-2xl border-2 border-slate-200 p-6">
+              <h4 className="text-xl font-bold text-slate-900 mb-2">Free</h4>
+              <div className="text-3xl font-bold text-slate-900 mb-4">$0</div>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2 text-sm text-slate-600">
+                  <span className="text-emerald-500">✓</span>
+                  <span>5 verifications per day</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-slate-600">
+                  <span className="text-emerald-500">✓</span>
+                  <span>Basic detection signals</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-slate-600">
+                  <span className="text-emerald-500">✓</span>
+                  <span>Image & video support</span>
+                </li>
+              </ul>
+              <button className="w-full py-2 border border-slate-300 rounded-xl text-slate-700 hover:bg-slate-50 transition-colors">
+                Current Plan
+              </button>
+            </div>
+
+            {/* Premium */}
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border-2 border-slate-900 p-6 text-white relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-500 rounded-full text-xs font-bold">
+                POPULAR
+              </div>
+              <h4 className="text-xl font-bold mb-2">Premium</h4>
+              <div className="text-3xl font-bold mb-1">$29</div>
+              <div className="text-sm text-slate-400 mb-4">per year</div>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2 text-sm">
+                  <span className="text-emerald-400">✓</span>
+                  <span>Unlimited verifications</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm">
+                  <span className="text-emerald-400">✓</span>
+                  <span>Priority processing</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm">
+                  <span className="text-emerald-400">✓</span>
+                  <span>Advanced signals</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm">
+                  <span className="text-emerald-400">✓</span>
+                  <span>Export reports</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm">
+                  <span className="text-emerald-400">✓</span>
+                  <span>Ad-free experience</span>
+                </li>
+              </ul>
+              <button className="w-full py-2 bg-white text-slate-900 rounded-xl font-semibold hover:bg-slate-100 transition-colors">
+                Upgrade Now
+              </button>
+            </div>
+
+            {/* Enterprise */}
+            <div className="bg-white rounded-2xl border-2 border-slate-200 p-6">
+              <h4 className="text-xl font-bold text-slate-900 mb-2">Enterprise</h4>
+              <div className="text-3xl font-bold text-slate-900 mb-4">Custom</div>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2 text-sm text-slate-600">
+                  <span className="text-emerald-500">✓</span>
+                  <span>API access</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-slate-600">
+                  <span className="text-emerald-500">✓</span>
+                  <span>White-label options</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-slate-600">
+                  <span className="text-emerald-500">✓</span>
+                  <span>Dedicated support</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-slate-600">
+                  <span className="text-emerald-500">✓</span>
+                  <span>Custom deployment</span>
+                </li>
+              </ul>
+              <button
+                onClick={() => window.location.href = createPageUrl('Enterprise')}
+                className="w-full py-2 border border-slate-900 text-slate-900 rounded-xl font-semibold hover:bg-slate-900 hover:text-white transition-colors"
+              >
+                Contact Sales
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Footer */}
       <footer className="border-t border-slate-100 mt-auto">
         <div className="max-w-4xl mx-auto px-6 py-8">
