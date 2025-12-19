@@ -180,26 +180,10 @@ Provide a thorough but accessible analysis.`,
                 Enterprise
               </button>
               <button
-                onClick={() => window.location.href = createPageUrl('HolidayGift')}
-                className="px-3 py-2 rounded-xl bg-gradient-to-r from-red-500 to-green-500 text-white hover:from-red-600 hover:to-green-600 transition-colors text-sm font-medium"
-              >
-                🎁 Holiday Gift
-              </button>
-              <button
                 onClick={() => window.location.href = createPageUrl('Bookmarklet')}
                 className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors text-sm font-medium"
               >
                 Get Bookmarklet
-              </button>
-              <button
-                onClick={() => setStep(step === 'history' ? 'upload' : 'history')}
-                className={`p-2.5 rounded-xl transition-colors ${
-                  step === 'history' 
-                    ? 'bg-slate-900 text-white' 
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                <History className="w-5 h-5" />
               </button>
             </div>
           </div>
