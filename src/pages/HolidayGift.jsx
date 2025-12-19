@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Gift, Sparkles, Check, ArrowLeft, Star } from 'lucide-react';
+import { Shield, Gift, Sparkles, Check, ArrowLeft, Star, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 import GiftCardModal from '@/components/gift/GiftCardModal';
+import Snowflakes from '@/components/effects/Snowflakes';
 
 const plans = [
   {
@@ -48,7 +49,9 @@ export default function HolidayGift() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 relative">
+      <Snowflakes />
+      
       {/* Festive Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl" />
@@ -91,15 +94,17 @@ export default function HolidayGift() {
             animate={{ opacity: 1, y: 0 }}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-500/20 to-green-500/20 text-white text-sm mb-6 border border-white/20">
-              <Gift className="w-4 h-4" />
-              Holiday Special 2024
+              <Clock className="w-4 h-4" />
+              Last-Minute Gift Solution
             </div>
             <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Gift the Truth<br />This Holiday Season
+              The Perfect Gift for<br />Parents & Grandparents
             </h2>
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-8">
-              Give your loved ones the power to verify what's real in an AI-generated world. 
-              The perfect gift for anyone who values truth and authenticity.
+            <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-4">
+              Help them navigate an AI-generated world. Give them confidence to verify what's real online.
+            </p>
+            <p className="text-lg text-emerald-400 max-w-2xl mx-auto mb-8">
+              Instant digital delivery • Perfect for white elephant • Actually useful
             </p>
           </motion.div>
         </div>
@@ -169,26 +174,26 @@ export default function HolidayGift() {
       <section className="relative py-16 px-6 border-t border-white/10">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-white mb-4">Why Gift Premium?</h3>
-            <p className="text-slate-300">Perfect for journalists, researchers, content creators, and truth-seekers</p>
+            <h3 className="text-3xl font-bold text-white mb-4">Why They'll Love It</h3>
+            <p className="text-slate-300">A gift that actually helps them stay safe and informed online</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                icon: Sparkles,
-                title: 'Advanced Detection',
-                desc: 'Access to cutting-edge AI detection algorithms and multi-signal analysis'
+                icon: Shield,
+                title: 'Easy to Use',
+                desc: 'Simple drag-and-drop interface. If they can use email, they can use this.'
               },
               {
-                icon: Shield,
-                title: 'Priority Processing',
-                desc: 'Skip the queue with premium priority analysis for faster results'
+                icon: Sparkles,
+                title: 'Peace of Mind',
+                desc: 'Help them spot fake news, scams, and AI-generated content before sharing.'
               },
               {
                 icon: Gift,
-                title: 'Beautiful Gift Cards',
-                desc: 'Send a personalized digital card for any holiday - Christmas, Hanukkah, Kwanzaa, or simply Happy Holidays'
+                title: 'Instant Delivery',
+                desc: 'Beautiful personalized card delivered instantly. Perfect for last-minute gifting.'
               }
             ].map((feature, i) => (
               <motion.div
@@ -210,14 +215,12 @@ export default function HolidayGift() {
       {/* How It Works */}
       <section className="relative py-16 px-6">
         <div className="max-w-3xl mx-auto">
-          <h3 className="text-3xl font-bold text-white text-center mb-12">How Gifting Works</h3>
+          <h3 className="text-3xl font-bold text-white text-center mb-12">Three Simple Steps</h3>
           <div className="space-y-6">
             {[
-              { step: '1', text: 'Choose your gift plan - 1 Year or Lifetime Premium' },
-              { step: '2', text: 'Customize your holiday card with a personal message' },
-              { step: '3', text: 'Complete purchase and receive your gift card instantly' },
-              { step: '4', text: 'Share the card via email, text, or download as an image' },
-              { step: '5', text: 'Recipient activates their premium access and starts verifying!' }
+              { step: '1', text: 'Pick 1 Year or Lifetime access - both include everything' },
+              { step: '2', text: 'Personalize a beautiful holiday card (optional message)' },
+              { step: '3', text: 'Email, text, or print it - delivered instantly!' }
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -236,10 +239,23 @@ export default function HolidayGift() {
         </div>
       </section>
 
+      {/* Testimonial */}
+      <section className="relative py-12 px-6">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 text-center">
+            <p className="text-lg text-white italic mb-4">
+              "Got this for my mom for Christmas. She's always forwarding questionable stuff on Facebook. 
+              Now she checks it first. Best $29 I've spent!"
+            </p>
+            <p className="text-slate-300">— Sarah M., verified customer</p>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="relative border-t border-white/10 py-8 px-6">
         <div className="max-w-4xl mx-auto text-center text-sm text-slate-400">
-          <p>© 2024 Is This Real? • Give the gift of truth this holiday season</p>
+          <p>© 2024 Is This Real? • The gift that keeps them safe online</p>
         </div>
       </footer>
 
