@@ -206,7 +206,7 @@ Provide a thorough but accessible analysis.`,
                   Free AI detection tool
                 </motion.div>
                 <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
-                  Verify before you believe
+                  REALITY CHECK: Is This Real…or is it AI?
                 </h2>
                 <p className="text-lg text-slate-500 max-w-xl mx-auto">
                   Upload an image, video, or paste a link to check if content is AI-generated or authentic.
