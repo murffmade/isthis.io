@@ -122,30 +122,71 @@ export default function HolidayGift() {
               </div>
             </motion.div>
 
-            {/* Right: Hero Image */}
+            {/* Right: Image Gallery */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
               className="relative"
             >
-              <div className="relative rounded-2xl overflow-hidden border-4 border-gradient-to-r from-red-500 via-emerald-500 to-blue-500 shadow-2xl shadow-emerald-500/20">
-                <img 
-                  src="https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?w=800&q=80" 
-                  alt="Grandparents using technology"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/60 to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="bg-gradient-to-r from-emerald-500 to-green-500 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-white/30">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Shield className="w-5 h-5 text-white" />
-                      <span className="font-bold text-white">✓ Verified: Real Photo</span>
-                    </div>
-                    <p className="text-sm text-white/90">Help them spot the difference</p>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Real Image 1 */}
+                <div className="relative rounded-xl overflow-hidden border-2 border-emerald-500/50 shadow-lg">
+                  <img 
+                    src="https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?w=400&q=80" 
+                    alt="Real photo"
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute top-2 right-2 px-3 py-1 bg-emerald-500 rounded-full">
+                    <span className="text-xs font-bold text-white">✓ REAL</span>
+                  </div>
+                </div>
+
+                {/* AI Image 1 */}
+                <div className="relative rounded-xl overflow-hidden border-2 border-amber-500/50 shadow-lg">
+                  <img 
+                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&q=80" 
+                    alt="Example image"
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute top-2 right-2 px-3 py-1 bg-amber-500 rounded-full">
+                    <span className="text-xs font-bold text-white">⚠️ AI</span>
+                  </div>
+                </div>
+
+                {/* Real Image 2 */}
+                <div className="relative rounded-xl overflow-hidden border-2 border-emerald-500/50 shadow-lg">
+                  <img 
+                    src="https://images.unsplash.com/photo-1609220136736-443140cffec6?w=400&q=80" 
+                    alt="Real photo"
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute top-2 right-2 px-3 py-1 bg-emerald-500 rounded-full">
+                    <span className="text-xs font-bold text-white">✓ REAL</span>
+                  </div>
+                </div>
+
+                {/* AI Image 2 */}
+                <div className="relative rounded-xl overflow-hidden border-2 border-amber-500/50 shadow-lg">
+                  <img 
+                    src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80" 
+                    alt="Example image"
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute top-2 right-2 px-3 py-1 bg-amber-500 rounded-full">
+                    <span className="text-xs font-bold text-white">⚠️ AI</span>
                   </div>
                 </div>
               </div>
+
+              {/* Overlay Message */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border-4 border-blue-500 max-w-xs text-center">
+                  <p className="text-lg font-bold text-slate-900 mb-1">Can you tell the difference?</p>
+                  <p className="text-sm text-slate-600">They'll know instantly ✨</p>
+                </div>
+              </div>
+
               {/* Decorative Elements */}
               <div className="absolute -top-6 -right-6 text-6xl animate-bounce">🎁</div>
               <div className="absolute -bottom-4 -left-4 text-5xl">🎄</div>
