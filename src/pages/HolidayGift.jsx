@@ -88,25 +88,57 @@ export default function HolidayGift() {
 
       {/* Hero */}
       <section className="relative py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-500/20 to-green-500/20 text-white text-sm mb-6 border border-white/20">
-              <Clock className="w-4 h-4" />
-              Last-Minute Gift Solution
-            </div>
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              The Perfect Gift for<br />Parents & Grandparents
-            </h2>
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-4">
-              Help them navigate an AI-generated world. Give them confidence to verify what's real online.
-            </p>
-            <p className="text-lg text-emerald-400 max-w-2xl mx-auto mb-8">
-              Instant digital delivery • Perfect for white elephant • Actually useful
-            </p>
-          </motion.div>
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Left: Text */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-500/20 to-green-500/20 text-white text-sm mb-6 border border-white/20">
+                <Clock className="w-4 h-4" />
+                Last-Minute Gift Solution
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                The Perfect Gift for<br />Parents & Grandparents
+              </h2>
+              <p className="text-xl text-slate-300 mb-4">
+                Help them navigate an AI-generated world. Give them confidence to verify what's real online.
+              </p>
+              <p className="text-lg text-emerald-400 mb-8">
+                Instant digital delivery • Perfect for white elephant • Actually useful
+              </p>
+            </motion.div>
+
+            {/* Right: Hero Image */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="relative"
+            >
+              <div className="relative rounded-2xl overflow-hidden border-4 border-white/20 shadow-2xl">
+                <img 
+                  src="https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?w=800&q=80" 
+                  alt="Grandparents using technology"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Shield className="w-5 h-5 text-emerald-600" />
+                      <span className="font-bold text-slate-900">Verified: Real Photo</span>
+                    </div>
+                    <p className="text-sm text-slate-600">Help them spot the difference</p>
+                  </div>
+                </div>
+              </div>
+              {/* Decorative Elements */}
+              <div className="absolute -top-6 -right-6 text-6xl">🎁</div>
+              <div className="absolute -bottom-4 -left-4 text-5xl">🎄</div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -239,15 +271,44 @@ export default function HolidayGift() {
         </div>
       </section>
 
-      {/* Testimonial */}
+      {/* Testimonial with Images */}
       <section className="relative py-12 px-6">
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 text-center">
-            <p className="text-lg text-white italic mb-4">
-              "Got this for my mom for Christmas. She's always forwarding questionable stuff on Facebook. 
-              Now she checks it first. Best $29 I've spent!"
-            </p>
-            <p className="text-slate-300">— Sarah M., verified customer</p>
+        <div className="max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+              <div className="flex items-start gap-4 mb-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80"
+                  alt="Customer"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-emerald-400"
+                />
+                <div>
+                  <p className="text-white font-semibold">Sarah M.</p>
+                  <p className="text-slate-400 text-sm">Verified Customer</p>
+                </div>
+              </div>
+              <p className="text-slate-200 italic">
+                "Got this for my mom for Christmas. She's always forwarding questionable stuff on Facebook. 
+                Now she checks it first. Best $29 I've spent!"
+              </p>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+              <div className="flex items-start gap-4 mb-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80"
+                  alt="Customer"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-emerald-400"
+                />
+                <div>
+                  <p className="text-white font-semibold">Mike R.</p>
+                  <p className="text-slate-400 text-sm">Verified Customer</p>
+                </div>
+              </div>
+              <p className="text-slate-200 italic">
+                "Perfect white elephant gift! Everyone wanted to steal it. Actually useful unlike the usual gag gifts."
+              </p>
+            </div>
           </div>
         </div>
       </section>
