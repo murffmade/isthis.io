@@ -179,12 +179,6 @@ Provide a thorough but accessible analysis.`,
               >
                 Enterprise
               </button>
-              <button
-                onClick={() => window.location.href = createPageUrl('Bookmarklet')}
-                className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors text-sm font-medium"
-              >
-                Get Bookmarklet
-              </button>
             </div>
           </div>
         </div>
