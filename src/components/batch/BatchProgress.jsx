@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, StopCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 
-export default function BatchProgress({ batch }) {
+export default function BatchProgress({ batch, onCancel }) {
   const [currentBatch, setCurrentBatch] = useState(batch);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     // Poll for updates every 2 seconds
@@ -30,6 +33,18 @@ export default function BatchProgress({ batch }) {
   const progress = currentBatch.total_items > 0 
     ? ((currentBatch.completed_items + currentBatch.failed_items) / currentBatch.total_items) * 100 
     : 0;
+
+  const handleCancel = async () => {
+    setCancelling(true);
+    try {
+      await base44.entities.BatchAnalysis.update(batch.id, { status: 'failed' });
+      toast.success('Batch cancelled');
+      if (onCancel) onCancel();
+    } catch (error) {
+      toast.error('Failed to cancel batch');
+      setCancelling(false);
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -92,6 +107,16 @@ export default function BatchProgress({ batch }) {
         <p className="text-sm text-slate-500 mt-6">
           This may take a few minutes depending on batch size
         </p>
+
+        <Button
+          onClick={handleCancel}
+          disabled={cancelling}
+          variant="outline"
+          className="mt-6"
+        >
+          <StopCircle className="w-4 h-4 mr-2" />
+          {cancelling ? 'Cancelling...' : 'Cancel Batch'}
+        </Button>
       </div>
     </div>
   );

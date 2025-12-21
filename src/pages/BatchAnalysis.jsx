@@ -26,6 +26,9 @@ export default function BatchAnalysisPage() {
     queryFn: () => BatchAnalysis.list('-created_date', 20)
   });
 
+  // Check for running batches
+  const runningBatches = batches.filter(b => b.status === 'processing' || b.status === 'queued');
+
   const modes = [
     { id: 'real', label: 'Is This Real?', icon: Shield, color: 'slate', desc: 'Detect AI-generated content' },
     { id: 'true', label: 'Is This True?', icon: '✓', color: 'blue', desc: 'Fact-check claims' },
@@ -187,11 +190,22 @@ export default function BatchAnalysisPage() {
   };
 
   const handleBatchSubmit = (data) => {
+    if (runningBatches.length > 0) {
+      toast.error('Please wait for current batch to complete before starting a new one');
+      return;
+    }
+    
     processBatchMutation.mutate({
       batchName: data.batchName,
       items: data.items,
       mode: selectedMode
     });
+  };
+
+  const handleCancelBatch = () => {
+    setStep('mode_select');
+    setCurrentBatch(null);
+    queryClient.invalidateQueries(['batches']);
   };
 
   const handleSelectBatch = async (batchId) => {
@@ -277,6 +291,12 @@ export default function BatchAnalysisPage() {
                 ))}
               </div>
 
+              {/* Data Retention Notice */}
+              <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-800">
+                <strong>Data Retention:</strong> Batch results are automatically deleted after 30 days. 
+                Export important reports for long-term storage.
+              </div>
+
               {/* Recent Batches */}
               {batches.length > 0 && (
                 <div>
@@ -319,6 +339,14 @@ export default function BatchAnalysisPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
+              {runningBatches.length > 0 && (
+                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                  <p className="text-amber-800 font-medium">
+                    ⚠️ You have {runningBatches.length} batch(es) currently processing. 
+                    Please wait for completion before starting a new batch.
+                  </p>
+                </div>
+              )}
               <BatchUpload
                 mode={selectedMode}
                 onSubmit={handleBatchSubmit}
@@ -334,7 +362,7 @@ export default function BatchAnalysisPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <BatchProgress batch={currentBatch} />
+              <BatchProgress batch={currentBatch} onCancel={handleCancelBatch} />
             </motion.div>
           )}
 

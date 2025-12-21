@@ -6,14 +6,24 @@ import { Textarea } from '@/components/ui/textarea';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
+const MAX_BATCH_SIZE = 1000;
+
 export default function BatchUpload({ mode, onSubmit, onBack }) {
   const [batchName, setBatchName] = useState('');
   const [items, setItems] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [textInput, setTextInput] = useState('');
+  const [error, setError] = useState('');
 
   const handleFileUpload = async (files) => {
+    if (items.length + files.length > MAX_BATCH_SIZE) {
+      setError(`Cannot exceed ${MAX_BATCH_SIZE} items per batch`);
+      toast.error(`Maximum ${MAX_BATCH_SIZE} items allowed`);
+      return;
+    }
+    
+    setError('');
     setUploading(true);
     const newItems = [];
 
@@ -38,6 +48,14 @@ export default function BatchUpload({ mode, onSubmit, onBack }) {
     if (!urlInput.trim()) return;
     
     const urls = urlInput.split('\n').filter(u => u.trim());
+    
+    if (items.length + urls.length > MAX_BATCH_SIZE) {
+      setError(`Cannot exceed ${MAX_BATCH_SIZE} items per batch`);
+      toast.error(`Maximum ${MAX_BATCH_SIZE} items allowed`);
+      return;
+    }
+    
+    setError('');
     const newItems = urls.map(url => ({
       input_type: 'url',
       input_value: url.trim(),
@@ -52,6 +70,14 @@ export default function BatchUpload({ mode, onSubmit, onBack }) {
     if (!textInput.trim()) return;
     
     const texts = textInput.split('\n\n').filter(t => t.trim());
+    
+    if (items.length + texts.length > MAX_BATCH_SIZE) {
+      setError(`Cannot exceed ${MAX_BATCH_SIZE} items per batch`);
+      toast.error(`Maximum ${MAX_BATCH_SIZE} items allowed`);
+      return;
+    }
+    
+    setError('');
     const newItems = texts.map((text, i) => ({
       input_type: 'text',
       input_value: text.trim(),
@@ -99,7 +125,22 @@ export default function BatchUpload({ mode, onSubmit, onBack }) {
       </button>
 
       <div className="bg-white rounded-2xl border-2 border-slate-200 p-8 mb-6">
-        <h2 className="text-2xl font-bold text-slate-900 mb-6">Setup Batch Analysis</h2>
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Setup Batch Analysis</h2>
+            <p className="text-sm text-slate-500 mt-1">Maximum {MAX_BATCH_SIZE} items per batch</p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-slate-900">{items.length}</div>
+            <div className="text-xs text-slate-500">/ {MAX_BATCH_SIZE}</div>
+          </div>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
         {/* Batch Name */}
         <div className="mb-6">

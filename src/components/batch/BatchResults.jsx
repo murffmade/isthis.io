@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Download, CheckCircle, AlertTriangle, XCircle, ExternalLink } from 'lucide-react';
+import { Download, CheckCircle, AlertTriangle, XCircle, ExternalLink, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import jsPDF from 'jspdf';
 
 export default function BatchResults({ batch, onStartOver }) {
   const [expandedId, setExpandedId] = useState(null);
@@ -45,7 +46,48 @@ export default function BatchResults({ batch, onStartOver }) {
     a.href = url;
     a.download = `${batch.name.replace(/[^a-z0-9]/gi, '_')}_results.csv`;
     a.click();
-    toast.success('Report exported');
+    toast.success('CSV exported');
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Title
+    doc.setFontSize(18);
+    doc.text(batch.name, 15, 20);
+    
+    // Summary
+    doc.setFontSize(12);
+    doc.text(`Total Items: ${batch.total_items}`, 15, 35);
+    doc.text(`Average Score: ${batch.summary?.average_score || 'N/A'}`, 15, 42);
+    doc.text(`High Risk: ${batch.summary?.high_risk_count || 0}`, 15, 49);
+    
+    // Results
+    doc.setFontSize(10);
+    let yPos = 60;
+    
+    analyses.slice(0, 20).forEach((analysis, i) => {
+      if (yPos > 270) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      doc.text(`${i + 1}. Score: ${analysis.score} - ${analysis.score_label}`, 15, yPos);
+      yPos += 7;
+      
+      const summary = analysis.summary?.substring(0, 100) || 'No summary';
+      const lines = doc.splitTextToSize(summary, pageWidth - 30);
+      doc.text(lines, 20, yPos);
+      yPos += lines.length * 5 + 5;
+    });
+    
+    if (analyses.length > 20) {
+      doc.text(`... and ${analyses.length - 20} more items`, 15, yPos);
+    }
+    
+    doc.save(`${batch.name.replace(/[^a-z0-9]/gi, '_')}_report.pdf`);
+    toast.success('PDF exported');
   };
 
   const getSeverityColor = (score) => {
@@ -69,10 +111,16 @@ export default function BatchResults({ batch, onStartOver }) {
             <h2 className="text-3xl font-bold text-slate-900 mb-2">{batch.name}</h2>
             <p className="text-slate-600">Batch analysis completed</p>
           </div>
-          <Button onClick={handleExportCSV} variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleExportCSV} variant="outline" size="sm">
+              <Download className="w-4 h-4 mr-2" />
+              CSV
+            </Button>
+            <Button onClick={handleExportPDF} variant="outline" size="sm">
+              <FileText className="w-4 h-4 mr-2" />
+              PDF
+            </Button>
+          </div>
         </div>
 
         {/* Summary Stats */}
