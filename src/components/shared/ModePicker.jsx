@@ -74,6 +74,35 @@ export default function ModePicker({ onSelectMode, currentMode }) {
           const Icon = mode.icon;
           const isRealMode = mode.id === 'real' && onSelectMode;
           
+          const cardContent = (
+            <div className={`bg-gradient-to-br ${mode.gradient} rounded-2xl p-8 border-2 border-${mode.color}-200 hover:border-${mode.color}-400 transition-all duration-300 cursor-pointer group h-full`}>
+              <div className="flex items-start justify-between mb-6">
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${mode.iconBg} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                  <Icon className="w-7 h-7 text-white" />
+                </div>
+                <ChevronRight className={`w-6 h-6 text-${mode.color}-400 group-hover:translate-x-1 transition-transform`} />
+              </div>
+
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                {mode.title}
+              </h3>
+              <p className="text-slate-600 mb-4">
+                {mode.description}
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {mode.examples.map((example, i) => (
+                  <span
+                    key={i}
+                    className="text-xs px-3 py-1 bg-white/60 rounded-full text-slate-600"
+                  >
+                    {example}
+                  </span>
+                ))}
+              </div>
+            </div>
+          );
+          
           return (
             <motion.div
               key={mode.id}
@@ -83,37 +112,13 @@ export default function ModePicker({ onSelectMode, currentMode }) {
             >
               {isRealMode ? (
                 <button onClick={() => handleModeClick(mode)} className="w-full text-left">
-                <div className={`bg-gradient-to-br ${mode.gradient} rounded-2xl p-8 border-2 border-${mode.color}-200 hover:border-${mode.color}-400 transition-all duration-300 cursor-pointer group h-full`}>
-                  <div className="flex items-start justify-between mb-6">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${mode.iconBg} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                      <Icon className="w-7 h-7 text-white" />
-                    </div>
-                    <ChevronRight className={`w-6 h-6 text-${mode.color}-400 group-hover:translate-x-1 transition-transform`} />
-                  </div>
-
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                    {mode.title}
-                  </h3>
-                  <p className="text-slate-600 mb-4">
-                    {mode.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2">
-                    {mode.examples.map((example, i) => (
-                      <span
-                        key={i}
-                        className="text-xs px-3 py-1 bg-white/60 rounded-full text-slate-600"
-                      >
-                        {example}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                {isRealMode ? (
-                  </button>
-                ) : (
-                  </Link>
-                )}
+                  {cardContent}
+                </button>
+              ) : (
+                <Link to={mode.path}>
+                  {cardContent}
+                </Link>
+              )}
             </motion.div>
           );
         })}
