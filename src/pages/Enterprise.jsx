@@ -80,6 +80,27 @@ export default function Enterprise() {
               </Button>
             </div>
           </motion.div>
+
+          {/* Enterprise Features Highlight */}
+          <div className="grid md:grid-cols-3 gap-6 mt-12">
+            {[
+              { icon: '📦', title: 'Batch Analysis', desc: 'Process up to 1000 items simultaneously with progress tracking' },
+              { icon: '⚡', title: 'High-Volume Processing', desc: 'Handle millions of verifications per day with distributed infrastructure' },
+              { icon: '🔐', title: 'Enterprise Security', desc: 'SOC 2 compliant with private deployment options' }
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 + i * 0.1 }}
+                className="bg-white rounded-xl p-6 border border-slate-200"
+              >
+                <div className="text-3xl mb-3">{item.icon}</div>
+                <h4 className="font-semibold text-slate-900 mb-1">{item.title}</h4>
+                <p className="text-sm text-slate-600">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -98,7 +119,7 @@ export default function Enterprise() {
               <ul className="space-y-3">
                 {[
                   'Real-time content verification',
-                  'Batch processing support',
+                  'Batch analysis for multiple items',
                   'Webhook notifications',
                   'Detailed analytics dashboard',
                   '99.9% uptime SLA'
@@ -256,10 +277,10 @@ const result = await response.json();
             <ul className="grid md:grid-cols-2 gap-4 text-left mb-8 max-w-xl mx-auto">
               {[
                 'Unlimited API requests',
+                'Batch analysis feature',
                 'Priority processing',
                 'Custom rate limits',
                 'Dedicated account manager',
-                'Custom model training',
                 'White-label options'
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-3 text-slate-700">
