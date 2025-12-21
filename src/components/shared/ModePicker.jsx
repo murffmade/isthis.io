@@ -52,6 +52,12 @@ const modes = [
 ];
 
 export default function ModePicker({ onSelectMode, currentMode }) {
+  const handleModeClick = (mode) => {
+    if (onSelectMode && mode.id === 'real') {
+      onSelectMode('real');
+    }
+  };
+
   return (
     <div>
       <div className="text-center mb-12">
@@ -66,6 +72,8 @@ export default function ModePicker({ onSelectMode, currentMode }) {
       <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
         {modes.map((mode, index) => {
           const Icon = mode.icon;
+          const isRealMode = mode.id === 'real' && onSelectMode;
+          
           return (
             <motion.div
               key={mode.id}
@@ -73,7 +81,8 @@ export default function ModePicker({ onSelectMode, currentMode }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Link to={mode.path}>
+              {isRealMode ? (
+                <button onClick={() => handleModeClick(mode)} className="w-full text-left">
                 <div className={`bg-gradient-to-br ${mode.gradient} rounded-2xl p-8 border-2 border-${mode.color}-200 hover:border-${mode.color}-400 transition-all duration-300 cursor-pointer group h-full`}>
                   <div className="flex items-start justify-between mb-6">
                     <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${mode.iconBg} flex items-center justify-center group-hover:scale-110 transition-transform`}>
@@ -100,7 +109,11 @@ export default function ModePicker({ onSelectMode, currentMode }) {
                     ))}
                   </div>
                 </div>
-              </Link>
+                {isRealMode ? (
+                  </button>
+                ) : (
+                  </Link>
+                )}
             </motion.div>
           );
         })}

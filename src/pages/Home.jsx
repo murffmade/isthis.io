@@ -266,7 +266,7 @@ Provide a thorough but accessible analysis.`,
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <ModePicker currentMode="real" />
+              <ModePicker currentMode="real" onSelectMode={() => setStep('upload')} />
               
               {/* Continue to classic upload below */}
               <div className="mt-16 pt-16 border-t-2 border-slate-200">
