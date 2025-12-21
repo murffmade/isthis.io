@@ -14,6 +14,7 @@ import Scam from './pages/Scam';
 import Safe from './pages/Safe';
 import History from './pages/History';
 import BatchAnalysis from './pages/BatchAnalysis';
+import EnterpriseMarketing from './pages/EnterpriseMarketing';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "Safe": Safe,
     "History": History,
     "BatchAnalysis": BatchAnalysis,
+    "EnterpriseMarketing": EnterpriseMarketing,
 }
 
 export const pagesConfig = {

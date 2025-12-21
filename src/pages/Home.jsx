@@ -245,12 +245,12 @@ Provide a thorough but accessible analysis.`,
                 <History className="w-4 h-4" />
                 <span className="hidden sm:inline">History</span>
               </Link>
-              <button
-                onClick={() => window.location.href = createPageUrl('Enterprise')}
+              <Link
+                to={createPageUrl('EnterpriseMarketing')}
                 className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors text-sm font-medium hidden sm:block"
               >
                 Enterprise
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -499,13 +499,13 @@ Provide a thorough but accessible analysis.`,
 
           {/* Enterprise CTA */}
           <div className="mt-12 text-center">
-            <p className="text-slate-600 mb-4">Enterprise AI Detection Solutions - API access available globally</p>
-            <button
-              onClick={() => window.location.href = createPageUrl('Enterprise')}
-              className="px-6 py-3 border-2 border-slate-900 text-slate-900 rounded-xl font-semibold hover:bg-slate-900 hover:text-white transition-colors"
+            <p className="text-slate-600 mb-4">Need batch processing or API access for your organization?</p>
+            <Link
+              to={createPageUrl('EnterpriseMarketing')}
+              className="inline-block px-6 py-3 border-2 border-slate-900 text-slate-900 rounded-xl font-semibold hover:bg-slate-900 hover:text-white transition-colors"
             >
-              View Enterprise Solutions
-            </button>
+              Learn About Enterprise
+            </Link>
           </div>
         </section>
       )}
