@@ -11,11 +11,12 @@ import AnalysisLoader from '@/components/verification/AnalysisLoader';
 import ResultCard from '@/components/verification/ResultCard';
 import ActionPanel from '@/components/verification/ActionPanel';
 import HistoryList from '@/components/verification/HistoryList';
+import ModePicker from '@/components/shared/ModePicker';
 
 const AnalysisRecord = base44.entities.AnalysisRecord;
 
 export default function Home() {
-  const [step, setStep] = useState('upload'); // upload, analyzing, result, action, history
+  const [step, setStep] = useState('mode_picker'); // mode_picker, upload, analyzing, result, action, history
   const [analysisStep, setAnalysisStep] = useState(0);
   const [currentResult, setCurrentResult] = useState(null);
   const [pendingContent, setPendingContent] = useState(null);
@@ -137,7 +138,7 @@ Provide a thorough but accessible analysis.`,
   };
 
   const handleStartOver = () => {
-    setStep('upload');
+    setStep('mode_picker');
     setCurrentResult(null);
     setPendingContent(null);
     setAnalysisStep(0);
@@ -236,6 +237,13 @@ Provide a thorough but accessible analysis.`,
             </button>
 
             <div className="flex items-center gap-2">
+              <Link
+                to={createPageUrl('History')}
+                className="px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors text-sm font-medium flex items-center gap-2"
+              >
+                <History className="w-4 h-4" />
+                <span className="hidden sm:inline">History</span>
+              </Link>
               <button
                 onClick={() => window.location.href = createPageUrl('Enterprise')}
                 className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors text-sm font-medium hidden sm:block"
@@ -250,6 +258,31 @@ Provide a thorough but accessible analysis.`,
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-6 py-12" role="main">
         <AnimatePresence mode="wait">
+          {step === 'mode_picker' && (
+            <motion.div
+              key="mode_picker"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <ModePicker currentMode="real" />
+              
+              {/* Continue to classic upload below */}
+              <div className="mt-16 pt-16 border-t-2 border-slate-200">
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold text-slate-900 mb-3">Or Continue with Classic Upload</h2>
+                  <p className="text-slate-600">Quick verification without choosing a mode</p>
+                </div>
+                <button
+                  onClick={() => setStep('upload')}
+                  className="mx-auto block px-8 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors"
+                >
+                  Start Quick Upload
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           {step === 'upload' && (
             <motion.div
               key="upload"
