@@ -80,7 +80,7 @@ export default function APIDocs() {
                 <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-slate-800 leading-tight">Is This Real?</h1>
+                <h1 className="text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
                 <p className="text-xs text-slate-500">API Documentation</p>
               </div>
             </a>
@@ -96,6 +96,28 @@ export default function APIDocs() {
       </header>
 
       <div className="max-w-6xl mx-auto px-6 py-12">
+        {/* Enterprise Notice */}
+        <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-8 mb-8 text-white">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+              <Shield className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Enterprise API Access</h2>
+              <p className="text-slate-300 mb-4">
+                Integrate IsThis.io verification into your applications with our comprehensive REST API. 
+                Access all verification modes programmatically with enterprise-grade reliability and support.
+              </p>
+              <a 
+                href={createPageUrl('Enterprise')}
+                className="inline-block px-6 py-2 bg-white text-slate-900 rounded-lg font-medium hover:bg-slate-100 transition-colors"
+              >
+                Contact Sales
+              </a>
+            </div>
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
@@ -202,22 +224,24 @@ export default function APIDocs() {
 
             {/* Endpoints */}
             <section id="endpoints" className="bg-white rounded-xl border border-slate-200 p-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Endpoints</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">API Endpoints</h2>
+              <p className="text-slate-600 mb-6">Base URL: <code className="bg-slate-100 px-2 py-1 rounded text-sm">https://api.isthis.io</code></p>
               
-              {/* Analyze Content */}
+              {/* Analyze Content - Real */}
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-3">
                   <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded">POST</span>
-                  <code className="text-sm font-mono text-slate-700">/v1/analyze</code>
+                  <code className="text-sm font-mono text-slate-700">/v1/verify/real</code>
                 </div>
-                <p className="text-slate-600 mb-4">Analyze an image, video, or URL for AI-generated content.</p>
+                <p className="text-slate-600 mb-4">Detect AI-generated images, videos, and deepfakes.</p>
                 
                 <h4 className="font-semibold text-slate-900 mb-2">Request Body:</h4>
                 <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto mb-4">
                   <pre className="text-sm text-slate-300">
 {`{
-  "url": "https://example.com/image.jpg",
-  "type": "image"  // or "video" or "url"
+  "input_type": "image",  // "image", "video", or "url"
+  "input_value": "https://example.com/image.jpg",
+  "context": "Optional context about the content"
 }`}
                   </pre>
                 </div>
@@ -227,45 +251,154 @@ export default function APIDocs() {
                   <pre className="text-sm text-slate-300">
 {`{
   "id": "analysis_123abc",
+  "mode": "real",
   "result": "likely_ai",
-  "confidence": 87,
+  "score": 87,
+  "score_label": "High",
+  "summary": "Content shows multiple signs of AI generation",
   "signals": [
     {
-      "signal_type": "Visual Artifacts",
+      "title": "Visual Artifacts",
       "description": "Detected anomalies in hand structure",
       "severity": "high"
     }
   ],
-  "summary": "This content shows signs of AI generation...",
-  "created_at": "2024-12-19T10:30:00Z"
+  "recommended_actions": [...],
+  "created_at": "2024-12-21T10:30:00Z"
+}`}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Fact Check Endpoint */}
+              <div className="mb-8 pt-6 border-t border-slate-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded">POST</span>
+                  <code className="text-sm font-mono text-slate-700">/v1/verify/true</code>
+                </div>
+                <p className="text-slate-600 mb-4">Verify claims and check facts with citations.</p>
+                
+                <h4 className="font-semibold text-slate-900 mb-2">Request Body:</h4>
+                <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto mb-4">
+                  <pre className="text-sm text-slate-300">
+{`{
+  "input_type": "text",  // "text", "url", or "image"
+  "input_value": "Scientists discovered a cure for the common cold",
+  "context": "Saw this on social media"
+}`}
+                  </pre>
+                </div>
+
+                <h4 className="font-semibold text-slate-900 mb-2">Response:</h4>
+                <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                  <pre className="text-sm text-slate-300">
+{`{
+  "id": "analysis_456def",
+  "mode": "true",
+  "score": 35,
+  "score_label": "Likely False",
+  "summary": "No credible evidence supports this claim",
+  "signals": [...],
+  "sources": [
+    {
+      "title": "Medical Research Update",
+      "url": "https://example.com/article",
+      "domain": "example.com",
+      "date": "2024-12-15"
+    }
+  ],
+  "recommended_actions": [...]
+}`}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Scam Detection Endpoint */}
+              <div className="mb-8 pt-6 border-t border-slate-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded">POST</span>
+                  <code className="text-sm font-mono text-slate-700">/v1/verify/scam</code>
+                </div>
+                <p className="text-slate-600 mb-4">Detect scams in messages, listings, and emails.</p>
+                
+                <h4 className="font-semibold text-slate-900 mb-2">Request Body:</h4>
+                <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                  <pre className="text-sm text-slate-300">
+{`{
+  "input_type": "text",
+  "input_value": "Congratulations! You've won $10,000...",
+  "context": "Received via email"
+}`}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Safety Assessment Endpoint */}
+              <div className="mb-8 pt-6 border-t border-slate-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded">POST</span>
+                  <code className="text-sm font-mono text-slate-700">/v1/verify/safe</code>
+                </div>
+                <p className="text-slate-600 mb-4">Get safety guidance for situations and decisions.</p>
+                
+                <h4 className="font-semibold text-slate-900 mb-2">Request Body:</h4>
+                <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                  <pre className="text-sm text-slate-300">
+{`{
+  "input_type": "text",
+  "input_value": "Is it safe to use this supplement?",
+  "context": "Found online, no FDA approval mentioned"
 }`}
                   </pre>
                 </div>
               </div>
 
               {/* Get Analysis */}
-              <div>
+              <div className="pt-6 border-t border-slate-200">
                 <div className="flex items-center gap-3 mb-3">
                   <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded">GET</span>
-                  <code className="text-sm font-mono text-slate-700">/v1/analyze/:id</code>
+                  <code className="text-sm font-mono text-slate-700">/v1/analysis/:id</code>
                 </div>
-                <p className="text-slate-600">Retrieve a specific analysis by ID.</p>
+                <p className="text-slate-600">Retrieve a specific analysis result by ID.</p>
+              </div>
+            </section>
+
+            {/* Webhooks */}
+            <section id="webhooks" className="bg-white rounded-xl border border-slate-200 p-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Webhooks</h2>
+              <p className="text-slate-600 mb-4">
+                Subscribe to webhook events to receive real-time notifications when analyses complete.
+              </p>
+              <div className="bg-slate-50 rounded-lg p-4">
+                <h4 className="font-semibold text-slate-900 mb-2">Available Events:</h4>
+                <ul className="space-y-2 text-sm text-slate-600">
+                  <li>• <code className="bg-white px-2 py-0.5 rounded">analysis.completed</code> - Analysis finished successfully</li>
+                  <li>• <code className="bg-white px-2 py-0.5 rounded">analysis.failed</code> - Analysis encountered an error</li>
+                </ul>
               </div>
             </section>
 
             {/* Rate Limits */}
             <section id="rate-limits" className="bg-white rounded-xl border border-slate-200 p-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Rate Limits</h2>
+              <p className="text-amber-600 text-sm mb-4 font-medium">⚠️ Enterprise-only feature</p>
               <div className="space-y-4">
                 <div className="p-4 bg-slate-50 rounded-lg">
-                  <h4 className="font-semibold text-slate-900 mb-1">Standard Plan</h4>
-                  <p className="text-slate-600">1,000 requests per hour</p>
+                  <h4 className="font-semibold text-slate-900 mb-1">Starter Tier</h4>
+                  <p className="text-slate-600">1,000 requests per hour • 10,000 per day</p>
                 </div>
                 <div className="p-4 bg-slate-50 rounded-lg">
-                  <h4 className="font-semibold text-slate-900 mb-1">Enterprise Plan</h4>
+                  <h4 className="font-semibold text-slate-900 mb-1">Professional Tier</h4>
+                  <p className="text-slate-600">5,000 requests per hour • 50,000 per day</p>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-lg">
+                  <h4 className="font-semibold text-slate-900 mb-1">Enterprise Tier</h4>
                   <p className="text-slate-600">Custom rate limits based on your needs</p>
                 </div>
               </div>
+              <p className="text-sm text-slate-500 mt-4">
+                Contact sales for higher rate limits or custom SLAs.
+              </p>
             </section>
 
             {/* Error Codes */}
