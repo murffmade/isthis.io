@@ -161,7 +161,7 @@ Provide a thorough but accessible analysis.`,
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "Is This Real? - AI Content Verification",
+      "name": "IsThis.io - AI Content Verification",
       "applicationCategory": "SecurityApplication",
       "description": "Free AI detection tool to verify images, videos, and content authenticity. Detect AI-generated content and deepfakes instantly with advanced multi-signal analysis.",
       "operatingSystem": "Web Browser",
@@ -186,16 +186,16 @@ Provide a thorough but accessible analysis.`,
     document.head.appendChild(script);
 
     // Update meta tags
-    document.title = 'Is This Real? - Free AI Content Detector & Deepfake Verification Tool';
+    document.title = 'IsThis.io - Free AI Content Detector & Deepfake Verification Tool';
     
     const metaTags = [
       { name: 'description', content: 'Free AI detection tool to verify if images and videos are real or AI-generated. Detect deepfakes, synthetic media, and AI content instantly with 95% accuracy. Available worldwide.' },
       { name: 'keywords', content: 'AI detector, deepfake detector, fake image detector, AI content verification, synthetic media detection, image authenticity, video verification, free AI detection tool' },
-      { property: 'og:title', content: 'Is This Real? - Free AI Content Detector & Verification' },
+      { property: 'og:title', content: 'IsThis.io - Free AI Content Detector & Verification' },
       { property: 'og:description', content: 'Instantly verify if images and videos are real or AI-generated. Free AI detection with advanced analysis.' },
       { property: 'og:type', content: 'website' },
       { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Is This Real? - AI Content Verification Tool' },
+      { name: 'twitter:title', content: 'IsThis.io - AI Content Verification Tool' },
       { name: 'geo.region', content: 'US' },
       { name: 'geo.position', content: 'global' },
       { name: 'language', content: 'en' },
@@ -232,7 +232,7 @@ Provide a thorough but accessible analysis.`,
                 <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-slate-800 leading-tight">Is This Real?</h1>
+                <h1 className="text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
                 <p className="text-xs text-slate-500">AI content verification</p>
               </div>
             </button>
@@ -519,7 +519,7 @@ Provide a thorough but accessible analysis.`,
               <span>AI analysis isn't perfect and may be wrong</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-slate-400">
-              <span>© 2026 Is This Real?</span>
+              <span>© 2026 IsThis.io</span>
             </div>
           </div>
         </div>

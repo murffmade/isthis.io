@@ -56,8 +56,8 @@ export default function HistoryPage() {
                 <HistoryIcon className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-slate-800 leading-tight">Analysis History</h1>
-                <p className="text-xs text-slate-500">Your saved verifications</p>
+                <h1 className="text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
+                <p className="text-xs text-slate-500">Analysis History</p>
               </div>
             </Link>
 

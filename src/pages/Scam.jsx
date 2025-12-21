@@ -154,8 +154,8 @@ Be clear and actionable.`,
                 <AlertTriangle className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-slate-800 leading-tight">Is This a Scam?</h1>
-                <p className="text-xs text-slate-500">Scam detection & protection</p>
+                <h1 className="text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
+                <p className="text-xs text-slate-500">Is This a Scam?</p>
               </div>
             </Link>
 

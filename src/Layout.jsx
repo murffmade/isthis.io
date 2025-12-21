@@ -48,7 +48,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             {/* Brand */}
             <div className="md:col-span-1">
-              <h3 className="font-bold text-lg mb-2">Is This Real?</h3>
+              <h3 className="font-bold text-lg mb-2">IsThis.io</h3>
               <p className="text-sm text-slate-400">
                 AI content verification for everyone
               </p>
@@ -121,7 +121,7 @@ export default function Layout({ children, currentPageName }) {
           {/* Bottom */}
           <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-400">
-              © 2026 Is This Real? All rights reserved.
+              © 2026 IsThis.io All rights reserved.
             </p>
             <div className="flex items-center gap-6">
               <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">

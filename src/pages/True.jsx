@@ -172,8 +172,8 @@ Provide a thorough, balanced fact-check.`,
                 <CheckCircle className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-slate-800 leading-tight">Is This True?</h1>
-                <p className="text-xs text-slate-500">Fact verification with citations</p>
+                <h1 className="text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
+                <p className="text-xs text-slate-500">Is This True?</p>
               </div>
             </Link>
 

@@ -174,8 +174,8 @@ Be practical and protective.`,
                 <Heart className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-slate-800 leading-tight">Is This Safe?</h1>
-                <p className="text-xs text-slate-500">Safety assessment & guidance</p>
+                <h1 className="text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
+                <p className="text-xs text-slate-500">Is This Safe?</p>
               </div>
             </Link>
 
