@@ -29,8 +29,10 @@ export default function TruePage() {
         analysisPrompt = `Fact-check this claim: "${inputData.input_value}"`;
       } else if (inputData.input_type === 'url') {
         analysisPrompt = `Fact-check the claims in this article/post: ${inputData.input_value}`;
+      } else if (inputData.input_type === 'image' || inputData.input_type === 'video') {
+        analysisPrompt = `First, carefully read and extract ALL text visible in this image/video (including text overlays, captions, memes, screenshots of tweets/posts, etc.). Then identify the key factual claims made in that text and fact-check them.`;
       } else {
-        analysisPrompt = `Extract and fact-check claims from this image/video content`;
+        analysisPrompt = `Extract and fact-check claims from this content`;
       }
 
       if (inputData.context) {
@@ -42,10 +44,11 @@ export default function TruePage() {
         prompt: `You are a professional fact-checker. ${analysisPrompt}
 
 Your task:
-1. Identify 1-3 key checkable claims
-2. Search for evidence from authoritative sources (government, academic, official organizations, primary data)
-3. Evaluate each claim's truthfulness
-4. Provide clear citations
+1. Extract any text present in the content
+2. Identify 1-3 key checkable claims from that text
+3. Search for evidence from authoritative sources (government, academic, official organizations, primary data)
+4. Evaluate each claim's truthfulness
+5. Provide clear citations
 
 Important guidelines:
 - Be neutral and non-political
