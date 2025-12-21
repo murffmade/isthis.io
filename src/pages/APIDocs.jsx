@@ -353,6 +353,57 @@ export default function APIDocs() {
                 </div>
               </div>
 
+              {/* Batch Analysis */}
+              <div className="mb-8 pt-6 border-t border-slate-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded">POST</span>
+                  <code className="text-sm font-mono text-slate-700">/v1/batch/analyze</code>
+                </div>
+                <p className="text-slate-600 mb-2">Submit multiple items for batch analysis.</p>
+                <p className="text-amber-600 text-sm mb-4 font-medium">⚠️ Enterprise-only endpoint</p>
+                
+                <h4 className="font-semibold text-slate-900 mb-2">Request Body:</h4>
+                <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto mb-4">
+                  <pre className="text-sm text-slate-300">
+{`{
+  "mode": "real",  // "real", "true", "scam", or "safe"
+  "batch_name": "Product Images - Week 12",
+  "items": [
+    {
+      "input_type": "image",
+      "input_value": "https://example.com/img1.jpg"
+    },
+    {
+      "input_type": "url",
+      "input_value": "https://example.com/article"
+    }
+  ]
+}`}
+                  </pre>
+                </div>
+
+                <h4 className="font-semibold text-slate-900 mb-2">Response:</h4>
+                <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                  <pre className="text-sm text-slate-300">
+{`{
+  "batch_id": "batch_789xyz",
+  "status": "processing",
+  "total_items": 2,
+  "estimated_completion": "2024-12-21T10:35:00Z"
+}`}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Get Batch Status */}
+              <div className="mb-8 pt-6 border-t border-slate-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded">GET</span>
+                  <code className="text-sm font-mono text-slate-700">/v1/batch/:batch_id</code>
+                </div>
+                <p className="text-slate-600">Check the status and results of a batch analysis.</p>
+              </div>
+
               {/* Get Analysis */}
               <div className="pt-6 border-t border-slate-200">
                 <div className="flex items-center gap-3 mb-3">

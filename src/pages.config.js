@@ -13,6 +13,7 @@ import True from './pages/True';
 import Scam from './pages/Scam';
 import Safe from './pages/Safe';
 import History from './pages/History';
+import BatchAnalysis from './pages/BatchAnalysis';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +33,7 @@ export const PAGES = {
     "Scam": Scam,
     "Safe": Safe,
     "History": History,
+    "BatchAnalysis": BatchAnalysis,
 }
 
 export const pagesConfig = {
