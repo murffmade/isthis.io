@@ -49,6 +49,13 @@ export default function UploadZone({ onAnalysisStart, onFileReady }) {
       return;
     }
 
+    // File size limits (25MB for images, 100MB for videos)
+    const maxSize = isImage ? 25 * 1024 * 1024 : 100 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setError(`File is too large. Maximum size: ${isImage ? '25MB' : '100MB'}`);
+      return;
+    }
+
     setIsUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
@@ -137,7 +144,7 @@ export default function UploadZone({ onAnalysisStart, onFileReady }) {
             >
               <input
                 type="file"
-                accept="image/*,video/*"
+                accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime"
                 onChange={handleFileSelect}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 disabled={isUploading}
@@ -165,7 +172,7 @@ export default function UploadZone({ onAnalysisStart, onFileReady }) {
                     or click to browse
                   </p>
                   <p className="text-xs text-slate-400">
-                    Supports JPG, PNG, GIF, MP4, MOV
+                    Supports JPG, PNG, GIF, WebP, MP4, MOV (max 25MB images, 100MB videos)
                   </p>
                 </>
               )}

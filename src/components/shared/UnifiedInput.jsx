@@ -62,6 +62,13 @@ export default function UnifiedInput({ mode, onSubmit, acceptTypes = ['image', '
       return;
     }
 
+    // Basic URL validation
+    const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    if (!urlPattern.test(url.trim()) && !url.includes('://')) {
+      toast.error('Please enter a valid URL (e.g., https://example.com)');
+      return;
+    }
+
     onSubmit({
       mode,
       input_type: 'url',
@@ -74,6 +81,17 @@ export default function UnifiedInput({ mode, onSubmit, acceptTypes = ['image', '
   const handleSubmitText = () => {
     if (!text.trim()) {
       toast.error('Please enter some text');
+      return;
+    }
+
+    // Character limit validation
+    if (text.length > 5000) {
+      toast.error('Text is too long. Please limit to 5000 characters.');
+      return;
+    }
+
+    if (text.trim().length < 10) {
+      toast.error('Please enter at least 10 characters for meaningful analysis.');
       return;
     }
 
@@ -255,9 +273,11 @@ export default function UnifiedInput({ mode, onSubmit, acceptTypes = ['image', '
                       mode === 'scam' ? 'Paste the full message, email, or listing text here' :
                       'Describe what you want to check for safety'
                     }
+                    maxLength={5000}
                     rows={6}
                     className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none"
                   />
+                  <p className="text-xs text-slate-500 mt-1">{text.length}/5000 characters</p>
                 </div>
 
                 {mode !== 'real' && (

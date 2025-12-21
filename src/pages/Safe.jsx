@@ -153,7 +153,13 @@ Be practical and protective.`,
       queryClient.invalidateQueries(['analyses']);
     },
     onError: (error) => {
-      toast.error('Analysis failed. Please try again.');
+      console.error('Analysis error:', error);
+      const errorMessage = error?.message?.includes('timeout') 
+        ? 'Analysis timed out. Please try with a smaller file or shorter text.'
+        : error?.message?.includes('rate limit')
+        ? 'Too many requests. Please wait a moment and try again.'
+        : 'Analysis failed. Please check your input and try again.';
+      toast.error(errorMessage);
       setStep('input');
     }
   });
@@ -260,12 +266,18 @@ Be practical and protective.`,
                 <Heart className="w-10 h-10 text-emerald-600" />
               </div>
               <h2 className="text-2xl font-bold text-slate-900 mb-3">Assessing Safety...</h2>
-              <p className="text-slate-600 mb-8">Evaluating risks and preparing recommendations</p>
+              <div className="space-y-2 max-w-md mx-auto mb-8">
+                <p className="text-slate-600">🔍 Identifying potential risks</p>
+                <p className="text-slate-600">📋 Evaluating safety concerns</p>
+                <p className="text-slate-600">🛡️ Preparing recommendations</p>
+                <p className="text-slate-600">✓ Compiling safety report</p>
+              </div>
               <div className="flex items-center justify-center gap-2">
                 <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                 <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                 <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
+              <p className="text-xs text-slate-500 mt-6">This may take 10-20 seconds</p>
             </motion.div>
           )}
 
