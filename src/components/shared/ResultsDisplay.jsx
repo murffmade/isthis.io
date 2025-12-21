@@ -1,0 +1,252 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { CheckCircle, XCircle, AlertCircle, Shield, ExternalLink, Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function ResultsDisplay({ result, mode, onStartOver }) {
+  const [expandedSection, setExpandedSection] = useState(null);
+  const [copiedText, setCopiedText] = useState('');
+
+  const getScoreConfig = () => {
+    if (mode === 'real') {
+      return {
+        icon: result.score >= 70 ? CheckCircle : result.score >= 40 ? AlertCircle : XCircle,
+        color: result.score >= 70 ? 'emerald' : result.score >= 40 ? 'amber' : 'red',
+        label: result.score >= 70 ? 'Likely Real' : result.score >= 40 ? 'Uncertain' : 'Likely AI'
+      };
+    } else if (mode === 'true') {
+      return {
+        icon: result.score >= 70 ? CheckCircle : result.score >= 40 ? AlertCircle : XCircle,
+        color: result.score >= 70 ? 'emerald' : result.score >= 40 ? 'amber' : 'red',
+        label: result.score >= 70 ? 'Likely True' : result.score >= 40 ? 'Needs Verification' : 'Likely False'
+      };
+    } else if (mode === 'scam') {
+      return {
+        icon: result.score >= 70 ? XCircle : result.score >= 40 ? AlertCircle : CheckCircle,
+        color: result.score >= 70 ? 'red' : result.score >= 40 ? 'amber' : 'emerald',
+        label: result.score >= 70 ? 'High Scam Risk' : result.score >= 40 ? 'Suspicious' : 'Appears Safe'
+      };
+    } else {
+      return {
+        icon: result.score >= 70 ? XCircle : result.score >= 40 ? AlertCircle : CheckCircle,
+        color: result.score >= 70 ? 'red' : result.score >= 40 ? 'amber' : 'emerald',
+        label: result.score >= 70 ? 'High Risk' : result.score >= 40 ? 'Some Risk' : 'Appears Safe'
+      };
+    }
+  };
+
+  const config = getScoreConfig();
+  const Icon = config.icon;
+
+  const handleCopy = async (text, id) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedText(id);
+    toast.success('Copied to clipboard');
+    setTimeout(() => setCopiedText(''), 2000);
+  };
+
+  const toggleSection = (section) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto">
+      {/* Score Display */}
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="text-center mb-12"
+      >
+        <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full bg-${config.color}-100 mb-6`}>
+          <Icon className={`w-12 h-12 text-${config.color}-600`} />
+        </div>
+        
+        <h2 className="text-3xl font-bold text-slate-900 mb-3">
+          {result.summary}
+        </h2>
+        
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="text-5xl font-bold text-slate-900">
+            {result.score}
+          </div>
+          <div className="text-left">
+            <div className="text-sm text-slate-500">Score</div>
+            <div className={`text-sm font-semibold text-${config.color}-600`}>
+              {result.score_label || config.label}
+            </div>
+          </div>
+        </div>
+
+        {/* Score Bar */}
+        <div className="max-w-md mx-auto">
+          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${result.score}%` }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className={`h-full bg-gradient-to-r from-${config.color}-400 to-${config.color}-600`}
+            />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Key Signals */}
+      {result.signals && result.signals.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white rounded-2xl border-2 border-slate-200 p-6 mb-6"
+        >
+          <button
+            onClick={() => toggleSection('signals')}
+            className="w-full flex items-center justify-between mb-4"
+          >
+            <h3 className="text-xl font-bold text-slate-900">Key Signals</h3>
+            {expandedSection === 'signals' ? (
+              <ChevronUp className="w-5 h-5 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-slate-400" />
+            )}
+          </button>
+
+          {(expandedSection === 'signals' || expandedSection === null) && (
+            <div className="space-y-3">
+              {result.signals.map((signal, i) => (
+                <div key={i} className="flex gap-3 p-4 bg-slate-50 rounded-xl">
+                  <div className={`w-2 h-2 rounded-full mt-2 ${
+                    signal.severity === 'high' ? 'bg-red-500' :
+                    signal.severity === 'medium' ? 'bg-amber-500' :
+                    'bg-blue-500'
+                  }`} />
+                  <div className="flex-1">
+                    <div className="font-medium text-slate-900 mb-1">{signal.title}</div>
+                    <div className="text-sm text-slate-600">{signal.description}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      )}
+
+      {/* Recommended Actions */}
+      {result.recommended_actions && result.recommended_actions.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white rounded-2xl border-2 border-slate-200 p-6 mb-6"
+        >
+          <h3 className="text-xl font-bold text-slate-900 mb-4">What You Should Do Now</h3>
+          <div className="space-y-3">
+            {result.recommended_actions.map((action, i) => (
+              <div key={i} className="flex gap-3">
+                <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+                  {i + 1}
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-slate-900">{action.action}</div>
+                  {action.description && (
+                    <div className="text-sm text-slate-600 mt-1">{action.description}</div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Sources (for True mode) */}
+      {mode === 'true' && result.sources && result.sources.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white rounded-2xl border-2 border-slate-200 p-6 mb-6"
+        >
+          <h3 className="text-xl font-bold text-slate-900 mb-4">Sources</h3>
+          <div className="space-y-3">
+            {result.sources.map((source, i) => (
+              <a
+                key={i}
+                href={source.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
+              >
+                <ExternalLink className="w-4 h-4 text-slate-400 mt-1 flex-shrink-0 group-hover:text-slate-600" />
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-slate-900 mb-1">{source.title}</div>
+                  <div className="text-sm text-slate-500 truncate">{source.domain}</div>
+                  {source.date && (
+                    <div className="text-xs text-slate-400 mt-1">{source.date}</div>
+                  )}
+                </div>
+              </a>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Method Explanation */}
+      {result.method_explanation && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-slate-50 rounded-2xl p-6 mb-6"
+        >
+          <button
+            onClick={() => toggleSection('method')}
+            className="w-full flex items-center justify-between mb-2"
+          >
+            <h3 className="text-lg font-semibold text-slate-700">How We Got This</h3>
+            {expandedSection === 'method' ? (
+              <ChevronUp className="w-5 h-5 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-slate-400" />
+            )}
+          </button>
+
+          {expandedSection === 'method' && (
+            <p className="text-sm text-slate-600 leading-relaxed">
+              {result.method_explanation}
+            </p>
+          )}
+        </motion.div>
+      )}
+
+      {/* Actions */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="flex gap-3"
+      >
+        <button
+          onClick={onStartOver}
+          className="flex-1 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors"
+        >
+          Check Another
+        </button>
+        <button
+          onClick={() => handleCopy(JSON.stringify(result, null, 2), 'result')}
+          className="px-6 py-3 border-2 border-slate-300 rounded-xl text-slate-700 hover:border-slate-400 transition-colors flex items-center gap-2"
+        >
+          {copiedText === 'result' ? (
+            <>
+              <Check className="w-4 h-4" />
+              Copied
+            </>
+          ) : (
+            <>
+              <Copy className="w-4 h-4" />
+              Copy
+            </>
+          )}
+        </button>
+      </motion.div>
+    </div>
+  );
+}

@@ -9,6 +9,10 @@ import Contact from './pages/Contact';
 import Careers from './pages/Careers';
 import Learn from './pages/Learn';
 import Blog from './pages/Blog';
+import True from './pages/True';
+import Scam from './pages/Scam';
+import Safe from './pages/Safe';
+import History from './pages/History';
 import __Layout from './Layout.jsx';
 
 
@@ -24,6 +28,10 @@ export const PAGES = {
     "Careers": Careers,
     "Learn": Learn,
     "Blog": Blog,
+    "True": True,
+    "Scam": Scam,
+    "Safe": Safe,
+    "History": History,
 }
 
 export const pagesConfig = {
