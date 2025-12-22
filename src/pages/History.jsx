@@ -20,14 +20,15 @@ const modeConfig = {
 export default function HistoryPage() {
   const [filterMode, setFilterMode] = useState('all');
   const queryClient = useQueryClient();
+  const PAGE_SIZE = 20;
 
   const { data: analyses = [], isLoading } = useQuery({
     queryKey: ['analyses', filterMode],
     queryFn: () => {
       if (filterMode === 'all') {
-        return Analysis.list('-created_date', 50);
+        return Analysis.list('-created_date', PAGE_SIZE);
       }
-      return Analysis.filter({ mode: filterMode }, '-created_date', 50);
+      return Analysis.filter({ mode: filterMode }, '-created_date', PAGE_SIZE);
     }
   });
 
@@ -208,6 +209,15 @@ export default function HistoryPage() {
                 </motion.div>
               );
             })}
+
+            {/* Pagination Notice */}
+            {analyses.length === PAGE_SIZE && (
+              <div className="mt-8 text-center p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <p className="text-sm text-slate-600">
+                  Showing {PAGE_SIZE} most recent analyses. Older records are automatically archived after 90 days.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </main>
