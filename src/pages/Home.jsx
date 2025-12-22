@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, History, Info, Sparkles } from 'lucide-react';
+import { Shield, History, Info, Sparkles, Settings } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -13,16 +13,42 @@ import ResultCard from '@/components/verification/ResultCard';
 import ActionPanel from '@/components/verification/ActionPanel';
 import HistoryList from '@/components/verification/HistoryList';
 import ModePicker from '@/components/shared/ModePicker';
+import PreferencesModal from '@/components/shared/PreferencesModal';
 
 const AnalysisRecord = base44.entities.AnalysisRecord;
+const UserPreferences = base44.entities.UserPreferences;
 
 export default function Home() {
   const [step, setStep] = useState('mode_picker'); // mode_picker, upload, analyzing, result, action, history
   const [analysisStep, setAnalysisStep] = useState(0);
   const [currentResult, setCurrentResult] = useState(null);
   const [pendingContent, setPendingContent] = useState(null);
+  const [showPreferences, setShowPreferences] = useState(false);
+  const [userPreferences, setUserPreferences] = useState(null);
 
   const queryClient = useQueryClient();
+
+  // Load user preferences on mount
+  useEffect(() => {
+    loadUserPreferences();
+  }, []);
+
+  const loadUserPreferences = async () => {
+    try {
+      const user = await base44.auth.me();
+      const prefs = await UserPreferences.filter({ created_by: user.email });
+      if (prefs && prefs.length > 0) {
+        setUserPreferences(prefs[0]);
+      }
+    } catch (error) {
+      // User not logged in or no preferences yet
+    }
+  };
+
+  const handlePreferencesSaved = (newPrefs) => {
+    setUserPreferences(newPrefs);
+    toast.success('Your preferences have been saved');
+  };
 
   // Check for bookmarklet URL parameter
   useEffect(() => {
@@ -238,6 +264,13 @@ Provide a thorough but accessible analysis.`,
             </button>
 
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowPreferences(true)}
+                className="px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors text-sm font-medium flex items-center gap-2"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="hidden sm:inline">Settings</span>
+              </button>
               <Link
                 to={createPageUrl('History')}
                 className="px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors text-sm font-medium flex items-center gap-2"
