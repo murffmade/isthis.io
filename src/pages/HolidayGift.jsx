@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Gift, Sparkles, Check, ArrowLeft, Star, Clock, CheckCircle, AlertTriangle, Heart } from 'lucide-react';
+import { Shield, Gift, Sparkles, Check, ArrowLeft, Star, Clock, CheckCircle, AlertTriangle, Heart, Upload, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { createPageUrl } from '@/utils';
 import GiftCardModal from '@/components/gift/GiftCardModal';
 import Snowflakes from '@/components/effects/Snowflakes';
 import InteractiveSteps from '@/components/gift/InteractiveSteps';
 import CountdownBanner from '@/components/gift/CountdownBanner';
+import QuickDemo from '@/components/gift/QuickDemo';
 
 const plans = [
   {
@@ -85,10 +87,25 @@ export default function HolidayGift() {
       {/* Top Callout */}
       <div className="relative py-8 px-6 border-b border-white/10 bg-gradient-to-r from-purple-900/30 via-blue-900/30 to-emerald-900/30 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto text-center">
-          <p className="text-lg md:text-xl font-semibold text-white mb-2">Give the gift of</p>
-          <p className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400 mb-4">
-            KNOWING
-          </p>
+            <p className="text-lg md:text-xl font-semibold text-white mb-2">Give the gift of</p>
+            <motion.p 
+              className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400 mb-4"
+              animate={{
+                scale: [1, 1.05, 1],
+                textShadow: [
+                  '0 0 20px rgba(52, 211, 153, 0.5)',
+                  '0 0 40px rgba(52, 211, 153, 0.8)',
+                  '0 0 20px rgba(52, 211, 153, 0.5)'
+                ]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              KNOWING
+            </motion.p>
           <p className="text-2xl md:text-4xl font-bold text-white leading-tight">
             help your loved ones<br />stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">safe</span> from <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-400">A.I.</span>,<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">misinformation</span>, and<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">scams</span> ✨
           </p>
@@ -293,10 +310,21 @@ export default function HolidayGift() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="relative py-16 px-6">
+      {/* Try It Now Demo */}
+      <section className="relative py-16 px-6 border-t border-white/10">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h3 className="text-3xl font-bold text-white mb-4">Try It Right Now</h3>
+            <p className="text-slate-300">See how easy it is to verify content - upload an image, paste a URL, or enter text</p>
+          </div>
+          <QuickDemo />
+        </div>
+      </section>
+
+      {/* Gifting Steps */}
+      <section className="relative py-16 px-6 border-t border-white/10">
         <div className="text-center mb-12">
-          <h3 className="text-3xl font-bold text-white mb-4">How It Works</h3>
+          <h3 className="text-3xl font-bold text-white mb-4">Gifting IsThis.io is Easy!</h3>
           <p className="text-slate-300">Click through each step to learn more</p>
         </div>
         <InteractiveSteps />

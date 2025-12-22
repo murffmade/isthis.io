@@ -82,11 +82,16 @@ export default function GiftCardModal({ plan, onClose }) {
     toast.success('Gift card downloaded!');
   };
 
+  const generateUniqueLink = () => {
+    const giftId = `gift_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `${window.location.origin}/?gift=${giftId}&plan=${plan.id}`;
+  };
+
   const handleCopyLink = async () => {
-    const giftUrl = `${window.location.origin}/?gift=${plan.id}`;
+    const giftUrl = generateUniqueLink();
     await navigator.clipboard.writeText(giftUrl);
     setCopied(true);
-    toast.success('Link copied to clipboard');
+    toast.success('Unique gift link copied to clipboard');
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -96,6 +101,26 @@ export default function GiftCardModal({ plan, onClose }) {
       `${recipientName ? `Hi ${recipientName},\n\n` : ''}I got you a gift! 🎁\n\n${message}\n\nYou now have ${plan.duration} of Is This Real? Premium access. Visit the link to activate your gift and start verifying content with AI-powered tools.\n\nHappy Holidays!`
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
+
+  const shareToSocialMedia = (platform) => {
+    const giftUrl = generateUniqueLink();
+    const text = encodeURIComponent(`🎁 I'm gifting ${plan.duration} of IsThis.io Premium! Help verify what's real online. ${message ? message : ''}`);
+    
+    const urls = {
+      twitter: `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(giftUrl)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(giftUrl)}&quote=${text}`,
+      whatsapp: `https://wa.me/?text=${text}%20${encodeURIComponent(giftUrl)}`,
+      telegram: `https://t.me/share/url?url=${encodeURIComponent(giftUrl)}&text=${text}`,
+      tiktok: `https://www.tiktok.com/share?url=${encodeURIComponent(giftUrl)}&text=${text}`,
+      instagram: null
+    };
+
+    if (platform === 'instagram') {
+      toast.info('Download the gift card and share it on Instagram Stories!');
+    } else {
+      window.open(urls[platform], '_blank', 'width=600,height=400');
+    }
   };
 
   return (
@@ -313,7 +338,7 @@ export default function GiftCardModal({ plan, onClose }) {
                 {/* Sharing Options */}
                 <div className="bg-slate-50 rounded-xl p-6">
                   <h4 className="font-semibold text-slate-800 mb-4">Share Your Gift</h4>
-                  <div className="grid sm:grid-cols-3 gap-3">
+                  <div className="grid sm:grid-cols-3 gap-3 mb-4">
                     <Button
                       onClick={handleDownload}
                       disabled={generating}
@@ -351,6 +376,54 @@ export default function GiftCardModal({ plan, onClose }) {
                         </>
                       )}
                     </Button>
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <p className="text-sm font-medium text-slate-600 mb-3">Share on social media:</p>
+                    <div className="grid grid-cols-6 gap-2">
+                      <button
+                        onClick={() => shareToSocialMedia('twitter')}
+                        className="aspect-square flex items-center justify-center bg-black hover:bg-gray-800 text-white rounded-lg transition-colors font-bold text-lg"
+                        title="Share on X"
+                      >
+                        𝕏
+                      </button>
+                      <button
+                        onClick={() => shareToSocialMedia('facebook')}
+                        className="aspect-square flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-xs font-semibold"
+                        title="Share on Facebook"
+                      >
+                        Facebook
+                      </button>
+                      <button
+                        onClick={() => shareToSocialMedia('tiktok')}
+                        className="aspect-square flex items-center justify-center bg-black hover:bg-gray-800 text-white rounded-lg transition-colors text-xs font-semibold"
+                        title="Share on TikTok"
+                      >
+                        TikTok
+                      </button>
+                      <button
+                        onClick={() => shareToSocialMedia('instagram')}
+                        className="aspect-square flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-colors text-xs font-semibold"
+                        title="Share on Instagram"
+                      >
+                        IG
+                      </button>
+                      <button
+                        onClick={() => shareToSocialMedia('whatsapp')}
+                        className="aspect-square flex items-center justify-center bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors text-xs font-semibold"
+                        title="Share on WhatsApp"
+                      >
+                        WA
+                      </button>
+                      <button
+                        onClick={() => shareToSocialMedia('telegram')}
+                        className="aspect-square flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-xs font-semibold"
+                        title="Share on Telegram"
+                      >
+                        TG
+                      </button>
+                    </div>
                   </div>
                 </div>
 
