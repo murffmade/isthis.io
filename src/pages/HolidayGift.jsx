@@ -28,6 +28,7 @@ const plans = [
     price: '$99',
     duration: 'Lifetime',
     popular: true,
+    limitedOffer: 'Only until Dec 26th, 2025',
     features: [
       'Everything in Annual',
       'Lifetime access - forever',
@@ -211,6 +212,15 @@ export default function HolidayGift() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="relative py-16 px-6">
+        <div className="text-center mb-12">
+          <h3 className="text-3xl font-bold text-white mb-4">How It Works</h3>
+          <p className="text-slate-300">Click through each step to learn more</p>
+        </div>
+        <InteractiveSteps />
+      </section>
+
       {/* Pricing Cards */}
       <section id="pricing-section" className="relative py-12 px-6">
         <div className="max-w-5xl mx-auto">
@@ -243,6 +253,11 @@ export default function HolidayGift() {
                     <span className="text-white/70">one-time</span>
                   </div>
                   <p className="text-emerald-300 font-semibold mt-2">✨ {plan.duration} of access</p>
+                  {plan.limitedOffer && (
+                    <p className="text-red-300 font-bold mt-2 text-sm animate-pulse">
+                      ⏰ {plan.limitedOffer}
+                    </p>
+                  )}
                 </div>
 
                 <ul className="space-y-3 mb-8">
@@ -335,15 +350,6 @@ export default function HolidayGift() {
             </div>
           </motion.div>
         </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="relative py-16 px-6">
-        <div className="text-center mb-12">
-          <h3 className="text-3xl font-bold text-white mb-4">How It Works</h3>
-          <p className="text-slate-300">Click through each step to learn more</p>
-        </div>
-        <InteractiveSteps />
       </section>
 
       {/* Testimonial with Images */}
