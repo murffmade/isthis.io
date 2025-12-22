@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, History, Gift, MoreHorizontal, User, Settings, LogOut, BookOpen, Briefcase, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -7,6 +7,17 @@ import { base44 } from '@/api/base44Client';
 
 export default function BottomNav({ currentPage = 'home' }) {
   const [showMore, setShowMore] = useState(false);
+
+  useEffect(() => {
+    if (showMore) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showMore]);
 
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', page: 'Home' },
