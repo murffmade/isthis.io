@@ -233,25 +233,29 @@ export default function HolidayGift() {
               {
                 title: 'Is This Real?',
                 Icon: Shield,
-                color: 'from-slate-600 to-slate-700',
+                gradient: 'from-slate-900 via-slate-800 to-slate-700',
+                bgImage: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80',
                 description: 'Detect AI-generated images, videos, and deepfakes instantly'
               },
               {
                 title: 'Is This True?',
                 Icon: CheckCircle,
-                color: 'from-blue-600 to-blue-700',
+                gradient: 'from-blue-900 via-blue-700 to-blue-600',
+                bgImage: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80',
                 description: 'Verify news, claims, and facts with reliable sources'
               },
               {
                 title: 'Is This a Scam?',
                 Icon: AlertTriangle,
-                color: 'from-amber-600 to-amber-700',
+                gradient: 'from-amber-900 via-amber-700 to-amber-600',
+                bgImage: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80',
                 description: 'Check messages, emails, and listings for fraud'
               },
               {
                 title: 'Is This Safe?',
                 Icon: Heart,
-                color: 'from-emerald-600 to-emerald-700',
+                gradient: 'from-emerald-900 via-emerald-700 to-emerald-600',
+                bgImage: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80',
                 description: 'Get safety guidance for decisions and situations'
               }
             ].map((pillar, i) => (
@@ -260,13 +264,29 @@ export default function HolidayGift() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border-2 border-white/20 hover:border-white/40 transition-all group"
+                className="relative rounded-2xl p-6 border-2 border-white/20 hover:border-white/40 transition-all group overflow-hidden"
               >
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${pillar.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <pillar.Icon className="w-8 h-8 text-white" />
+                {/* Background Image with Gradient Overlay */}
+                <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity">
+                  <img 
+                    src={pillar.bgImage} 
+                    alt="" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${pillar.gradient} mix-blend-multiply`} />
                 </div>
-                <h4 className="text-xl font-bold text-white mb-2">{pillar.title}</h4>
-                <p className="text-slate-300">{pillar.description}</p>
+                
+                {/* Gradient Background */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${pillar.gradient} opacity-80 backdrop-blur-sm`} />
+                
+                {/* Content */}
+                <div className="relative z-10">
+                  <div className={`w-16 h-16 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-white/30`}>
+                    <pillar.Icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h4 className="text-xl font-bold text-white mb-2">{pillar.title}</h4>
+                  <p className="text-slate-200">{pillar.description}</p>
+                </div>
               </motion.div>
             ))}
           </div>
