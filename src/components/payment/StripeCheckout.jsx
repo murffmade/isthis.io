@@ -9,28 +9,20 @@ export default function StripeCheckout({ plan, onSuccess, onCancel }) {
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      // Note: This requires backend functions to be enabled
-      // The backend should create a Stripe checkout session and return the URL
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Create a Stripe checkout session for plan: ${plan.name} at price: $${plan.price}`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            checkout_url: { type: "string" },
-            session_id: { type: "string" }
-          }
-        }
+      const result = await base44.functions.createCheckoutSession({
+        plan_name: plan.name,
+        price_cents: plan.price * 100 // Convert dollars to cents
       });
 
-      // Redirect to Stripe checkout
-      if (result.checkout_url) {
+      if (result.success && result.checkout_url) {
         window.location.href = result.checkout_url;
       } else {
-        toast.error('Payment system not configured. Please contact support.');
+        toast.error(result.error || 'Payment system not configured. Please set up Stripe in your dashboard.');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Checkout error:', error);
-      toast.error('Unable to start checkout. Backend functions may not be enabled.');
+      toast.error('Unable to start checkout. Please try again.');
       setLoading(false);
     }
   };
