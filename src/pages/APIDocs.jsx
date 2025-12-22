@@ -7,6 +7,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import BottomNav from '@/components/mobile/BottomNav';
 
 export default function APIDocs() {
   const [showNewKeyModal, setShowNewKeyModal] = useState(false);
@@ -67,7 +68,7 @@ export default function APIDocs() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-20 md:pb-0">
       {/* Header */}
       <header className="border-b border-slate-200 bg-white sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4">
@@ -552,6 +553,8 @@ export default function APIDocs() {
           </motion.div>
         </div>
       )}
+
+      <BottomNav />
     </div>
   );
 }

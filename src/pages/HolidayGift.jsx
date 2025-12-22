@@ -9,6 +9,7 @@ import Snowflakes from '@/components/effects/Snowflakes';
 import InteractiveSteps from '@/components/gift/InteractiveSteps';
 import CountdownBanner from '@/components/gift/CountdownBanner';
 import QuickDemo from '@/components/gift/QuickDemo';
+import BottomNav from '@/components/mobile/BottomNav';
 
 const plans = [
   {
@@ -52,7 +53,7 @@ export default function HolidayGift() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-900 via-emerald-900 to-blue-900 relative">
+    <div className="min-h-screen bg-gradient-to-br from-red-900 via-emerald-900 to-blue-900 relative pb-20 md:pb-0">
       <Snowflakes />
       
       {/* Festive Background Elements */}
@@ -523,6 +524,8 @@ export default function HolidayGift() {
           }}
         />
       )}
+
+      <BottomNav />
     </div>
   );
 }

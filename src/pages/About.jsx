@@ -2,10 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, ArrowLeft, Target, Users, Lightbulb, Heart } from 'lucide-react';
 import { createPageUrl } from '@/utils';
+import BottomNav from '@/components/mobile/BottomNav';
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-20 md:pb-0">
       {/* Header */}
       <header className="border-b border-slate-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4">
@@ -144,6 +145,8 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      <BottomNav />
     </div>
   );
 }

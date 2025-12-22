@@ -4,6 +4,7 @@ import { CheckCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import confetti from 'canvas-confetti';
+import BottomNav from '@/components/mobile/BottomNav';
 
 export default function PaymentSuccess() {
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function PaymentSuccess() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center px-6">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center px-6 pb-20 md:pb-0">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -87,6 +88,8 @@ export default function PaymentSuccess() {
           A confirmation email has been sent to your inbox
         </p>
       </motion.div>
+
+      <BottomNav />
     </div>
   );
 }

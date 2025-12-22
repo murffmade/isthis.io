@@ -7,6 +7,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { createPageUrl } from '@/utils';
 import confetti from 'canvas-confetti';
+import BottomNav from '@/components/mobile/BottomNav';
 
 export default function GiftRedemption() {
   const [giftCode, setGiftCode] = useState(null);
@@ -120,7 +121,7 @@ export default function GiftRedemption() {
 
   if (step === 'loading' || loadingGift) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-900 via-emerald-900 to-blue-900 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-red-900 via-emerald-900 to-blue-900 flex items-center justify-center p-6 pb-20 md:pb-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -135,7 +136,7 @@ export default function GiftRedemption() {
 
   if (step === 'error' || !giftData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-900 via-emerald-900 to-blue-900 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-red-900 via-emerald-900 to-blue-900 flex items-center justify-center p-6 pb-20 md:pb-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -160,7 +161,7 @@ export default function GiftRedemption() {
   const daysUntilExpiry = giftData.expires_at ? Math.ceil((new Date(giftData.expires_at) - new Date()) / (1000 * 60 * 60 * 24)) : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-900 via-emerald-900 to-blue-900 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-red-900 via-emerald-900 to-blue-900 flex items-center justify-center p-6 pb-20 md:pb-6">
       <AnimatePresence mode="wait">
         {step === 'login_required' && (
           <motion.div
@@ -345,6 +346,8 @@ export default function GiftRedemption() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <BottomNav />
     </div>
   );
 }

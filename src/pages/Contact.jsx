@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
+import BottomNav from '@/components/mobile/BottomNav';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-20 md:pb-0">
       {/* Header */}
       <header className="border-b border-slate-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4">
@@ -194,6 +195,8 @@ export default function Contact() {
           </motion.div>
         </div>
       </section>
+
+      <BottomNav />
     </div>
   );
 }
