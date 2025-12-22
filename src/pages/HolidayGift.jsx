@@ -19,7 +19,6 @@ const plans = [
       'Priority analysis speed',
       'Advanced detection signals',
       'Export verification reports',
-      'Ad-free experience',
       '1 year of full access'
     ]
   },
@@ -34,8 +33,7 @@ const plans = [
       'Lifetime access - forever',
       'Early access to new features',
       'Premium support',
-      'Future AI model upgrades',
-      'Best value - one-time payment'
+      'Future AI model upgrades'
     ]
   }
 ];
@@ -73,7 +71,7 @@ export default function HolidayGift() {
                 <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-white leading-tight">Is This Real?</h1>
+                <h1 className="text-lg font-bold text-white leading-tight">IsThis.io</h1>
                 <p className="text-xs text-emerald-300">AI content verification</p>
               </div>
             </a>
@@ -290,8 +288,8 @@ export default function HolidayGift() {
               },
               {
                 icon: Sparkles,
-                title: 'Peace of Mind',
-                desc: 'Help them spot fake news, scams, and AI-generated content before sharing.'
+                title: '4 Verification Modes',
+                desc: 'Check if content is Real, True, a Scam, or Safe - all in one powerful tool.'
               },
               {
                 icon: Gift,
@@ -393,7 +391,7 @@ export default function HolidayGift() {
       {/* Footer */}
       <footer className="relative border-t border-white/10 py-8 px-6">
         <div className="max-w-4xl mx-auto text-center text-sm text-slate-400">
-          <p>© 2026 Is This Real? • The gift that keeps them safe online</p>
+          <p>© 2026 IsThis.io • The gift that keeps them safe online</p>
         </div>
       </footer>
 
