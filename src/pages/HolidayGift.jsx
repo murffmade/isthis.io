@@ -92,7 +92,7 @@ export default function HolidayGift() {
       <div className="relative py-8 px-6 border-b border-white/10">
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-2xl md:text-4xl font-bold text-white leading-relaxed">
-            Give the gift of <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">truth</span> — help your loved ones stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">safe</span> from deepfakes, fake news, and online scams ✨
+            Give the gift of <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">truth</span> — help your loved ones stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">safe</span> from A.I., misinformation, and scams - online and off ✨
           </p>
         </div>
       </div>
