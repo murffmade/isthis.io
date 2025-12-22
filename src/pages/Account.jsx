@@ -99,7 +99,7 @@ export default function AccountPage() {
               </div>
               <div>
                 <h1 className="text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
-                <p className="text-xs text-slate-500">Account & Subscription</p>
+                <p className="text-xs text-slate-500 hidden sm:block">Account & Subscription</p>
               </div>
             </Link>
 

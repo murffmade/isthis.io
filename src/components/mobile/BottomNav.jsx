@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Search, History, User } from 'lucide-react';
+import { Home, History, Gift, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -7,12 +7,13 @@ export default function BottomNav({ currentPage = 'home' }) {
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', page: 'Home' },
     { id: 'history', icon: History, label: 'History', page: 'History' },
+    { id: 'gifts', icon: Gift, label: 'Gifts', page: 'MyGifts' },
     { id: 'account', icon: User, label: 'Account', page: 'Account' }
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 safe-bottom md:hidden z-50">
-      <div className="grid grid-cols-3 h-16">
+      <div className="grid grid-cols-4 h-16">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentPage === item.id;

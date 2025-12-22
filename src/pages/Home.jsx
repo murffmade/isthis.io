@@ -160,7 +160,9 @@ Provide a thorough but accessible analysis.`,
             </button>
 
             <div className="flex items-center gap-2">
-              <ProfileDropdown onOpenSettings={() => setShowPreferences(true)} />
+              <div className="hidden md:block">
+                <ProfileDropdown onOpenSettings={() => setShowPreferences(true)} />
+              </div>
             </div>
           </div>
         </div>
