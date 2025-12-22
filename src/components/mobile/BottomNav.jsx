@@ -22,15 +22,15 @@ export default function BottomNav({ currentPage = 'home' }) {
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', page: 'Home' },
     { id: 'history', icon: History, label: 'History', page: 'History' },
-    { id: 'gifts', icon: Gift, label: 'Gifts', page: 'MyGifts' }
+    { id: 'settings', icon: Settings, label: 'Settings', action: 'settings' }
   ];
 
   const moreItems = [
     { icon: User, label: 'Account', page: 'Account' },
+    { icon: Gift, label: 'Gifts', page: 'MyGifts' },
     { icon: BookOpen, label: 'Learn', page: 'Learn' },
     { icon: Briefcase, label: 'Enterprise', page: 'EnterpriseMarketing' },
-    { icon: Mail, label: 'Support', page: 'Support' },
-    { icon: Settings, label: 'Settings', action: 'settings' }
+    { icon: Mail, label: 'Support', page: 'Support' }
   ];
 
   const handleMoreItemClick = (item) => {
@@ -51,7 +51,26 @@ export default function BottomNav({ currentPage = 'home' }) {
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
-            
+
+            if (item.action === 'settings') {
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    // Settings action - could be handled by parent
+                  }}
+                  className={`flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 ${
+                    isActive 
+                      ? 'text-slate-900' 
+                      : 'text-slate-400 active:text-slate-600'
+                  }`}
+                >
+                  <Icon className={`w-6 h-6 ${isActive ? 'fill-slate-900' : ''}`} />
+                  <span className="text-xs font-medium">{item.label}</span>
+                </button>
+              );
+            }
+
             return (
               <Link
                 key={item.id}
