@@ -21,6 +21,7 @@ import Admin from './pages/Admin';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import GiftRedemption from './pages/GiftRedemption';
+import MyGifts from './pages/MyGifts';
 import __Layout from './Layout.jsx';
 
 
@@ -48,6 +49,7 @@ export const PAGES = {
     "PrivacyPolicy": PrivacyPolicy,
     "TermsOfService": TermsOfService,
     "GiftRedemption": GiftRedemption,
+    "MyGifts": MyGifts,
 }
 
 export const pagesConfig = {
