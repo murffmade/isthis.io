@@ -96,7 +96,7 @@ export default function BottomNav({ currentPage = 'home' }) {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-40 md:hidden safe-bottom max-h-[75vh] flex flex-col"
+              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-40 md:hidden safe-bottom max-h-[85vh] flex flex-col"
               >
               <div className="p-4 pb-6 overflow-y-auto flex-1">
                 <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-6" />
