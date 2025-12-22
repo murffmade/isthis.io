@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createPageUrl } from '@/utils';
 import SentGiftsList from '@/components/gifts/SentGiftsList';
 import ReceivedGiftsList from '@/components/gifts/ReceivedGiftsList';
+import BottomNav from '@/components/mobile/BottomNav';
 
 export default function MyGifts() {
   const [activeTab, setActiveTab] = useState('sent'); // sent, received
@@ -37,7 +38,7 @@ export default function MyGifts() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-20 md:pb-0">
       {/* Header */}
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-6 py-4">
@@ -51,7 +52,7 @@ export default function MyGifts() {
               </div>
               <div>
                 <h1 className="text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
-                <p className="text-xs text-slate-500">Gift Management</p>
+                <p className="text-xs text-slate-500 hidden sm:block">Gift Management</p>
               </div>
             </a>
             <a
@@ -112,6 +113,9 @@ export default function MyGifts() {
           )}
         </motion.div>
       </main>
+
+      {/* Mobile Bottom Nav */}
+      <BottomNav currentPage="gifts" />
     </div>
   );
 }
