@@ -11,6 +11,8 @@ import ResultCard from '@/components/verification/ResultCard';
 import ProfileDropdown from '@/components/shared/ProfileDropdown';
 import PreferencesModal from '@/components/shared/PreferencesModal';
 import StripeCheckout from '@/components/payment/StripeCheckout';
+import BottomNav from '@/components/mobile/BottomNav';
+import SplashScreen from '@/components/mobile/SplashScreen';
 
 export default function Home() {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -18,6 +20,18 @@ export default function Home() {
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const [showPreferences, setShowPreferences] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    // Detect mobile device
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const queryClient = useQueryClient();
 
@@ -124,7 +138,10 @@ Provide a thorough but accessible analysis.`,
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <>
+      {isMobile && showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-20 md:pb-0">
       {/* Header */}
       <header className="border-b border-slate-100 bg-white/95 backdrop-blur-sm sticky top-0 z-50 safe-top">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
@@ -396,15 +413,19 @@ Provide a thorough but accessible analysis.`,
         </AnimatePresence>
       </main>
 
-      {/* Preferences Modal */}
-      <PreferencesModal
-        isOpen={showPreferences}
-        onClose={() => setShowPreferences(false)}
-        onSave={(prefs) => {
-          toast.success('Preferences saved');
-          setShowPreferences(false);
-        }}
-      />
-    </div>
+        {/* Preferences Modal */}
+        <PreferencesModal
+          isOpen={showPreferences}
+          onClose={() => setShowPreferences(false)}
+          onSave={(prefs) => {
+            toast.success('Preferences saved');
+            setShowPreferences(false);
+          }}
+        />
+
+        {/* Mobile Bottom Nav */}
+        <BottomNav currentPage="home" />
+      </div>
+    </>
   );
 }
