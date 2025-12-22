@@ -262,11 +262,11 @@ export default function Support() {
               },
               {
                 q: 'How does billing work for premium plans?',
-                a: 'Premium plans are one-time payments. The annual plan ($29) gives you 1 year of full access, while the lifetime plan ($99) provides permanent access with all future updates.'
+                a: 'The annual plan ($29/year) is a recurring subscription that renews yearly. The lifetime plan ($99) is a one-time payment providing permanent access with all future updates.'
               },
               {
                 q: 'Can I cancel my subscription?',
-                a: 'Our plans are one-time purchases, not subscriptions. You have full access for the duration you paid for with no recurring charges.'
+                a: 'Yes, the annual plan ($29/year) can be cancelled anytime. The lifetime plan ($99) is a one-time purchase with no recurring charges.'
               }
             ].map((faq, i) => (
               <motion.div
