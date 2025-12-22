@@ -1,0 +1,327 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
+export default function Admin() {
+  const [searchEmail, setSearchEmail] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
+  const queryClient = useQueryClient();
+
+  // Check if current user is admin
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
+  const isAdmin = currentUser?.role === 'admin';
+
+  // Search for user
+  const { data: users = [] } = useQuery({
+    queryKey: ['users', searchEmail],
+    queryFn: async () => {
+      if (!searchEmail) return [];
+      return await base44.entities.User.filter({ email: searchEmail });
+    },
+    enabled: isAdmin && searchEmail.length > 0
+  });
+
+  // Get user's subscription
+  const { data: userSubscription } = useQuery({
+    queryKey: ['subscription', selectedUser?.email],
+    queryFn: async () => {
+      if (!selectedUser) return null;
+      const subs = await base44.entities.Subscription.filter({ 
+        created_by: selectedUser.email 
+      });
+      return subs.length > 0 ? subs[0] : null;
+    },
+    enabled: !!selectedUser
+  });
+
+  // Update subscription mutation
+  const updateSubscriptionMutation = useMutation({
+    mutationFn: async ({ plan, status }) => {
+      if (!selectedUser) return;
+      
+      if (userSubscription) {
+        // Update existing
+        await base44.entities.Subscription.update(userSubscription.id, {
+          plan,
+          status,
+          expires_at: plan === 'lifetime' ? null : userSubscription.expires_at
+        });
+      } else {
+        // Create new
+        const subData = {
+          plan,
+          status,
+          expires_at: plan === 'lifetime' ? null : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+        };
+        // Need to create as the user
+        await base44.entities.Subscription.create(subData);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['subscription']);
+      toast.success('Subscription updated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to update subscription');
+    }
+  });
+
+  const grantFreePremium = (plan) => {
+    updateSubscriptionMutation.mutate({ plan, status: 'active' });
+  };
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-6">
+        <div className="text-center">
+          <Shield className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Access Denied</h2>
+          <p className="text-slate-600 mb-6">You must be an admin to access this page.</p>
+          <Button onClick={() => window.location.href = createPageUrl('Home')}>
+            Go to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      {/* Header */}
+      <header className="border-b border-slate-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center">
+                <Crown className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-slate-800 leading-tight">Admin Panel</h1>
+                <p className="text-xs text-slate-500">User & Subscription Management</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => window.location.href = createPageUrl('Home')}
+              variant="outline"
+            >
+              Back to Home
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Stats */}
+          <div className="lg:col-span-3 grid md:grid-cols-4 gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-xl border border-slate-200 p-6"
+            >
+              <Users className="w-8 h-8 text-slate-900 mb-3" />
+              <div className="text-2xl font-bold text-slate-900">-</div>
+              <div className="text-sm text-slate-600">Total Users</div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-xl border border-slate-200 p-6"
+            >
+              <CreditCard className="w-8 h-8 text-emerald-600 mb-3" />
+              <div className="text-2xl font-bold text-slate-900">-</div>
+              <div className="text-sm text-slate-600">Premium Users</div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white rounded-xl border border-slate-200 p-6"
+            >
+              <Shield className="w-8 h-8 text-blue-600 mb-3" />
+              <div className="text-2xl font-bold text-slate-900">-</div>
+              <div className="text-sm text-slate-600">Free Users</div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-xl border border-slate-200 p-6"
+            >
+              <Settings className="w-8 h-8 text-purple-600 mb-3" />
+              <div className="text-2xl font-bold text-slate-900">-</div>
+              <div className="text-sm text-slate-600">Active Today</div>
+            </motion.div>
+          </div>
+
+          {/* User Search */}
+          <div className="lg:col-span-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-white rounded-xl border border-slate-200 p-8"
+            >
+              <h2 className="text-xl font-bold text-slate-900 mb-6">User Management</h2>
+              
+              <div className="mb-6">
+                <Label htmlFor="search">Search User by Email</Label>
+                <div className="flex gap-3 mt-2">
+                  <Input
+                    id="search"
+                    type="email"
+                    placeholder="user@example.com"
+                    value={searchEmail}
+                    onChange={(e) => setSearchEmail(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button disabled={!searchEmail}>
+                    <Search className="w-4 h-4 mr-2" />
+                    Search
+                  </Button>
+                </div>
+              </div>
+
+              {/* User Results */}
+              {users.length > 0 && (
+                <div className="space-y-3">
+                  {users.map((user) => (
+                    <div
+                      key={user.id}
+                      onClick={() => setSelectedUser(user)}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        selectedUser?.id === user.id
+                          ? 'border-purple-500 bg-purple-50'
+                          : 'border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-semibold text-slate-900">{user.full_name || 'No name'}</div>
+                          <div className="text-sm text-slate-600">{user.email}</div>
+                          <div className="text-xs text-slate-500 mt-1">
+                            Role: {user.role} • Created: {new Date(user.created_date).toLocaleDateString()}
+                          </div>
+                        </div>
+                        {selectedUser?.id === user.id && (
+                          <Check className="w-5 h-5 text-purple-600" />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {searchEmail && users.length === 0 && (
+                <div className="text-center py-8 text-slate-500">
+                  No users found with that email
+                </div>
+              )}
+            </motion.div>
+          </div>
+
+          {/* Subscription Management */}
+          {selectedUser && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="lg:col-span-3 bg-white rounded-xl border border-slate-200 p-8"
+            >
+              <h2 className="text-xl font-bold text-slate-900 mb-6">
+                Subscription Management for {selectedUser.email}
+              </h2>
+
+              <div className="mb-6 p-4 bg-slate-50 rounded-lg">
+                <div className="text-sm text-slate-600 mb-2">Current Status:</div>
+                {userSubscription ? (
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg font-bold text-slate-900 capitalize">
+                        {userSubscription.plan} Plan
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        userSubscription.status === 'active'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-slate-200 text-slate-700'
+                      }`}>
+                        {userSubscription.status}
+                      </span>
+                    </div>
+                    {userSubscription.expires_at && (
+                      <div className="text-sm text-slate-600">
+                        Expires: {new Date(userSubscription.expires_at).toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-slate-900 font-semibold">Free Plan (No subscription)</div>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-slate-900">Grant Free Premium Access:</h3>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Button
+                    onClick={() => grantFreePremium('annual')}
+                    disabled={updateSubscriptionMutation.isPending}
+                    variant="outline"
+                    className="h-auto py-4 flex-col items-start border-blue-200 hover:border-blue-500 hover:bg-blue-50"
+                  >
+                    <div className="font-semibold text-blue-900 mb-1">1 Year Premium</div>
+                    <div className="text-xs text-slate-600">Grant annual plan access</div>
+                  </Button>
+
+                  <Button
+                    onClick={() => grantFreePremium('lifetime')}
+                    disabled={updateSubscriptionMutation.isPending}
+                    className="h-auto py-4 flex-col items-start bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900"
+                  >
+                    <div className="font-semibold mb-1">Lifetime Premium</div>
+                    <div className="text-xs opacity-90">Grant lifetime access</div>
+                  </Button>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-slate-200">
+                  <h3 className="font-semibold text-slate-900 mb-3">Additional Actions:</h3>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => {
+                        updateSubscriptionMutation.mutate({ 
+                          plan: userSubscription?.plan || 'free', 
+                          status: 'cancelled' 
+                        });
+                      }}
+                      disabled={updateSubscriptionMutation.isPending}
+                      variant="outline"
+                      className="border-red-200 text-red-700 hover:bg-red-50 hover:border-red-400"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Revoke Premium
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}

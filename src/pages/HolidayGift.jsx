@@ -77,19 +77,13 @@ export default function HolidayGift() {
                 <p className="text-xs text-emerald-300">AI content verification</p>
               </div>
             </a>
-            <a
-              href={createPageUrl('Home')}
-              className="flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </a>
+
           </div>
         </div>
       </header>
 
       {/* Top Callout */}
-      <div className="relative py-8 px-6 border-b border-white/10">
+      <div className="relative py-8 px-6 border-b border-white/10 bg-gradient-to-r from-purple-900/30 via-blue-900/30 to-emerald-900/30 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-3xl md:text-5xl font-bold text-white leading-tight">
             Give the gift of <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">knowing</span>

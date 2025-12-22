@@ -124,10 +124,10 @@ export default function Layout({ children, currentPageName }) {
               © 2026 IsThis.io All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
+              <a href={createPageUrl('PrivacyPolicy')} className="text-sm text-slate-400 hover:text-white transition-colors">
                 Privacy Policy
               </a>
-              <a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">
+              <a href={createPageUrl('TermsOfService')} className="text-sm text-slate-400 hover:text-white transition-colors">
                 Terms of Service
               </a>
             </div>

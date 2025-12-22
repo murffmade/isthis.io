@@ -17,6 +17,9 @@ import BatchAnalysis from './pages/BatchAnalysis';
 import EnterpriseMarketing from './pages/EnterpriseMarketing';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Account from './pages/Account';
+import Admin from './pages/Admin';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import __Layout from './Layout.jsx';
 
 
@@ -40,6 +43,9 @@ export const PAGES = {
     "EnterpriseMarketing": EnterpriseMarketing,
     "PaymentSuccess": PaymentSuccess,
     "Account": Account,
+    "Admin": Admin,
+    "PrivacyPolicy": PrivacyPolicy,
+    "TermsOfService": TermsOfService,
 }
 
 export const pagesConfig = {
