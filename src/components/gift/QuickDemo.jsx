@@ -51,7 +51,65 @@ export default function QuickDemo() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setUploadedFile(file_url);
-      toast.success('Image uploaded!');
+      toast.success('Image uploaded! Analyzing...');
+      
+      // Automatically start analysis
+      setAnalyzing(true);
+      try {
+        const analysisResult = await base44.integrations.Core.InvokeLLM({
+          prompt: `You are an expert AI content detector. Analyze this image for signs of AI generation. Look for visual artifacts, inconsistencies, and AI fingerprints.
+
+Analyze for these signals:
+- Visual artifacts (hands, eyes, teeth, symmetry issues)
+- Lighting and shadow inconsistencies  
+- Texture anomalies or unnatural smoothing
+- Depth and perspective errors
+- Known AI generation patterns
+
+Provide a thorough but accessible analysis.`,
+          file_urls: [file_url],
+          response_json_schema: {
+            type: "object",
+            properties: {
+              result: {
+                type: "string",
+                enum: ["likely_real", "likely_ai", "uncertain"],
+                description: "Primary determination"
+              },
+              confidence: {
+                type: "number",
+                description: "Confidence percentage 0-100"
+              },
+              signals: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    signal_type: { type: "string" },
+                    description: { type: "string" },
+                    severity: { type: "string", enum: ["low", "medium", "high"] }
+                  }
+                }
+              },
+              claims_to_be_real: {
+                type: "boolean",
+                description: "Whether content presents itself as authentic real footage"
+              },
+              summary: {
+                type: "string",
+                description: "2-3 sentence plain English summary"
+              }
+            },
+            required: ["result", "confidence", "signals", "summary"]
+          }
+        });
+
+        setResult({ ...analysisResult, feedback: null });
+      } catch (error) {
+        toast.error('Analysis failed');
+      } finally {
+        setAnalyzing(false);
+      }
     } catch (error) {
       toast.error('Failed to upload image');
     }
