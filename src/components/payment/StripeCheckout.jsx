@@ -15,6 +15,10 @@ export default function StripeCheckout({ plan, onSuccess, onCancel }) {
       });
 
       if (result.success && result.checkout_url) {
+        // For gifts, call onSuccess with session ID before redirect if available
+        if (onSuccess && result.session_id) {
+          await onSuccess(result.session_id);
+        }
         window.location.href = result.checkout_url;
       } else {
         toast.error(result.error || 'Payment system not configured. Please set up Stripe in your dashboard.');
