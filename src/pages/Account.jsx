@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import moment from 'moment';
 import StripeCheckout from '@/components/payment/StripeCheckout';
+import BottomNav from '@/components/mobile/BottomNav';
 
 const planConfig = {
   free: {
@@ -299,6 +300,9 @@ export default function AccountPage() {
           </motion.div>
         )}
       </main>
+
+      {/* Mobile Bottom Nav */}
+      <BottomNav currentPage="account" />
     </div>
   );
 }
