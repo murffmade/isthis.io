@@ -15,6 +15,7 @@ import Safe from './pages/Safe';
 import History from './pages/History';
 import BatchAnalysis from './pages/BatchAnalysis';
 import EnterpriseMarketing from './pages/EnterpriseMarketing';
+import PaymentSuccess from './pages/PaymentSuccess';
 import __Layout from './Layout.jsx';
 
 
@@ -36,6 +37,7 @@ export const PAGES = {
     "History": History,
     "BatchAnalysis": BatchAnalysis,
     "EnterpriseMarketing": EnterpriseMarketing,
+    "PaymentSuccess": PaymentSuccess,
 }
 
 export const pagesConfig = {

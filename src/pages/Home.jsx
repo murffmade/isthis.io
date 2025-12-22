@@ -14,6 +14,7 @@ import ActionPanel from '@/components/verification/ActionPanel';
 import HistoryList from '@/components/verification/HistoryList';
 import ModePicker from '@/components/shared/ModePicker';
 import PreferencesModal from '@/components/shared/PreferencesModal';
+import StripeCheckout from '@/components/payment/StripeCheckout';
 
 const AnalysisRecord = base44.entities.AnalysisRecord;
 const UserPreferences = base44.entities.UserPreferences;
@@ -180,6 +181,10 @@ Provide a thorough but accessible analysis.`,
   const handleSelectRecord = (record) => {
     setCurrentResult(record);
     setStep('result');
+  };
+
+  const handlePaymentSuccess = () => {
+    toast.success('Payment successful! Premium features activated.');
   };
 
   // SEO structured data
@@ -493,9 +498,10 @@ Provide a thorough but accessible analysis.`,
                   <span>1 year of full access</span>
                 </li>
               </ul>
-              <button className="w-full py-2 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors" aria-label="Get started with 1 year premium plan">
-                Get Started
-              </button>
+              <StripeCheckout
+                plan={{ name: '1 Year Premium', price: 29, buttonText: 'Get Started' }}
+                onSuccess={handlePaymentSuccess}
+              />
             </article>
 
             {/* Lifetime Premium */}
@@ -531,9 +537,10 @@ Provide a thorough but accessible analysis.`,
                   <span>Future AI model upgrades</span>
                 </li>
               </ul>
-              <button className="w-full py-2 bg-white text-slate-900 rounded-xl font-semibold hover:bg-slate-100 transition-colors" aria-label="Get lifetime premium access">
-                Get Lifetime Access
-              </button>
+              <StripeCheckout
+                plan={{ name: 'Lifetime Premium', price: 99, buttonText: 'Get Lifetime Access' }}
+                onSuccess={handlePaymentSuccess}
+              />
             </article>
           </div>
 
