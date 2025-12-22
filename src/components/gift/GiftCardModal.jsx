@@ -374,19 +374,39 @@ export default function GiftCardModal({ plan, onClose }) {
 
             {step === 'preview_gift' && (
               <div className="space-y-6">
+                {/* Preview Header */}
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Final Preview</h3>
+                  <p className="text-sm text-slate-600">This is exactly how your gift card will look</p>
+                </div>
+
                 {/* Full Preview */}
-                <div className="flex justify-center bg-slate-50 rounded-xl p-8">
-                  <div style={{ transform: 'scale(0.7)', transformOrigin: 'top center' }}>
-                    <GiftCard
-                      theme={theme}
-                      plan={plan}
-                      recipientName={recipientName}
-                      message={message}
-                      fontStyle={fontStyle}
-                      nameFontSize={nameFontSize}
-                      messageFontSize={messageFontSize}
-                      cardRef={cardRef}
-                    />
+                <div className="bg-slate-50 rounded-xl p-8 border-2 border-slate-200">
+                  <div className="flex justify-center">
+                    <div style={{ transform: 'scale(0.7)', transformOrigin: 'top center' }}>
+                      <GiftCard
+                        theme={theme}
+                        plan={plan}
+                        recipientName={recipientName}
+                        message={message}
+                        fontStyle={fontStyle}
+                        nameFontSize={nameFontSize}
+                        messageFontSize={messageFontSize}
+                        cardRef={cardRef}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Customization Summary */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                  <p className="text-sm font-semibold text-blue-900 mb-2">Your Customizations:</p>
+                  <div className="grid grid-cols-2 gap-2 text-sm text-blue-800">
+                    <div>• Theme: <span className="font-medium">{themes.find(t => t.id === theme)?.name}</span></div>
+                    <div>• Font: <span className="font-medium">{fontStyles.find(f => f.id === fontStyle)?.name}</span></div>
+                    {recipientName && <div>• Recipient: <span className="font-medium">{recipientName}</span></div>}
+                    {message && <div>• Personal message included</div>}
+                    {soundEffect !== 'none' && <div>• Sound: <span className="font-medium">{soundEffects.find(s => s.id === soundEffect)?.name}</span></div>}
                   </div>
                 </div>
 
