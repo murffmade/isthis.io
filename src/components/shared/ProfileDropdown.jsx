@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User, Settings, History, CreditCard, ChevronDown } from 'lucide-react';
+import { User, Settings, History, CreditCard, ChevronDown, Gift } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +32,12 @@ export default function ProfileDropdown({ onOpenSettings }) {
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to={createPageUrl('MyGifts')} className="flex items-center gap-2 cursor-pointer">
+            <Gift className="w-4 h-4" />
+            My Gifts
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link to={createPageUrl('History')} className="flex items-center gap-2 cursor-pointer">
             <History className="w-4 h-4" />
