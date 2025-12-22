@@ -213,6 +213,59 @@ export default function HolidayGift() {
         </div>
       </section>
 
+      {/* 4 Pillars */}
+      <section className="relative py-16 px-6 border-t border-white/10">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">4 Ways to Verify Anything Online</h3>
+            <p className="text-xl text-slate-300">One tool, complete protection for your loved ones</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              {
+                title: 'Is This Real?',
+                icon: '🤖',
+                color: 'from-slate-600 to-slate-700',
+                description: 'Detect AI-generated images, videos, and deepfakes instantly'
+              },
+              {
+                title: 'Is This True?',
+                icon: '✅',
+                color: 'from-blue-600 to-blue-700',
+                description: 'Verify news, claims, and facts with reliable sources'
+              },
+              {
+                title: 'Is This a Scam?',
+                icon: '⚠️',
+                color: 'from-amber-600 to-amber-700',
+                description: 'Check messages, emails, and listings for fraud'
+              },
+              {
+                title: 'Is This Safe?',
+                icon: '🛡️',
+                color: 'from-emerald-600 to-emerald-700',
+                description: 'Get safety guidance for decisions and situations'
+              }
+            ].map((pillar, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border-2 border-white/20 hover:border-white/40 transition-all group"
+              >
+                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${pillar.color} flex items-center justify-center mb-4 text-3xl group-hover:scale-110 transition-transform`}>
+                  {pillar.icon}
+                </div>
+                <h4 className="text-xl font-bold text-white mb-2">{pillar.title}</h4>
+                <p className="text-slate-300">{pillar.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How It Works */}
       <section className="relative py-16 px-6">
         <div className="text-center mb-12">
