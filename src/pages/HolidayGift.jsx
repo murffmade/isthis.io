@@ -87,7 +87,7 @@ export default function HolidayGift() {
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-lg md:text-xl font-semibold text-white mb-2">Give the</p>
           <p className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400 mb-4">
-            Gift of Knowing
+            GIFT of KNOWING
           </p>
           <p className="text-2xl md:text-4xl font-bold text-white leading-tight">
             help your loved ones stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">safe</span> from <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-400">A.I.</span>, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">misinformation</span>, and <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">scams</span> - online and off ✨
