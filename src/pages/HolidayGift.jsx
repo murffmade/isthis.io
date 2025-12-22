@@ -85,9 +85,9 @@ export default function HolidayGift() {
       {/* Top Callout */}
       <div className="relative py-8 px-6 border-b border-white/10 bg-gradient-to-r from-purple-900/30 via-blue-900/30 to-emerald-900/30 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto text-center">
-          <p className="text-lg md:text-xl font-semibold text-white mb-2">Give the</p>
+          <p className="text-lg md:text-xl font-semibold text-white mb-2">Give the gift of</p>
           <p className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400 mb-4">
-            GIFT of KNOWING
+            KNOWING
           </p>
           <p className="text-2xl md:text-4xl font-bold text-white leading-tight">
             help your loved ones stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">safe</span> from <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-400">A.I.</span>, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">misinformation</span>, and <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">scams</span> - online and off ✨
