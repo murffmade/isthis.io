@@ -128,11 +128,21 @@ Provide a thorough but accessible analysis.`,
       const prompt = contentType === 'url' 
         ? `Analyze this URL for AI-generated content: ${inputValue}. Consider if this is from a social media platform and evaluate the likelihood of the content being AI-generated vs authentic.`
         : contentType === 'text'
-        ? `Analyze this text for AI-generated content or misinformation: ${inputValue}`
+        ? `Fact-check this claim: "${inputValue}". Search for reliable sources and determine if this statement is true, false, or misleading.`
         : `Analyze this ${contentType} for signs of AI generation. Look for visual artifacts, inconsistencies, and AI fingerprints.`;
 
       const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an expert AI content detector. ${prompt}
+        prompt: contentType === 'text' 
+          ? `You are an expert fact-checker. ${prompt}
+
+Research and analyze:
+- Check reliable news sources and fact-checking sites
+- Look for scientific studies or official data
+- Identify any misleading context or partial truths
+- Find credible sources that support or refute the claim
+
+Provide a clear verdict with evidence.`
+          : `You are an expert AI content detector. ${prompt}
 
 Analyze for these signals:
 - Visual artifacts (hands, eyes, teeth, symmetry issues)
@@ -238,8 +248,8 @@ Provide a thorough but accessible analysis.`,
               : 'bg-white/10 text-white hover:bg-white/20'
           }`}
         >
-          <Type className="w-4 h-4 inline mr-2" />
-          Text
+          <CheckCircle2 className="w-4 h-4 inline mr-2" />
+          Is This True?
         </button>
       </div>
 
@@ -283,7 +293,7 @@ Provide a thorough but accessible analysis.`,
             {mode === 'text' && (
               <div className="space-y-4">
                 <Textarea
-                  placeholder="Enter text to verify..."
+                  placeholder="Enter a claim or statement to fact-check..."
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   className="bg-white/20 border-white/30 text-white placeholder:text-white/50 h-24"
