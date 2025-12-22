@@ -181,21 +181,25 @@ Provide a thorough but accessible analysis.`,
               {/* Upload Section */}
               <div className="max-w-2xl mx-auto mb-16">
                 <div className="bg-white rounded-2xl border-2 border-slate-200 p-8 shadow-sm">
-                  <label className="block mb-6">
-                    <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center cursor-pointer hover:border-slate-400 transition-colors bg-slate-50">
+                  <div className="mb-6">
+                    <input
+                      type="file"
+                      id="file-upload"
+                      accept="image/*,video/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                    <label 
+                      htmlFor="file-upload"
+                      className="block border-2 border-dashed border-slate-300 rounded-xl p-12 text-center cursor-pointer hover:border-slate-400 transition-colors bg-slate-50"
+                    >
                       <Upload className="w-12 h-12 text-slate-400 mx-auto mb-4" />
                       <p className="text-slate-700 font-medium mb-2">
                         {uploadedFile ? '✓ Image uploaded!' : 'Click to upload an image or video'}
                       </p>
                       <p className="text-sm text-slate-500">or drag and drop here</p>
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*,video/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-                  </label>
+                    </label>
+                  </div>
 
                   <div className="relative mb-6">
                     <div className="absolute inset-0 flex items-center">
