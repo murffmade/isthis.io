@@ -6,46 +6,114 @@ const holidayThemes = {
     gradient: 'linear-gradient(135deg, #dc2626 0%, #059669 100%)',
     accentColor: '#dc2626',
     emoji: '🎄',
-    greeting: 'Merry Christmas!'
+    greeting: 'Merry Christmas!',
+    animated: true
   },
   hanukkah: {
     gradient: 'linear-gradient(135deg, #3b82f6 0%, #eff6ff 100%)',
     accentColor: '#3b82f6',
     emoji: '🕎',
-    greeting: 'Happy Hanukkah!'
+    greeting: 'Happy Hanukkah!',
+    animated: true
   },
   kwanzaa: {
     gradient: 'linear-gradient(135deg, #dc2626 0%, #059669 50%, #000000 100%)',
     accentColor: '#059669',
     emoji: '🕯️',
-    greeting: 'Happy Kwanzaa!'
+    greeting: 'Happy Kwanzaa!',
+    animated: true
+  },
+  newyear: {
+    gradient: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
+    accentColor: '#a855f7',
+    emoji: '🎉',
+    greeting: 'Happy New Year!',
+    animated: true
+  },
+  winter: {
+    gradient: 'linear-gradient(135deg, #22d3ee 0%, #2563eb 100%)',
+    accentColor: '#0ea5e9',
+    emoji: '❄️',
+    greeting: 'Winter Wishes!',
+    animated: true
+  },
+  festive: {
+    gradient: 'linear-gradient(135deg, #fbbf24 0%, #f97316 100%)',
+    accentColor: '#f59e0b',
+    emoji: '✨',
+    greeting: 'Season\'s Greetings!',
+    animated: true
+  },
+  elegant: {
+    gradient: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
+    accentColor: '#334155',
+    emoji: '💎',
+    greeting: 'With Best Wishes',
+    animated: false
   },
   general: {
     gradient: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)',
     accentColor: '#0f172a',
     emoji: '🎁',
-    greeting: 'Happy Holidays!'
+    greeting: 'Happy Holidays!',
+    animated: false
   }
 };
 
-export default function GiftCard({ theme = 'general', plan, recipientName, message, cardRef }) {
+const fontFamilies = {
+  modern: 'Inter, system-ui, sans-serif',
+  elegant: 'Georgia, serif',
+  playful: 'Comic Sans MS, cursive',
+  classic: 'Times New Roman, serif'
+};
+
+export default function GiftCard({ 
+  theme = 'general', 
+  plan, 
+  recipientName, 
+  message, 
+  fontStyle = 'modern',
+  nameFontSize = 18,
+  messageFontSize = 14,
+  cardRef 
+}) {
   const themeStyle = holidayThemes[theme];
+  const fontFamily = fontFamilies[fontStyle] || fontFamilies.modern;
 
   return (
-    <div
-      ref={cardRef}
-      style={{
-        width: '650px',
-        background: themeStyle.gradient,
-        padding: '48px',
-        borderRadius: '24px',
-        position: 'relative',
-        fontFamily: 'Inter, system-ui, sans-serif',
-        overflow: 'hidden'
-      }}
-    >
+    <>
+      <style>
+        {`
+          @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+          }
+          .animated-card .emoji-float {
+            animation: float 3s ease-in-out infinite;
+          }
+        `}
+      </style>
+      <div
+        ref={cardRef}
+        style={{
+          width: '650px',
+          background: themeStyle.gradient,
+          padding: '48px',
+          borderRadius: '24px',
+          position: 'relative',
+          fontFamily: fontFamily,
+          overflow: 'hidden',
+          animation: themeStyle.animated ? 'shimmer 3s ease-in-out infinite' : 'none',
+          backgroundSize: themeStyle.animated ? '200% 200%' : 'auto'
+        }}
+        className={themeStyle.animated ? 'animated-card' : ''}
+      >
       {/* Decorative Elements */}
-      <div style={{
+      <div className="emoji-float" style={{
         position: 'absolute',
         top: '20px',
         right: '20px',
@@ -54,12 +122,13 @@ export default function GiftCard({ theme = 'general', plan, recipientName, messa
       }}>
         {themeStyle.emoji}
       </div>
-      <div style={{
+      <div className="emoji-float" style={{
         position: 'absolute',
         bottom: '20px',
         left: '20px',
         fontSize: '48px',
-        opacity: 0.3
+        opacity: 0.3,
+        animationDelay: '1.5s'
       }}>
         {themeStyle.emoji}
       </div>
@@ -93,9 +162,10 @@ export default function GiftCard({ theme = 'general', plan, recipientName, messa
           </h2>
           {recipientName && (
             <p style={{
-              fontSize: '18px',
+              fontSize: `${nameFontSize}px`,
               color: '#64748b',
-              margin: 0
+              margin: 0,
+              fontFamily: fontFamily
             }}>
               {recipientName}
             </p>
@@ -158,11 +228,12 @@ export default function GiftCard({ theme = 'general', plan, recipientName, messa
             marginBottom: '24px'
           }}>
             <p style={{
-              fontSize: '14px',
+              fontSize: `${messageFontSize}px`,
               color: '#475569',
               margin: 0,
               fontStyle: 'italic',
-              lineHeight: 1.6
+              lineHeight: 1.6,
+              fontFamily: fontFamily
             }}>
               "{message}"
             </p>
@@ -265,5 +336,6 @@ export default function GiftCard({ theme = 'general', plan, recipientName, messa
         </div>
       </div>
     </div>
+    </>
   );
 }

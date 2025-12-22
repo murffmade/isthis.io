@@ -10,10 +10,28 @@ import html2canvas from 'html2canvas';
 import GiftCard from './GiftCard';
 
 const themes = [
-  { id: 'christmas', name: 'Christmas', emoji: '🎄', color: 'from-red-500 to-green-500' },
-  { id: 'hanukkah', name: 'Hanukkah', emoji: '🕎', color: 'from-blue-500 to-blue-300' },
-  { id: 'kwanzaa', name: 'Kwanzaa', emoji: '🕯️', color: 'from-red-500 via-green-500 to-black' },
-  { id: 'general', name: 'Happy Holidays', emoji: '🎁', color: 'from-slate-700 to-slate-900' }
+  { id: 'christmas', name: 'Christmas', emoji: '🎄', color: 'from-red-500 to-green-500', animated: true },
+  { id: 'hanukkah', name: 'Hanukkah', emoji: '🕎', color: 'from-blue-500 to-blue-300', animated: true },
+  { id: 'kwanzaa', name: 'Kwanzaa', emoji: '🕯️', color: 'from-red-500 via-green-500 to-black', animated: true },
+  { id: 'newyear', name: 'New Year', emoji: '🎉', color: 'from-purple-500 to-pink-500', animated: true },
+  { id: 'winter', name: 'Winter', emoji: '❄️', color: 'from-cyan-400 to-blue-600', animated: true },
+  { id: 'festive', name: 'Festive', emoji: '✨', color: 'from-amber-400 to-orange-500', animated: true },
+  { id: 'elegant', name: 'Elegant', emoji: '💎', color: 'from-slate-800 to-slate-600', animated: false },
+  { id: 'general', name: 'Happy Holidays', emoji: '🎁', color: 'from-slate-700 to-slate-900', animated: false }
+];
+
+const fontStyles = [
+  { id: 'modern', name: 'Modern', family: 'Inter, sans-serif' },
+  { id: 'elegant', name: 'Elegant', family: 'Georgia, serif' },
+  { id: 'playful', name: 'Playful', family: 'Comic Sans MS, cursive' },
+  { id: 'classic', name: 'Classic', family: 'Times New Roman, serif' }
+];
+
+const soundEffects = [
+  { id: 'none', name: 'No Sound', icon: '🔇' },
+  { id: 'jingle', name: 'Jingle Bells', icon: '🔔' },
+  { id: 'cheer', name: 'Holiday Cheer', icon: '🎵' },
+  { id: 'celebration', name: 'Celebration', icon: '🎊' }
 ];
 
 export default function GiftCardModal({ plan, onClose }) {
@@ -22,6 +40,10 @@ export default function GiftCardModal({ plan, onClose }) {
   const [theme, setTheme] = useState('general');
   const [recipientName, setRecipientName] = useState('');
   const [message, setMessage] = useState('');
+  const [fontStyle, setFontStyle] = useState('modern');
+  const [nameFontSize, setNameFontSize] = useState(18);
+  const [messageFontSize, setMessageFontSize] = useState(14);
+  const [soundEffect, setSoundEffect] = useState('none');
   const [generating, setGenerating] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -113,7 +135,7 @@ export default function GiftCardModal({ plan, onClose }) {
             {step === 'customize' && (
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Customization Form */}
-                <div className="space-y-6">
+                <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
                   <div>
                     <Label className="text-slate-700 mb-2">Choose Holiday Theme</Label>
                     <div className="grid grid-cols-2 gap-3 mt-2">
@@ -121,12 +143,17 @@ export default function GiftCardModal({ plan, onClose }) {
                         <button
                           key={t.id}
                           onClick={() => setTheme(t.id)}
-                          className={`p-4 rounded-xl border-2 transition-all ${
+                          className={`p-4 rounded-xl border-2 transition-all relative ${
                             theme === t.id
                               ? 'border-slate-900 bg-slate-50'
                               : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
+                          {t.animated && (
+                            <span className="absolute top-2 right-2 text-xs bg-purple-500 text-white px-2 py-0.5 rounded-full">
+                              ✨
+                            </span>
+                          )}
                           <div className="text-2xl mb-2">{t.emoji}</div>
                           <div className="font-medium text-sm text-slate-700">{t.name}</div>
                         </button>
@@ -160,6 +187,77 @@ export default function GiftCardModal({ plan, onClose }) {
                     />
                   </div>
 
+                  <div>
+                    <Label className="text-slate-700 mb-2">Font Style</Label>
+                    <div className="grid grid-cols-2 gap-3 mt-2">
+                      {fontStyles.map((font) => (
+                        <button
+                          key={font.id}
+                          onClick={() => setFontStyle(font.id)}
+                          className={`p-3 rounded-xl border-2 transition-all ${
+                            fontStyle === font.id
+                              ? 'border-slate-900 bg-slate-50'
+                              : 'border-slate-200 hover:border-slate-300'
+                          }`}
+                          style={{ fontFamily: font.family }}
+                        >
+                          <div className="font-medium text-sm text-slate-700">{font.name}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="nameFontSize" className="text-slate-700">
+                        Name Size: {nameFontSize}px
+                      </Label>
+                      <input
+                        id="nameFontSize"
+                        type="range"
+                        min="14"
+                        max="28"
+                        value={nameFontSize}
+                        onChange={(e) => setNameFontSize(Number(e.target.value))}
+                        className="w-full mt-2"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="messageFontSize" className="text-slate-700">
+                        Message Size: {messageFontSize}px
+                      </Label>
+                      <input
+                        id="messageFontSize"
+                        type="range"
+                        min="12"
+                        max="20"
+                        value={messageFontSize}
+                        onChange={(e) => setMessageFontSize(Number(e.target.value))}
+                        className="w-full mt-2"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-slate-700 mb-2">Background Sound</Label>
+                    <div className="grid grid-cols-2 gap-3 mt-2">
+                      {soundEffects.map((sound) => (
+                        <button
+                          key={sound.id}
+                          onClick={() => setSoundEffect(sound.id)}
+                          className={`p-3 rounded-xl border-2 transition-all ${
+                            soundEffect === sound.id
+                              ? 'border-slate-900 bg-slate-50'
+                              : 'border-slate-200 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className="text-xl mb-1">{sound.icon}</div>
+                          <div className="font-medium text-xs text-slate-700">{sound.name}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <Button
                     onClick={handlePreview}
                     className="w-full h-12 bg-slate-900 hover:bg-slate-800"
@@ -176,6 +274,9 @@ export default function GiftCardModal({ plan, onClose }) {
                       plan={plan}
                       recipientName={recipientName}
                       message={message}
+                      fontStyle={fontStyle}
+                      nameFontSize={nameFontSize}
+                      messageFontSize={messageFontSize}
                       cardRef={cardRef}
                     />
                   </div>
@@ -193,10 +294,21 @@ export default function GiftCardModal({ plan, onClose }) {
                       plan={plan}
                       recipientName={recipientName}
                       message={message}
+                      fontStyle={fontStyle}
+                      nameFontSize={nameFontSize}
+                      messageFontSize={messageFontSize}
                       cardRef={cardRef}
                     />
                   </div>
                 </div>
+
+                {soundEffect !== 'none' && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                    <p className="text-sm text-blue-700">
+                      🎵 <strong>{soundEffects.find(s => s.id === soundEffect)?.name}</strong> will play when the recipient opens this card
+                    </p>
+                  </div>
+                )}
 
                 {/* Sharing Options */}
                 <div className="bg-slate-50 rounded-xl p-6">
