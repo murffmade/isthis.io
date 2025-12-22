@@ -91,8 +91,10 @@ export default function HolidayGift() {
       {/* Top Callout */}
       <div className="relative py-8 px-6 border-b border-white/10">
         <div className="max-w-5xl mx-auto text-center">
-          <p className="text-2xl md:text-4xl font-bold text-white leading-relaxed">
-            Give the gift of <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">truth</span> — help your loved ones stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">safe</span> from A.I., misinformation, and scams - online and off ✨
+          <p className="text-3xl md:text-5xl font-bold text-white leading-tight">
+            Give the gift of <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">knowing</span>
+            <br />
+            <span className="text-2xl md:text-4xl">help your loved ones stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">safe</span> from <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-400">A.I.</span>, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">misinformation</span>, and <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">scams</span> - online and off ✨</span>
           </p>
         </div>
       </div>
