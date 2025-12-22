@@ -6,8 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { useMutation } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '@/utils';
 import html2canvas from 'html2canvas';
 import GiftCard from './GiftCard';
+import StripeCheckout from '@/components/payment/StripeCheckout';
 
 const themes = [
   { id: 'christmas', name: 'Christmas', emoji: '🎄', color: 'from-red-500 to-green-500', animated: true },
@@ -36,7 +40,7 @@ const soundEffects = [
 
 export default function GiftCardModal({ plan, onClose }) {
   const cardRef = useRef(null);
-  const [step, setStep] = useState('customize'); // customize, preview, share
+  const [step, setStep] = useState('customize'); // customize, preview_gift, payment, share
   const [theme, setTheme] = useState('general');
   const [recipientName, setRecipientName] = useState('');
   const [message, setMessage] = useState('');
@@ -47,6 +51,21 @@ export default function GiftCardModal({ plan, onClose }) {
   const [generating, setGenerating] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [giftCode, setGiftCode] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  React.useEffect(() => {
+    loadUser();
+  }, []);
+
+  const loadUser = async () => {
+    try {
+      const user = await base44.auth.me();
+      setCurrentUser(user);
+    } catch (error) {
+      // User not logged in
+    }
+  };
 
   const generateImage = async () => {
     setGenerating(true);
@@ -68,8 +87,48 @@ export default function GiftCardModal({ plan, onClose }) {
   };
 
   const handlePreview = () => {
-    setStep('preview');
+    setStep('preview_gift');
   };
+
+  const handleProceedToPayment = () => {
+    setStep('payment');
+  };
+
+  const createGiftCodeMutation = useMutation({
+    mutationFn: async (paymentIntentId) => {
+      if (!currentUser) {
+        await base44.auth.redirectToLogin();
+        return;
+      }
+
+      const code = `gift_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 90); // 90 days expiration
+
+      const giftData = await base44.entities.GiftCode.create({
+        code: code,
+        plan: plan.id,
+        sender_email: currentUser.email,
+        sender_name: currentUser.full_name || currentUser.email,
+        recipient_name: recipientName || '',
+        message: message || '',
+        theme: theme,
+        redeemed: false,
+        expires_at: expiresAt.toISOString(),
+        stripe_payment_intent_id: paymentIntentId
+      });
+
+      setGiftCode(giftData);
+      return giftData;
+    },
+    onSuccess: () => {
+      setStep('share');
+      toast.success('Gift created successfully!');
+    },
+    onError: () => {
+      toast.error('Failed to create gift code');
+    }
+  });
 
   const handleDownload = async () => {
     const url = imageUrl || await generateImage();
@@ -83,8 +142,10 @@ export default function GiftCardModal({ plan, onClose }) {
   };
 
   const generateUniqueLink = () => {
-    const giftId = `gift_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    return `${window.location.origin}/?gift=${giftId}&plan=${plan.id}`;
+    if (giftCode) {
+      return `${window.location.origin}${createPageUrl('GiftRedemption')}?gift=${giftCode.code}`;
+    }
+    return `${window.location.origin}${createPageUrl('GiftRedemption')}?gift=preview`;
   };
 
   const handleCopyLink = async () => {
@@ -143,9 +204,11 @@ export default function GiftCardModal({ plan, onClose }) {
           <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
             <div>
               <h3 className="font-semibold text-slate-800">
-                {step === 'customize' ? 'Customize Your Gift Card' : 'Your Gift Card'}
+                {step === 'customize' ? 'Customize Your Gift Card' : 
+                 step === 'preview_gift' ? 'Preview Your Gift' :
+                 step === 'payment' ? 'Complete Purchase' : 'Your Gift Card'}
               </h3>
-              <p className="text-sm text-slate-500">{plan.name}</p>
+              <p className="text-sm text-slate-500">{plan.name} - {plan.price}</p>
             </div>
             <button
               onClick={onClose}
@@ -287,7 +350,7 @@ export default function GiftCardModal({ plan, onClose }) {
                     onClick={handlePreview}
                     className="w-full h-12 bg-slate-900 hover:bg-slate-800"
                   >
-                    Preview Gift Card
+                    Preview & Continue
                   </Button>
                 </div>
 
@@ -309,7 +372,100 @@ export default function GiftCardModal({ plan, onClose }) {
               </div>
             )}
 
-            {step === 'preview' && (
+            {step === 'preview_gift' && (
+              <div className="space-y-6">
+                {/* Full Preview */}
+                <div className="flex justify-center bg-slate-50 rounded-xl p-8">
+                  <div style={{ transform: 'scale(0.7)', transformOrigin: 'top center' }}>
+                    <GiftCard
+                      theme={theme}
+                      plan={plan}
+                      recipientName={recipientName}
+                      message={message}
+                      fontStyle={fontStyle}
+                      nameFontSize={nameFontSize}
+                      messageFontSize={messageFontSize}
+                      cardRef={cardRef}
+                    />
+                  </div>
+                </div>
+
+                {soundEffect !== 'none' && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                    <p className="text-sm text-blue-700">
+                      🎵 <strong>{soundEffects.find(s => s.id === soundEffect)?.name}</strong> will play when the recipient opens this card
+                    </p>
+                  </div>
+                )}
+
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="text-sm text-amber-800 font-medium mb-2">📅 Gift Details:</p>
+                  <ul className="text-sm text-amber-700 space-y-1">
+                    <li>• Expires in 90 days</li>
+                    <li>• Can be redeemed once</li>
+                    <li>• Recipient will get email notification</li>
+                    <li>• You'll be notified when redeemed</li>
+                  </ul>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => setStep('customize')}
+                    variant="outline"
+                    className="flex-1 h-11"
+                  >
+                    Edit Card
+                  </Button>
+                  <Button
+                    onClick={handleProceedToPayment}
+                    className="flex-1 h-11 bg-emerald-600 hover:bg-emerald-700 text-white"
+                  >
+                    Continue to Payment
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {step === 'payment' && (
+              <div className="space-y-6">
+                <div className="bg-slate-50 rounded-xl p-6">
+                  <h4 className="font-semibold text-slate-800 mb-4">Order Summary</h4>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between">
+                      <span className="text-slate-600">Gift Plan:</span>
+                      <span className="font-semibold">{plan.name}</span>
+                    </div>
+                    {recipientName && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">For:</span>
+                        <span className="font-semibold">{recipientName}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                      <span>Total:</span>
+                      <span className="text-emerald-600">{plan.price}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <StripeCheckout
+                  plan={{ ...plan, buttonText: 'Complete Purchase' }}
+                  onSuccess={(paymentIntentId) => {
+                    createGiftCodeMutation.mutate(paymentIntentId);
+                  }}
+                />
+
+                <Button
+                  onClick={() => setStep('preview_gift')}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Back to Preview
+                </Button>
+              </div>
+            )}
+
+            {step === 'share' && (
               <div className="space-y-6">
                 {/* Full Preview */}
                 <div className="flex justify-center bg-slate-50 rounded-xl p-8">
@@ -377,6 +533,15 @@ export default function GiftCardModal({ plan, onClose }) {
                       )}
                     </Button>
                   </div>
+
+                  {giftCode && (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-4">
+                      <p className="text-sm text-emerald-800 font-medium mb-2">
+                        ✅ Gift Code: <code className="font-mono bg-white px-2 py-1 rounded">{giftCode.code}</code>
+                      </p>
+                      <p className="text-xs text-emerald-700">Expires: {new Date(giftCode.expires_at).toLocaleDateString()}</p>
+                    </div>
+                  )}
 
                   <div className="border-t pt-4">
                     <p className="text-sm font-medium text-slate-600 mb-3">Share on social media:</p>
