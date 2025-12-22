@@ -270,13 +270,13 @@ Provide a thorough but accessible analysis.`,
             </button>
 
             <div className="flex items-center gap-2">
-              <ProfileDropdown onOpenSettings={() => setShowPreferences(true)} />
               <Link
                 to={createPageUrl('EnterpriseMarketing')}
                 className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors text-sm font-medium hidden sm:block"
               >
                 Enterprise
               </Link>
+              <ProfileDropdown onOpenSettings={() => setShowPreferences(true)} />
             </div>
           </div>
         </div>
