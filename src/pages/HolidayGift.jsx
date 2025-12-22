@@ -359,7 +359,7 @@ export default function HolidayGift() {
                   <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
                   <div className="flex items-baseline gap-2">
                     <span className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">{plan.price}</span>
-                    <span className="text-white/70">one-time</span>
+                    <span className="text-white/70">{plan.id === 'lifetime' ? 'one-time' : '/year'}</span>
                   </div>
                   <p className="text-emerald-300 font-semibold mt-2">✨ {plan.duration} of access</p>
                   {plan.limitedOffer && (
