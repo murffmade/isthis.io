@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Link as LinkIcon, Type, Loader2, Share2, CheckCircle2, AlertTriangle, HelpCircle, ThumbsUp, ThumbsDown, Info } from 'lucide-react';
+import { Upload, Link as LinkIcon, Type, Loader2, Share2, CheckCircle2, AlertTriangle, HelpCircle, ThumbsUp, ThumbsDown, Info, Shield, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -38,7 +38,7 @@ const severityColors = {
 };
 
 export default function QuickDemo() {
-  const [mode, setMode] = useState('url'); // url, image, text
+  const [mode, setMode] = useState('real'); // real, true, scam, safe
   const [inputValue, setInputValue] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
@@ -123,26 +123,14 @@ Provide a thorough but accessible analysis.`,
 
     setAnalyzing(true);
     try {
-      const contentType = mode === 'image' ? 'image' : mode === 'url' ? 'url' : 'text';
+      let prompt = '';
+      let systemPrompt = '';
       
-      const prompt = contentType === 'url' 
-        ? `Analyze this URL for AI-generated content: ${inputValue}. Consider if this is from a social media platform and evaluate the likelihood of the content being AI-generated vs authentic.`
-        : contentType === 'text'
-        ? `Fact-check this claim: "${inputValue}". Search for reliable sources and determine if this statement is true, false, or misleading.`
-        : `Analyze this ${contentType} for signs of AI generation. Look for visual artifacts, inconsistencies, and AI fingerprints.`;
-
-      const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: contentType === 'text' 
-          ? `You are an expert fact-checker. ${prompt}
-
-Research and analyze:
-- Check reliable news sources and fact-checking sites
-- Look for scientific studies or official data
-- Identify any misleading context or partial truths
-- Find credible sources that support or refute the claim
-
-Provide a clear verdict with evidence.`
-          : `You are an expert AI content detector. ${prompt}
+      if (mode === 'real') {
+        prompt = uploadedFile 
+          ? `Analyze this image/video for signs of AI generation. Look for visual artifacts, inconsistencies, and AI fingerprints.`
+          : `Analyze this content for AI-generated elements.`;
+        systemPrompt = `You are an expert AI content detector. ${prompt}
 
 Analyze for these signals:
 - Visual artifacts (hands, eyes, teeth, symmetry issues)
@@ -151,9 +139,48 @@ Analyze for these signals:
 - Depth and perspective errors
 - Known AI generation patterns
 
-Provide a thorough but accessible analysis.`,
+Provide a thorough but accessible analysis.`;
+      } else if (mode === 'true') {
+        prompt = `Fact-check this claim or article: "${inputValue}". Search for reliable sources and determine if this information is true, false, or misleading.`;
+        systemPrompt = `You are an expert fact-checker. ${prompt}
+
+Research and analyze:
+- Check reliable news sources and fact-checking sites
+- Look for scientific studies or official data
+- Identify any misleading context or partial truths
+- Find credible sources that support or refute the claim
+
+Provide a clear verdict with evidence.`;
+      } else if (mode === 'scam') {
+        prompt = `Analyze this message for scam indicators: "${inputValue}". Check for common fraud patterns, suspicious language, and red flags.`;
+        systemPrompt = `You are an expert fraud detection specialist. ${prompt}
+
+Look for:
+- Urgency tactics and pressure language
+- Suspicious links or requests for personal information
+- Grammar and spelling issues common in scams
+- Too-good-to-be-true offers
+- Impersonation attempts
+
+Provide a risk assessment.`;
+      } else if (mode === 'safe') {
+        prompt = `Provide safety guidance for this situation: "${inputValue}". Consider potential risks and offer practical advice.`;
+        systemPrompt = `You are a safety advisor. ${prompt}
+
+Consider:
+- Immediate safety concerns
+- Long-term implications
+- Red flags to watch for
+- Practical steps to stay safe
+- When to seek professional help
+
+Provide caring, practical guidance.`;
+      }
+
+      const analysisResult = await base44.integrations.Core.InvokeLLM({
+        prompt: systemPrompt,
         file_urls: uploadedFile ? [uploadedFile] : undefined,
-        add_context_from_internet: contentType === 'url',
+        add_context_from_internet: mode === 'true' || mode === 'scam',
         response_json_schema: {
           type: "object",
           properties: {
@@ -217,39 +244,62 @@ Provide a thorough but accessible analysis.`,
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-white/20 p-6">
       {/* Mode Selector */}
-      <div className="flex gap-2 mb-6">
+      <div className="grid grid-cols-2 gap-3 mb-6">
         <button
-          onClick={() => setMode('url')}
-          className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
-            mode === 'url'
+          onClick={() => setMode('real')}
+          className={`py-3 px-4 rounded-xl font-medium transition-all text-left ${
+            mode === 'real'
               ? 'bg-white text-slate-900'
               : 'bg-white/10 text-white hover:bg-white/20'
           }`}
         >
-          <LinkIcon className="w-4 h-4 inline mr-2" />
-          URL
+          <div className="flex items-center gap-2 mb-1">
+            <Shield className="w-4 h-4" />
+            <span className="font-bold">Is This Real?</span>
+          </div>
+          <p className="text-xs opacity-70">Upload an image or video to detect AI-generated content</p>
         </button>
         <button
-          onClick={() => setMode('image')}
-          className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
-            mode === 'image'
+          onClick={() => setMode('true')}
+          className={`py-3 px-4 rounded-xl font-medium transition-all text-left ${
+            mode === 'true'
               ? 'bg-white text-slate-900'
               : 'bg-white/10 text-white hover:bg-white/20'
           }`}
         >
-          <Upload className="w-4 h-4 inline mr-2" />
-          Image
+          <div className="flex items-center gap-2 mb-1">
+            <CheckCircle2 className="w-4 h-4" />
+            <span className="font-bold">Is This True?</span>
+          </div>
+          <p className="text-xs opacity-70">Post a link to a news article and find out if the information is true</p>
         </button>
         <button
-          onClick={() => setMode('text')}
-          className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
-            mode === 'text'
+          onClick={() => setMode('scam')}
+          className={`py-3 px-4 rounded-xl font-medium transition-all text-left ${
+            mode === 'scam'
               ? 'bg-white text-slate-900'
               : 'bg-white/10 text-white hover:bg-white/20'
           }`}
         >
-          <CheckCircle2 className="w-4 h-4 inline mr-2" />
-          Is This True?
+          <div className="flex items-center gap-2 mb-1">
+            <AlertTriangle className="w-4 h-4" />
+            <span className="font-bold">Is This a Scam?</span>
+          </div>
+          <p className="text-xs opacity-70">Check messages, emails, and listings for potential fraud</p>
+        </button>
+        <button
+          onClick={() => setMode('safe')}
+          className={`py-3 px-4 rounded-xl font-medium transition-all text-left ${
+            mode === 'safe'
+              ? 'bg-white text-slate-900'
+              : 'bg-white/10 text-white hover:bg-white/20'
+          }`}
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <Heart className="w-4 h-4" />
+            <span className="font-bold">Is This Safe?</span>
+          </div>
+          <p className="text-xs opacity-70">Get safety guidance for decisions and situations</p>
         </button>
       </div>
 
@@ -261,28 +311,17 @@ Provide a thorough but accessible analysis.`,
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {mode === 'url' && (
-              <div className="space-y-4">
-                <Input
-                  placeholder="Paste a URL to verify..."
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="bg-white/20 border-white/30 text-white placeholder:text-white/50"
-                />
-              </div>
-            )}
-
-            {mode === 'image' && (
+            {mode === 'real' && (
               <div className="space-y-4">
                 <label className="block">
                   <div className="border-2 border-dashed border-white/30 rounded-xl p-8 text-center cursor-pointer hover:border-white/50 transition-colors">
                     <Upload className="w-8 h-8 text-white/70 mx-auto mb-2" />
-                    <p className="text-white/70 text-sm">Click to upload an image</p>
-                    {uploadedFile && <p className="text-emerald-300 text-sm mt-2">✓ Image uploaded</p>}
+                    <p className="text-white/70 text-sm">Click to upload an image or video</p>
+                    {uploadedFile && <p className="text-emerald-300 text-sm mt-2">✓ File uploaded</p>}
                   </div>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/*,video/*"
                     onChange={handleFileUpload}
                     className="hidden"
                   />
@@ -290,10 +329,32 @@ Provide a thorough but accessible analysis.`,
               </div>
             )}
 
-            {mode === 'text' && (
+            {mode === 'true' && (
+              <div className="space-y-4">
+                <Input
+                  placeholder="Paste a URL to a news article or claim..."
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className="bg-white/20 border-white/30 text-white placeholder:text-white/50"
+                />
+              </div>
+            )}
+
+            {mode === 'scam' && (
               <div className="space-y-4">
                 <Textarea
-                  placeholder="Enter a claim or statement to fact-check..."
+                  placeholder="Paste a suspicious message, email, or listing..."
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className="bg-white/20 border-white/30 text-white placeholder:text-white/50 h-24"
+                />
+              </div>
+            )}
+
+            {mode === 'safe' && (
+              <div className="space-y-4">
+                <Textarea
+                  placeholder="Describe a situation or decision you need safety guidance on..."
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   className="bg-white/20 border-white/30 text-white placeholder:text-white/50 h-24"
