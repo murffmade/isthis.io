@@ -19,18 +19,12 @@ const modeConfig = {
 };
 
 export default function HistoryPage() {
-  const [filterMode, setFilterMode] = useState('all');
   const queryClient = useQueryClient();
   const PAGE_SIZE = 20;
 
   const { data: analyses = [], isLoading } = useQuery({
-    queryKey: ['analyses', filterMode],
-    queryFn: () => {
-      if (filterMode === 'all') {
-        return Analysis.list('-created_date', PAGE_SIZE);
-      }
-      return Analysis.filter({ mode: filterMode }, '-created_date', PAGE_SIZE);
-    }
+    queryKey: ['analyses'],
+    queryFn: () => Analysis.filter({ mode: 'real' }, '-created_date', PAGE_SIZE)
   });
 
   const deleteMutation = useMutation({
@@ -76,41 +70,10 @@ export default function HistoryPage() {
 
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-6 py-12">
-        {/* Filters */}
+        {/* Title */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Filter className="w-5 h-5 text-slate-400" />
-            <span className="text-sm font-medium text-slate-700">Filter by mode:</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setFilterMode('all')}
-              className={`px-4 py-2 rounded-xl font-medium transition-colors ${
-                filterMode === 'all'
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-white border-2 border-slate-200 text-slate-700 hover:border-slate-300'
-              }`}
-            >
-              All
-            </button>
-            {Object.entries(modeConfig).map(([mode, config]) => {
-              const Icon = config.icon;
-              return (
-                <button
-                  key={mode}
-                  onClick={() => setFilterMode(mode)}
-                  className={`px-4 py-2 rounded-xl font-medium transition-colors flex items-center gap-2 ${
-                    filterMode === mode
-                      ? `bg-${config.color}-600 text-white`
-                      : 'bg-white border-2 border-slate-200 text-slate-700 hover:border-slate-300'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {config.label}
-                </button>
-              );
-            })}
-          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Your Verification History</h2>
+          <p className="text-slate-600">All your "Is This Real?" analyses</p>
         </div>
 
         {/* Results */}
