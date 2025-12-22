@@ -159,40 +159,6 @@ ${formData.message}
             </div>
           </div>
 
-          {/* Use Cases */}
-          <div className="mb-20">
-            <h3 className="text-3xl font-bold text-slate-900 mb-8 text-center">
-              Trusted by Industry Leaders
-            </h3>
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  industry: 'News & Media',
-                  use: 'Verify user-submitted content before publication and maintain editorial integrity'
-                },
-                {
-                  industry: 'Social Platforms',
-                  use: 'Automatically detect and flag synthetic media at scale across millions of posts'
-                },
-                {
-                  industry: 'E-Commerce',
-                  use: 'Prevent fraud with automated product image verification and seller monitoring'
-                }
-              ].map((useCase, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + i * 0.1 }}
-                  className="bg-white rounded-xl p-6 border border-slate-200"
-                >
-                  <h4 className="font-semibold text-slate-900 mb-2 text-lg">{useCase.industry}</h4>
-                  <p className="text-sm text-slate-600 leading-relaxed">{useCase.use}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
           {/* Early Access Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
