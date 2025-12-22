@@ -6,6 +6,7 @@ import { createPageUrl } from '@/utils';
 import GiftCardModal from '@/components/gift/GiftCardModal';
 import Snowflakes from '@/components/effects/Snowflakes';
 import InteractiveSteps from '@/components/gift/InteractiveSteps';
+import CountdownBanner from '@/components/gift/CountdownBanner';
 
 const plans = [
   {
@@ -59,6 +60,9 @@ export default function HolidayGift() {
         <div className="absolute bottom-20 left-1/3 w-56 h-56 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute top-1/2 right-1/4 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl" />
       </div>
+
+      {/* Countdown Banner */}
+      <CountdownBanner />
 
       {/* Header */}
       <header className="relative border-b border-white/20 bg-gradient-to-r from-red-500/10 via-emerald-500/10 to-blue-500/10 backdrop-blur-sm">
