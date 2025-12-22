@@ -418,10 +418,17 @@ Provide a thorough but accessible analysis.`,
               />
             </motion.div>
           )}
-        </AnimatePresence>
-      </main>
+          </AnimatePresence>
 
-      {/* Pricing Section */}
+          {/* Preferences Modal */}
+          <PreferencesModal
+          isOpen={showPreferences}
+          onClose={() => setShowPreferences(false)}
+          onSave={handlePreferencesSaved}
+          />
+          </main>
+
+          {/* Pricing Section */}
       {step === 'upload' && (
         <section className="max-w-4xl mx-auto px-6 py-16 border-t border-slate-100" itemScope itemType="https://schema.org/PriceSpecification">
           <div className="text-center mb-12">
