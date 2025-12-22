@@ -16,6 +16,7 @@ import History from './pages/History';
 import BatchAnalysis from './pages/BatchAnalysis';
 import EnterpriseMarketing from './pages/EnterpriseMarketing';
 import PaymentSuccess from './pages/PaymentSuccess';
+import Account from './pages/Account';
 import __Layout from './Layout.jsx';
 
 
@@ -38,6 +39,7 @@ export const PAGES = {
     "BatchAnalysis": BatchAnalysis,
     "EnterpriseMarketing": EnterpriseMarketing,
     "PaymentSuccess": PaymentSuccess,
+    "Account": Account,
 }
 
 export const pagesConfig = {

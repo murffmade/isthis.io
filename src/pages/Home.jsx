@@ -277,6 +277,13 @@ Provide a thorough but accessible analysis.`,
                 <span className="hidden sm:inline">Settings</span>
               </button>
               <Link
+                to={createPageUrl('Account')}
+                className="px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors text-sm font-medium flex items-center gap-2"
+              >
+                <History className="w-4 h-4" />
+                <span className="hidden sm:inline">Account</span>
+              </Link>
+              <Link
                 to={createPageUrl('History')}
                 className="px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors text-sm font-medium flex items-center gap-2"
               >
