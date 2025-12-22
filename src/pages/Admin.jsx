@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown } from 'lucide-react';
+import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown, ToggleLeft, ToggleRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,86 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+
+function FeatureToggles() {
+  const queryClient = useQueryClient();
+
+  const { data: settings } = useQuery({
+    queryKey: ['appSettings'],
+    queryFn: async () => {
+      const allSettings = await base44.entities.AppSettings.list();
+      return allSettings.length > 0 ? allSettings[0] : null;
+    }
+  });
+
+  const updateSettingMutation = useMutation({
+    mutationFn: async ({ field, value }) => {
+      if (settings) {
+        await base44.entities.AppSettings.update(settings.id, { [field]: value });
+      } else {
+        await base44.entities.AppSettings.create({ [field]: value });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['appSettings']);
+      toast.success('Feature setting updated');
+    }
+  });
+
+  const features = [
+    { key: 'feature_is_this_real', label: 'Is This Real?', icon: Shield, color: 'text-slate-600' },
+    { key: 'feature_is_this_true', label: 'Is This True?', icon: Check, color: 'text-blue-600' },
+    { key: 'feature_is_this_scam', label: 'Is This a Scam?', icon: X, color: 'text-amber-600' },
+    { key: 'feature_is_this_safe', label: 'Is This Safe?', icon: Shield, color: 'text-emerald-600' }
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-xl border border-slate-200 p-8"
+    >
+      <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+        <Settings className="w-6 h-6" />
+        Feature Toggles
+      </h2>
+      
+      <div className="grid md:grid-cols-2 gap-4">
+        {features.map((feature) => {
+          const Icon = feature.icon;
+          const isEnabled = settings?.[feature.key] ?? true;
+          
+          return (
+            <button
+              key={feature.key}
+              onClick={() => updateSettingMutation.mutate({ field: feature.key, value: !isEnabled })}
+              className={`p-4 rounded-xl border-2 transition-all text-left ${
+                isEnabled
+                  ? 'border-emerald-200 bg-emerald-50'
+                  : 'border-slate-200 bg-slate-50'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Icon className={`w-5 h-5 ${feature.color}`} />
+                  <span className="font-semibold text-slate-900">{feature.label}</span>
+                </div>
+                {isEnabled ? (
+                  <ToggleRight className="w-6 h-6 text-emerald-600" />
+                ) : (
+                  <ToggleLeft className="w-6 h-6 text-slate-400" />
+                )}
+              </div>
+              <div className={`text-sm ${isEnabled ? 'text-emerald-700' : 'text-slate-500'}`}>
+                {isEnabled ? 'Enabled' : 'Disabled'}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
 
 export default function Admin() {
   const [searchEmail, setSearchEmail] = useState('');
@@ -124,6 +204,11 @@ export default function Admin() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid lg:grid-cols-3 gap-8">
+          {/* Feature Toggles */}
+          <div className="lg:col-span-3">
+            <FeatureToggles />
+          </div>
+
           {/* Stats */}
           <div className="lg:col-span-3 grid md:grid-cols-4 gap-6">
             <motion.div

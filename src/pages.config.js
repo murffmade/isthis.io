@@ -1,55 +1,55 @@
-import Home from './pages/Home';
-import Bookmarklet from './pages/Bookmarklet';
-import HolidayGift from './pages/HolidayGift';
-import Enterprise from './pages/Enterprise';
 import APIDocs from './pages/APIDocs';
-import Support from './pages/Support';
 import About from './pages/About';
-import Contact from './pages/Contact';
-import Careers from './pages/Careers';
-import Learn from './pages/Learn';
-import Blog from './pages/Blog';
-import True from './pages/True';
-import Scam from './pages/Scam';
-import Safe from './pages/Safe';
-import History from './pages/History';
-import BatchAnalysis from './pages/BatchAnalysis';
-import EnterpriseMarketing from './pages/EnterpriseMarketing';
-import PaymentSuccess from './pages/PaymentSuccess';
 import Account from './pages/Account';
 import Admin from './pages/Admin';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
+import BatchAnalysis from './pages/BatchAnalysis';
+import Blog from './pages/Blog';
+import Bookmarklet from './pages/Bookmarklet';
+import Careers from './pages/Careers';
+import Contact from './pages/Contact';
+import Enterprise from './pages/Enterprise';
+import EnterpriseMarketing from './pages/EnterpriseMarketing';
 import GiftRedemption from './pages/GiftRedemption';
+import History from './pages/History';
+import HolidayGift from './pages/HolidayGift';
+import Home from './pages/Home';
+import Learn from './pages/Learn';
 import MyGifts from './pages/MyGifts';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Safe from './pages/Safe';
+import Scam from './pages/Scam';
+import Support from './pages/Support';
+import TermsOfService from './pages/TermsOfService';
+import True from './pages/True';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "Bookmarklet": Bookmarklet,
-    "HolidayGift": HolidayGift,
-    "Enterprise": Enterprise,
     "APIDocs": APIDocs,
-    "Support": Support,
     "About": About,
-    "Contact": Contact,
-    "Careers": Careers,
-    "Learn": Learn,
-    "Blog": Blog,
-    "True": True,
-    "Scam": Scam,
-    "Safe": Safe,
-    "History": History,
-    "BatchAnalysis": BatchAnalysis,
-    "EnterpriseMarketing": EnterpriseMarketing,
-    "PaymentSuccess": PaymentSuccess,
     "Account": Account,
     "Admin": Admin,
-    "PrivacyPolicy": PrivacyPolicy,
-    "TermsOfService": TermsOfService,
+    "BatchAnalysis": BatchAnalysis,
+    "Blog": Blog,
+    "Bookmarklet": Bookmarklet,
+    "Careers": Careers,
+    "Contact": Contact,
+    "Enterprise": Enterprise,
+    "EnterpriseMarketing": EnterpriseMarketing,
     "GiftRedemption": GiftRedemption,
+    "History": History,
+    "HolidayGift": HolidayGift,
+    "Home": Home,
+    "Learn": Learn,
     "MyGifts": MyGifts,
+    "PaymentSuccess": PaymentSuccess,
+    "PrivacyPolicy": PrivacyPolicy,
+    "Safe": Safe,
+    "Scam": Scam,
+    "Support": Support,
+    "TermsOfService": TermsOfService,
+    "True": True,
 }
 
 export const pagesConfig = {
