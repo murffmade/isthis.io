@@ -87,11 +87,6 @@ export default function Layout({ children, currentPageName }) {
                       </a>
                     </li>
                     <li>
-                      <a href={createPageUrl('APIDocs')} className="text-sm text-slate-400 hover:text-white transition-colors">
-                        API Docs
-                      </a>
-                    </li>
-                    <li>
                       <a href={createPageUrl('EnterpriseMarketing')} className="text-sm text-slate-400 hover:text-white transition-colors">
                         Enterprise
                       </a>
