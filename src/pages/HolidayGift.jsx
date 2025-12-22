@@ -92,7 +92,7 @@ export default function HolidayGift() {
       <div className="relative py-6 px-6 bg-gradient-to-r from-emerald-500/20 via-blue-500/20 to-purple-500/20 border-b border-white/10">
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-xl md:text-2xl font-semibold text-white leading-relaxed">
-            Detect A.I., verify social media gossip, protect your family from scans - online and off…
+            Give the gift of truth — help your loved ones stay safe from deepfakes, fake news, and online scams ✨
           </p>
         </div>
       </div>
