@@ -61,9 +61,6 @@ export default function HolidayGift() {
         <div className="absolute top-1/2 right-1/4 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl" />
       </div>
 
-      {/* Countdown Banner */}
-      <CountdownBanner />
-
       {/* Header */}
       <header className="relative border-b border-white/20 bg-gradient-to-r from-red-500/10 via-emerald-500/10 to-blue-500/10 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-6 py-4">
@@ -355,6 +352,9 @@ export default function HolidayGift() {
           </motion.div>
         </div>
       </section>
+
+      {/* Countdown Banner */}
+      <CountdownBanner />
 
       {/* Testimonial with Images */}
       <section className="relative py-12 px-6">
