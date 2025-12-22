@@ -271,7 +271,7 @@ Provide caring, practical guidance.`;
             <CheckCircle2 className="w-4 h-4" />
             <span className="font-bold">Is This True?</span>
           </div>
-          <p className="text-xs opacity-70">Post a link to a news article and find out if the information is true</p>
+          <p className="text-xs opacity-70">Post a link to a news article and find out how true the information is…</p>
         </button>
         <button
           onClick={() => setMode('scam')}
@@ -326,6 +326,20 @@ Provide caring, practical guidance.`;
                     className="hidden"
                   />
                 </label>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-white/20"></div>
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-transparent px-2 text-white/50">or</span>
+                  </div>
+                </div>
+                <Input
+                  placeholder="Paste a URL to an image or video..."
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className="bg-white/20 border-white/30 text-white placeholder:text-white/50"
+                />
               </div>
             )}
 
