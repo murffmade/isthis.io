@@ -482,7 +482,7 @@ export default function HolidayGift() {
               </div>
               <p className="text-slate-200 italic">
                 "Got this for my mom for Christmas. She's always forwarding questionable stuff on Facebook. 
-                Now she checks it first. Best $29 I've spent!"
+                Now she checks it first. Best subscription I've ever gifted!"
               </p>
             </div>
             

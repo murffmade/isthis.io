@@ -426,7 +426,7 @@ Provide a thorough but accessible analysis.`,
         <section className="max-w-4xl mx-auto px-6 py-16 border-t border-slate-100" itemScope itemType="https://schema.org/PriceSpecification">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">AI Detection Pricing - Global Access</h2>
-            <p className="text-lg text-slate-600">Free AI verification tool with premium options. One-time payment, no subscription. Available worldwide.</p>
+            <p className="text-lg text-slate-600">Free AI verification tool with premium options. Choose annual subscription or lifetime access. Available worldwide.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -463,7 +463,7 @@ Provide a thorough but accessible analysis.`,
                 <span itemProp="price" content="29">$29</span>
                 <meta itemProp="priceCurrency" content="USD" />
               </div>
-              <div className="text-sm text-slate-500 mb-4">one-time payment - global access</div>
+              <div className="text-sm text-slate-500 mb-4">per year - annual subscription</div>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-start gap-2 text-sm text-slate-600">
                   <span className="text-emerald-500">✓</span>
