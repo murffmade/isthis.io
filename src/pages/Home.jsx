@@ -29,6 +29,8 @@ export default function Home() {
   const [showPreferences, setShowPreferences] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   React.useEffect(() => {
     // Detect mobile device
@@ -47,11 +49,34 @@ export default function Home() {
     if (!file) return;
 
     try {
+      setUploading(true);
+      setUploadProgress(0);
       setUploadedFileObj(file);
+      
+      // Simulate progress for better UX (actual upload happens quickly)
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 150);
+      
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setUploadedFile(file_url);
-      toast.success('File uploaded! Click "Verify Now" to analyze.');
+      
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      
+      setTimeout(() => {
+        setUploadedFile(file_url);
+        setUploading(false);
+        toast.success('File uploaded! Click "Verify Now" to analyze.');
+      }, 300);
     } catch (error) {
+      setUploading(false);
+      setUploadProgress(0);
       toast.error('Failed to upload file');
     }
   };
@@ -730,16 +755,45 @@ Provide comprehensive patch voting with decisive classifications, justified conf
                       accept="image/*,video/*"
                       onChange={handleFileUpload}
                       className="hidden"
+                      disabled={uploading}
                     />
                     <label 
                       htmlFor="file-upload"
-                      className="block border-2 border-dashed border-slate-300 rounded-xl p-8 sm:p-12 text-center cursor-pointer active:scale-[0.98] hover:border-slate-400 transition-all bg-slate-50"
+                      className={`block border-2 border-dashed border-slate-300 rounded-xl p-8 sm:p-12 text-center transition-all bg-slate-50 ${
+                        uploading ? 'cursor-wait opacity-75' : 'cursor-pointer active:scale-[0.98] hover:border-slate-400'
+                      }`}
                     >
-                      <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-slate-400 mx-auto mb-3 sm:mb-4" />
-                      <p className="text-sm sm:text-base text-slate-700 font-medium mb-1 sm:mb-2">
-                        {uploadedFile ? '✓ Image uploaded!' : 'Tap to upload an image or video'}
-                      </p>
-                      <p className="text-xs sm:text-sm text-slate-500">or drag and drop here</p>
+                      {uploading ? (
+                        <>
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 relative">
+                            <div className="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
+                            <div 
+                              className="absolute inset-0 border-4 border-slate-900 rounded-full border-t-transparent animate-spin"
+                            ></div>
+                          </div>
+                          <p className="text-sm sm:text-base text-slate-700 font-medium mb-1 sm:mb-2">
+                            Uploading... {uploadProgress}%
+                          </p>
+                          <div className="max-w-xs mx-auto mt-3">
+                            <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${uploadProgress}%` }}
+                                transition={{ duration: 0.3 }}
+                                className="h-full bg-slate-900 rounded-full"
+                              />
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-slate-400 mx-auto mb-3 sm:mb-4" />
+                          <p className="text-sm sm:text-base text-slate-700 font-medium mb-1 sm:mb-2">
+                            {uploadedFile ? '✓ File uploaded!' : 'Tap to upload an image or video'}
+                          </p>
+                          <p className="text-xs sm:text-sm text-slate-500">or drag and drop here</p>
+                        </>
+                      )}
                     </label>
                   </div>
 
