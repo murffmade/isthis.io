@@ -79,7 +79,7 @@ function getSignalContext(signalType, description, isAIGenerated) {
   
   // Real indicators
   if (lowerSignal.includes('exif') || lowerSignal.includes('metadata')) {
-    return 'Camera information (called EXIF data) is automatically saved in real photos taken with cameras or phones. A.I. images typically don\'t have this.';
+    return 'Camera information is automatically saved in real photos taken with cameras or phones. A.I. images typically don\'t have this.';
   }
   if (lowerSignal.includes('compression') || lowerSignal.includes('artifact') || lowerSignal.includes('jpeg')) {
     return 'Real photos have natural compression patterns from how cameras save images. A.I. images often lack these technical fingerprints.';
@@ -367,7 +367,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                           <div className="flex-1">
                             <p className="font-semibold text-emerald-900 mb-2">Camera Data Found</p>
                             <p className="text-sm text-emerald-800 mb-3">
-                              This image contains technical information automatically saved by a camera or phone. This is a strong indicator of authenticity because A.I. generators typically don't include this data.
+                              This image contains technical information automatically saved by a camera or phone. This is a strong indicator of authenticity because A.I. generators typically don't include camera data.
                             </p>
                             <div className="space-y-2 text-sm">
                               {exifData.Make && (
@@ -431,7 +431,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
               <div className="flex-1">
                 <p className="font-semibold text-amber-900 mb-2">No Camera Data Found</p>
                 <p className="text-sm text-amber-800">
-                  This image doesn't contain any camera information (EXIF data). Real photos taken with cameras or phones automatically save technical details like camera model, date, and settings. The absence of this data is common in A.I.-generated images, though it can also happen with screenshots or edited photos.
+                  This image doesn't contain any camera information. Real photos taken with cameras or phones automatically save technical details like camera model, date, and settings. The absence of this data is common in A.I.-generated images, though it can also happen with screenshots or edited photos.
                 </p>
               </div>
             </div>
