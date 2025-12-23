@@ -158,10 +158,101 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
         </div>
       </div>
 
+      {/* Camera & EXIF Metadata Section */}
+      {result.exif_summary && (
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-3 text-lg">📷 Camera Information</h3>
+          <div className="space-y-4">
+            {(() => {
+              try {
+                const exifData = JSON.parse(result.exif_summary);
+                const hasCameraInfo = exifData.Make || exifData.Model;
+
+                if (hasCameraInfo) {
+                  return (
+                    <>
+                      <div className="p-4 rounded-xl bg-emerald-50 border-2 border-emerald-200">
+                        <div className="flex items-start gap-3">
+                          <div className="text-2xl">✓</div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-emerald-900 mb-2">Camera Data Found</p>
+                            <p className="text-sm text-emerald-800 mb-3">
+                              This image contains technical information automatically saved by a camera or phone. This is a strong indicator of authenticity because A.I. generators typically don't include this data.
+                            </p>
+                            <div className="space-y-2 text-sm">
+                              {exifData.Make && (
+                                <div className="flex gap-2">
+                                  <span className="font-semibold text-emerald-900 min-w-24">Camera Brand:</span>
+                                  <span className="text-emerald-800">{exifData.Make}</span>
+                                </div>
+                              )}
+                              {exifData.Model && (
+                                <div className="flex gap-2">
+                                  <span className="font-semibold text-emerald-900 min-w-24">Camera Model:</span>
+                                  <span className="text-emerald-800">{exifData.Model}</span>
+                                </div>
+                              )}
+                              {exifData.DateTime && (
+                                <div className="flex gap-2">
+                                  <span className="font-semibold text-emerald-900 min-w-24">Date Taken:</span>
+                                  <span className="text-emerald-800">{exifData.DateTime}</span>
+                                </div>
+                              )}
+                              {exifData.ISO && (
+                                <div className="flex gap-2">
+                                  <span className="font-semibold text-emerald-900 min-w-24">ISO:</span>
+                                  <span className="text-emerald-800">{exifData.ISO}</span>
+                                </div>
+                              )}
+                              {exifData.FNumber && (
+                                <div className="flex gap-2">
+                                  <span className="font-semibold text-emerald-900 min-w-24">Aperture:</span>
+                                  <span className="text-emerald-800">f/{exifData.FNumber}</span>
+                                </div>
+                              )}
+                              {exifData.ExposureTime && (
+                                <div className="flex gap-2">
+                                  <span className="font-semibold text-emerald-900 min-w-24">Shutter Speed:</span>
+                                  <span className="text-emerald-800">{exifData.ExposureTime}s</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  );
+                }
+              } catch (e) {
+                // Failed to parse EXIF
+              }
+              return null;
+            })()}
+          </div>
+        </div>
+      )}
+
+      {!result.exif_summary && result.result === 'likely_ai' && (
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-3 text-lg">📷 Camera Information</h3>
+          <div className="p-4 rounded-xl bg-amber-50 border-2 border-amber-200">
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">⚠️</div>
+              <div className="flex-1">
+                <p className="font-semibold text-amber-900 mb-2">No Camera Data Found</p>
+                <p className="text-sm text-amber-800">
+                  This image doesn't contain any camera information (EXIF data). Real photos taken with cameras or phones automatically save technical details like camera model, date, and settings. The absence of this data is common in A.I.-generated images, though it can also happen with screenshots or edited photos.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Signals Section */}
       {result.signals && result.signals.length > 0 && (
         <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-          <h3 className="font-semibold text-slate-800 mb-4 text-lg">What we found</h3>
+          <h3 className="font-semibold text-slate-800 mb-4 text-lg">🔍 What we found</h3>
           <div className="space-y-3">
             {result.signals.map((signal, index) => {
               const context = getSignalContext(signal.signal_type, signal.description, result.result === 'likely_ai');
@@ -171,18 +262,22 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="flex items-start gap-3 p-3 rounded-xl bg-slate-50"
+                  className="p-4 rounded-xl bg-slate-50 border border-slate-200"
                 >
-                  <span className={`px-2.5 py-1 rounded-full text-sm font-medium ${severityColors[signal.severity]}`}>
-                    {signal.severity}
-                  </span>
-                  <div className="flex-1">
-                    <p className="text-base font-medium text-slate-700">{signal.signal_type}</p>
-                    <p className="text-base text-slate-600 mt-1">{signal.description}</p>
-                    {context && (
-                      <p className="text-sm text-slate-500 mt-2 italic">💡 {context}</p>
-                    )}
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${severityColors[signal.severity]}`}>
+                      {signal.severity}
+                    </span>
+                    <span className="text-base font-bold text-slate-800">{signal.signal_type}</span>
                   </div>
+                  <p className="text-base text-slate-700 leading-relaxed mb-3">{signal.description}</p>
+                  {context && (
+                    <div className="pt-3 border-t border-slate-200">
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        <span className="font-semibold text-slate-700">Why this matters:</span> {context}
+                      </p>
+                    </div>
+                  )}
                 </motion.div>
               );
             })}
