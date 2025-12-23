@@ -165,27 +165,49 @@ export default function ShareCard({ result, cardRef }) {
         }}>
           {/* Result Icon and Title */}
           <div>
+            {/* Analyzed Image */}
+            {(result.file_url || result.thumbnail_url) && (
+              <div style={{
+                marginBottom: '32px',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                border: '3px solid #e2e8f0',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)'
+              }}>
+                <img 
+                  src={result.file_url || result.thumbnail_url}
+                  alt="Analyzed content"
+                  style={{
+                    width: '100%',
+                    height: '280px',
+                    objectFit: 'cover',
+                    display: 'block'
+                  }}
+                />
+              </div>
+            )}
+
             <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '20px',
-              marginBottom: '40px'
+              marginBottom: '32px'
             }}>
               <div style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '24px',
+                width: '80px',
+                height: '80px',
+                borderRadius: '20px',
                 background: config.bgGradient,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: `0 12px 30px ${config.color}40`
+                boxShadow: `0 8px 24px ${config.color}40`
               }}>
-                <span style={{ fontSize: '48px' }}>{config.emoji}</span>
+                <span style={{ fontSize: '40px' }}>{config.emoji}</span>
               </div>
               <div style={{ flex: 1 }}>
                 <h2 style={{ 
-                  fontSize: '48px', 
+                  fontSize: '40px', 
                   fontWeight: '800', 
                   color: '#0f172a',
                   margin: 0,
@@ -195,79 +217,56 @@ export default function ShareCard({ result, cardRef }) {
                   {config.title}
                 </h2>
                 <p style={{ 
-                  fontSize: '22px', 
+                  fontSize: '20px', 
                   color: '#64748b',
-                  margin: '8px 0 0 0',
+                  margin: '6px 0 0 0',
                   fontWeight: '500'
                 }}>
-                  Analysis Complete
+                  {result.confidence}% Confidence
                 </p>
               </div>
             </div>
 
-            {/* Confidence Bar */}
-            <div style={{
-              background: config.lightColor,
-              borderRadius: '20px',
-              padding: '32px',
-              marginBottom: '32px'
-            }}>
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between',
-                alignItems: 'baseline',
-                marginBottom: '16px'
-              }}>
-                <span style={{ 
-                  fontSize: '18px', 
-                  fontWeight: '600',
-                  color: '#334155'
-                }}>
-                  Confidence Level
-                </span>
-                <span style={{ 
-                  fontSize: '56px', 
-                  fontWeight: '800',
-                  color: config.darkColor,
-                  lineHeight: 1
-                }}>
-                  {result.confidence}%
-                </span>
-              </div>
-              <div style={{ 
-                height: '20px', 
-                background: 'white',
-                borderRadius: '10px',
-                overflow: 'hidden',
-                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)'
-              }}>
-                <div style={{
-                  width: `${result.confidence}%`,
-                  height: '100%',
-                  background: config.bgGradient,
-                  borderRadius: '10px',
-                  transition: 'width 1s ease-out'
-                }} />
-              </div>
-            </div>
-
-            {/* Summary */}
+            {/* Brief Summary */}
             {result.summary && (
               <div style={{
-                padding: '28px',
-                background: '#f8fafc',
+                padding: '24px',
+                background: config.lightColor,
                 borderRadius: '16px',
-                border: '2px solid #e2e8f0'
+                border: `2px solid ${config.color}30`,
+                marginBottom: '24px'
               }}>
                 <p style={{ 
-                  fontSize: '17px', 
+                  fontSize: '16px', 
                   color: '#334155',
                   margin: 0,
-                  lineHeight: 1.7,
+                  lineHeight: 1.6,
                   fontWeight: '500'
                 }}>
-                  {result.summary.length > 200 ? result.summary.substring(0, 200) + '...' : result.summary}
+                  {result.summary.length > 150 ? result.summary.substring(0, 150) + '...' : result.summary}
                 </p>
+              </div>
+            )}
+
+            {/* Key Signals Count */}
+            {result.signals && result.signals.length > 0 && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '16px 24px',
+                background: '#f8fafc',
+                borderRadius: '12px',
+                border: '2px solid #e2e8f0'
+              }}>
+                <span style={{ fontSize: '24px' }}>🔍</span>
+                <span style={{
+                  fontSize: '15px',
+                  color: '#475569',
+                  fontWeight: '600'
+                }}>
+                  {result.signals.length} detection signal{result.signals.length !== 1 ? 's' : ''} analyzed
+                </span>
               </div>
             )}
           </div>
@@ -282,23 +281,33 @@ export default function ShareCard({ result, cardRef }) {
             justifyContent: 'space-between'
           }}>
             <div style={{ 
-              fontSize: '14px', 
+              fontSize: '13px', 
               color: '#94a3b8',
               lineHeight: 1.5,
-              maxWidth: '70%'
+              maxWidth: '55%'
             }}>
               ⚡ Results may not be perfect. Always verify from multiple sources.
             </div>
             <div style={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-              padding: '12px 24px',
-              borderRadius: '12px',
-              fontSize: '15px',
-              fontWeight: '700',
-              color: 'white',
-              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              gap: '6px'
             }}>
-              Try it free →
+              <div style={{
+                fontSize: '16px',
+                fontWeight: '700',
+                color: '#6366f1'
+              }}>
+                isthis.io
+              </div>
+              <div style={{
+                fontSize: '12px',
+                color: '#94a3b8',
+                fontWeight: '500'
+              }}>
+                Free A.I. Detection Tool
+              </div>
             </div>
           </div>
         </div>
