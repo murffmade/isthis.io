@@ -51,53 +51,115 @@ const severityColors = {
 function getSignalContext(signalType, description, isAIGenerated) {
   const lowerSignal = (signalType + ' ' + description).toLowerCase();
   
-  // AI indicators
+  // AI indicators - Enhanced with more detail
   if (lowerSignal.includes('symmetry') || lowerSignal.includes('symmetric')) {
-    return 'A.I. often creates faces that are too perfectly symmetrical. Real faces have natural differences between left and right sides.';
+    return {
+      simple: 'A.I. often creates faces that are too perfectly symmetrical. Real faces have natural differences between left and right sides.',
+      detailed: 'Human faces naturally have slight asymmetries - one eye might be slightly higher, or one side of the smile might be different. A.I. generators often create perfectly mirrored faces because they\'re trained on idealized images. When we see perfect left-right symmetry, it\'s a red flag that the image was computer-generated rather than photographed.',
+      weight: 'This is a STRONG indicator of A.I. generation when present.'
+    };
   }
   if (lowerSignal.includes('skin') && (lowerSignal.includes('smooth') || lowerSignal.includes('plastic') || lowerSignal.includes('perfect'))) {
-    return 'A.I. often smooths skin too much, removing natural pores and tiny imperfections that real skin has.';
+    return {
+      simple: 'A.I. often smooths skin too much, removing natural pores and tiny imperfections that real skin has.',
+      detailed: 'Real skin has pores, fine lines, minor blemishes, and texture variations that are visible even in professional photography. A.I. tends to over-smooth skin, making it look like plastic or porcelain. This happens because A.I. models are trained to create "attractive" images, which they interpret as perfectly smooth skin.',
+      weight: 'This is a STRONG indicator when combined with other A.I. signs.'
+    };
   }
   if (lowerSignal.includes('finger') || lowerSignal.includes('hand')) {
-    return 'Hands and fingers are very difficult for A.I. to create correctly - they often have extra or missing fingers.';
+    return {
+      simple: 'Hands and fingers are very difficult for A.I. to create correctly - they often have extra or missing fingers.',
+      detailed: 'Hands are one of the hardest things for A.I. to generate because they have complex anatomy with many joints, overlapping fingers, and different angles. A.I. often creates hands with the wrong number of fingers, fingers that bend impossibly, or fingers that merge together unnaturally.',
+      weight: 'This is a VERY STRONG indicator - hand errors are almost exclusively found in A.I.-generated images.'
+    };
   }
   if (lowerSignal.includes('background') && (lowerSignal.includes('melt') || lowerSignal.includes('incoher') || lowerSignal.includes('blur'))) {
-    return 'A.I. often struggles with background details, creating blurry or strange edges around the subject.';
+    return {
+      simple: 'A.I. often struggles with background details, creating blurry or strange edges around the subject.',
+      detailed: 'A.I. generators focus most of their processing power on the main subject (like a face), which means backgrounds often become distorted, blurry, or "melted" looking. You might see objects that don\'t make sense, edges that fade unnaturally, or patterns that suddenly change. Real photos maintain consistent detail throughout.',
+      weight: 'This is a MODERATE to STRONG indicator depending on severity.'
+    };
   }
   if (lowerSignal.includes('lighting') && lowerSignal.includes('inconsistent')) {
-    return 'Real photos have light coming from one direction. A.I. sometimes creates impossible lighting from multiple sources.';
+    return {
+      simple: 'Real photos have light coming from one direction. A.I. sometimes creates impossible lighting from multiple sources.',
+      detailed: 'In real photography, light follows physics - shadows fall in one direction, highlights match the light source, and reflections are consistent. A.I. sometimes creates lighting that\'s physically impossible, like shadows pointing different directions or faces lit from multiple angles that don\'t exist in the scene.',
+      weight: 'This is a STRONG indicator when clearly impossible lighting is present.'
+    };
   }
   if (lowerSignal.includes('text') || lowerSignal.includes('letter') || lowerSignal.includes('garbled')) {
-    return 'A.I. frequently creates nonsensical or scrambled text in images - it can\'t spell properly yet.';
+    return {
+      simple: 'A.I. frequently creates nonsensical or scrambled text in images - it can\'t spell properly yet.',
+      detailed: 'A.I. image generators struggle with text because they don\'t understand language - they only see text as visual patterns. This results in gibberish letters, words that look almost right but aren\'t real, or text that changes mid-word. Real photos capture actual readable text from signs, books, or screens.',
+      weight: 'This is a VERY STRONG indicator - garbled text is nearly always A.I.-generated.'
+    };
   }
   if (lowerSignal.includes('repetitive') || lowerSignal.includes('pattern')) {
-    return 'A.I. sometimes creates unnatural repeating patterns, especially in backgrounds or textures.';
+    return {
+      simple: 'A.I. sometimes creates unnatural repeating patterns, especially in backgrounds or textures.',
+      detailed: 'A.I. can get "stuck" in repetitive patterns, especially in less important areas like backgrounds or textures. You might see the same pattern repeated too perfectly, or elements that look copy-pasted. Real environments have natural randomness and variation.',
+      weight: 'This is a MODERATE indicator - can also occur in some real images with wallpaper or tiles.'
+    };
   }
   if (lowerSignal.includes('teeth') && lowerSignal.includes('perfect')) {
-    return 'Real teeth have natural variations in color and alignment. A.I. often makes them too uniform and perfect.';
+    return {
+      simple: 'Real teeth have natural variations in color and alignment. A.I. often makes them too uniform and perfect.',
+      detailed: 'Real teeth have slight color variations, natural imperfections in alignment, and realistic translucency. A.I. often generates teeth that look like perfect white blocks, all exactly the same size and perfectly aligned - like cartoon teeth rather than real human teeth.',
+      weight: 'This is a MODERATE to STRONG indicator when very obvious.'
+    };
   }
   
-  // Real indicators
+  // Real indicators - Enhanced with more detail
   if (lowerSignal.includes('exif') || lowerSignal.includes('metadata')) {
-    return 'Camera information is automatically saved in real photos taken with cameras or phones. A.I. images typically don\'t have this.';
+    return {
+      simple: 'Camera information is automatically saved in real photos taken with cameras or phones. A.I. images typically don\'t have this.',
+      detailed: 'When you take a photo with a camera or smartphone, it automatically saves hidden information (called metadata) about the camera model, settings, date, and sometimes location. A.I.-generated images don\'t have this data because they weren\'t taken by a camera - they were created by software. Finding this metadata is strong evidence of a real photo.',
+      weight: 'This is a STRONG indicator of authenticity when present and verified.'
+    };
   }
   if (lowerSignal.includes('compression') || lowerSignal.includes('artifact') || lowerSignal.includes('jpeg')) {
-    return 'Real photos have natural compression patterns from how cameras save images. A.I. images often lack these technical fingerprints.';
+    return {
+      simple: 'Real photos have natural compression patterns from how cameras save images. A.I. images often lack these technical fingerprints.',
+      detailed: 'Cameras compress images in specific ways that leave distinctive patterns at the pixel level. These compression "fingerprints" are consistent across the whole image in real photos. A.I.-generated images often lack these patterns or have inconsistent compression that reveals they weren\'t captured by a camera.',
+      weight: 'This is a STRONG technical indicator when properly analyzed.'
+    };
   }
   if (lowerSignal.includes('pore') || lowerSignal.includes('texture') && lowerSignal.includes('natural')) {
-    return 'Visible skin pores and natural texture are signs of authentic photography - A.I. often misses these tiny details.';
+    return {
+      simple: 'Visible skin pores and natural texture are signs of authentic photography - A.I. often misses these tiny details.',
+      detailed: 'Real skin has visible pores, fine lines, and texture that\'s consistent across the face. These microscopic details are hard for A.I. to replicate correctly. When you can see natural skin texture with realistic pores, it\'s a good sign the image is authentic.',
+      weight: 'This is a MODERATE to STRONG indicator supporting authenticity.'
+    };
   }
   if (lowerSignal.includes('asymmetr') && !lowerSignal.includes('lack')) {
-    return 'Natural facial asymmetry (one side slightly different from the other) is a strong sign of a real photo.';
+    return {
+      simple: 'Natural facial asymmetry (one side slightly different from the other) is a strong sign of a real photo.',
+      detailed: 'Every real human face is slightly asymmetric - we all have small differences between our left and right sides. These natural asymmetries are captured in real photos. When we detect realistic facial asymmetry with natural-looking imperfections, it strongly suggests the image is authentic.',
+      weight: 'This is a STRONG indicator supporting authenticity.'
+    };
   }
-  if (lowerSignal.includes('motion blur') || lowerSignal.includes('focus')) {
-    return 'Natural camera blur and focus effects come from real camera lenses - A.I. often gets this wrong.';
+  
+  // Video-specific indicators
+  if (lowerSignal.includes('temporal') || lowerSignal.includes('frame') && lowerSignal.includes('inconsisten')) {
+    return {
+      simple: 'Objects or details that appear, disappear, or change unnaturally between frames suggest A.I. generation or manipulation.',
+      detailed: 'In real videos, objects move smoothly and consistently from one frame to the next following the laws of physics. A.I.-generated videos sometimes have objects that suddenly appear, disappear, or change shape between frames because each frame is generated somewhat independently.',
+      weight: 'This is a STRONG indicator in video analysis.'
+    };
   }
-  if (lowerSignal.includes('wrinkle') || lowerSignal.includes('wear') || lowerSignal.includes('imperfection')) {
-    return 'Physical wear and natural imperfections are signs of real objects and people - A.I. tends to make things too perfect.';
+  if (lowerSignal.includes('scene') && lowerSignal.includes('shift')) {
+    return {
+      simple: 'Sudden changes in visual style or quality within a video can indicate different parts were generated separately.',
+      detailed: 'When different parts of a video look like they were made with different tools or styles, it suggests the video was pieced together from multiple A.I. generations. Real videos maintain consistent lighting, color grading, and visual quality throughout unless there\'s an obvious cut or transition.',
+      weight: 'This is a MODERATE to STRONG indicator depending on the abruptness of changes.'
+    };
   }
-  if (lowerSignal.includes('chromatic aberration') || lowerSignal.includes('lens distortion')) {
-    return 'Real camera lenses create subtle color fringing and warping at the edges that A.I. typically doesn\'t replicate.';
+  if (lowerSignal.includes('blink') || lowerSignal.includes('eye') && lowerSignal.includes('movement')) {
+    return {
+      simple: 'Unnatural or absent blinking patterns are a major deepfake indicator - humans naturally blink 15-20 times per minute.',
+      detailed: 'Real people blink regularly and naturally, with the blink happening quickly and affecting the whole face slightly. Deepfakes often show too little blinking, too much blinking, or blinking that looks mechanical. Some deepfakes also show eyes that don\'t move naturally or don\'t react to light changes.',
+      weight: 'This is a VERY STRONG indicator of deepfake manipulation.'
+    };
   }
   
   return null; // No additional context
@@ -592,10 +654,25 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                         </div>
                         <p className="text-base text-slate-700 leading-relaxed mb-3">{signal.description}</p>
                         {context && (
-                          <div className="pt-3 border-t border-slate-200">
-                            <p className="text-sm text-slate-600 leading-relaxed">
-                              <span className="font-semibold text-slate-700">Why this matters:</span> {context}
-                            </p>
+                          <div className="pt-3 border-t border-slate-200 space-y-3">
+                            <div>
+                              <p className="text-sm text-slate-600 leading-relaxed">
+                                <span className="font-semibold text-slate-700">🔍 Quick explanation:</span> {context.simple}
+                              </p>
+                            </div>
+                            {context.detailed && (
+                              <div className="bg-white p-3 rounded-lg">
+                                <p className="text-sm text-slate-600 leading-relaxed">
+                                  <span className="font-semibold text-slate-700">📚 Detailed breakdown:</span> {context.detailed}
+                                </p>
+                              </div>
+                            )}
+                            {context.weight && (
+                              <div className="flex items-start gap-2 text-xs text-slate-500">
+                                <span className="font-semibold">⚖️ Reliability:</span>
+                                <span>{context.weight}</span>
+                              </div>
+                            )}
                           </div>
                         )}
                       </motion.div>
@@ -641,43 +718,120 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
         </div>
       )}
 
-      {/* Summary */}
+      {/* Summary & Decision Process */}
       {result.summary && (
         <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-          <h3 className="font-semibold text-slate-800 mb-3">Summary</h3>
-          <p className="text-slate-600 leading-relaxed">{result.summary}</p>
+          <h3 className="font-semibold text-slate-800 mb-3 text-lg">📝 Analysis Summary</h3>
+          <p className="text-slate-600 leading-relaxed mb-4">{result.summary}</p>
+
+          {/* Understanding the Decision */}
+          <div className="mt-6 pt-6 border-t border-slate-100">
+            <h4 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+              <span>🧠</span> How We Made This Decision
+            </h4>
+            <div className="space-y-3 text-sm text-slate-600">
+              <p className="leading-relaxed">
+                Our A.I. detection system analyzes {result.content_type === 'video' ? 'multiple frames and technical video properties' : 'multiple regions of the image and technical properties'} looking for patterns that distinguish real content from A.I.-generated content.
+              </p>
+
+              {result.content_type === 'video' ? (
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                  <p className="font-semibold text-slate-700 mb-2">For videos, we look at:</p>
+                  <ul className="space-y-1 ml-4">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-600 mt-1">•</span>
+                      <span><strong>Frame-by-frame consistency:</strong> Real videos show smooth, natural progression. A.I. videos often have objects that flicker or change unnaturally between frames.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-600 mt-1">•</span>
+                      <span><strong>Technical metadata:</strong> File size, bitrate, and encoding patterns can reveal if a video was generated rather than recorded.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-600 mt-1">•</span>
+                      <span><strong>Deepfake indicators:</strong> Unnatural blinking, face boundaries that don't match the background, and facial movements that don't sync properly.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-600 mt-1">•</span>
+                      <span><strong>Scene consistency:</strong> Style or quality changes within the video can indicate different parts were generated separately.</span>
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                  <p className="font-semibold text-slate-700 mb-2">For images, we examine:</p>
+                  <ul className="space-y-1 ml-4">
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 mt-1">•</span>
+                      <span><strong>Camera data:</strong> Real photos contain technical information from the camera. A.I. images typically don't.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 mt-1">•</span>
+                      <span><strong>Multiple image regions:</strong> We analyze different parts independently. A.I. artifacts often appear in some areas but not others.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 mt-1">•</span>
+                      <span><strong>Pixel-level patterns:</strong> Compression artifacts, noise patterns, and color distributions differ between real photos and A.I. generations.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 mt-1">•</span>
+                      <span><strong>Visual artifacts:</strong> Common A.I. tells like impossible anatomy, perfect symmetry, or unnatural textures.</span>
+                    </li>
+                  </ul>
+                </div>
+              )}
+
+              <p className="leading-relaxed mt-4">
+                <span className="font-semibold text-slate-700">Our confidence in this result:</span> Each piece of evidence we find has different reliability. We weight stronger indicators (like impossible hand anatomy or camera data) more heavily than weaker ones (like slight compression differences). The signals we found led us to classify this as <span className="font-bold">{config.title}</span>.
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
       {/* How We Scored This */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-        <h3 className="font-semibold text-slate-800 mb-3">How We Scored This</h3>
-        <div className="space-y-3 text-sm text-slate-600">
-          <p>
-            Our system gives each image a score between 0 and 100:
-          </p>
-          <ul className="space-y-2 ml-4">
-            <li className="flex items-start gap-2">
-              <span className="text-emerald-600 font-bold">•</span>
-              <span><strong>Likely Real (0-42):</strong> Shows strong signs of being authentic, like camera information, natural imperfections, and realistic lighting.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-amber-600 font-bold">•</span>
-              <span><strong>Likely A.I. (58-100):</strong> Shows typical computer-generated patterns, like overly perfect symmetry, unnatural smoothness, or impossible details.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-slate-600 font-bold">•</span>
-              <span><strong>Uncertain (43-57):</strong> Mixed signals or not enough clear evidence to make a confident determination.</span>
-            </li>
-          </ul>
+        <h3 className="font-semibold text-slate-800 mb-3 text-lg">📊 Understanding the Score</h3>
+        <div className="space-y-4 text-sm text-slate-600">
+          <div className="bg-slate-50 p-4 rounded-lg">
+            <p className="leading-relaxed">
+              Our system analyzes {result.content_type === 'video' ? 'each frame and technical metadata' : 'multiple regions and technical data'} to generate a score between 0 and 100. This score represents how much the content resembles typical A.I.-generated patterns versus authentic {result.content_type === 'video' ? 'footage' : 'photography'}.
+            </p>
+          </div>
+
+          <div className="grid gap-3">
+            <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+              <span className="text-2xl">✓</span>
+              <div>
+                <div className="font-bold text-emerald-800 mb-1">Likely Real (0-42)</div>
+                <p className="text-sm text-emerald-700">Strong evidence of authenticity: camera data present, natural imperfections, realistic physics, consistent compression patterns.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span className="text-2xl">❓</span>
+              <div>
+                <div className="font-bold text-slate-700 mb-1">Uncertain (43-57)</div>
+                <p className="text-sm text-slate-600">Mixed or insufficient evidence. Could be heavily edited real content, artistic styling, or high-quality A.I. generation.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <div className="font-bold text-amber-800 mb-1">Likely A.I. (58-100)</div>
+                <p className="text-sm text-amber-700">Multiple A.I. indicators detected: impossible anatomy, perfect symmetry, unnatural smoothness, missing camera data, or physical impossibilities.</p>
+              </div>
+            </div>
+          </div>
+
           {result.score && (
             <div className="pt-4 border-t border-slate-100">
-              <p className="font-semibold text-slate-900 mb-3">
-                This image scored: {result.score}/100
+              <p className="font-semibold text-slate-900 mb-3 text-base">
+                This {result.content_type === 'video' ? 'video' : 'image'} scored: {result.score}/100
               </p>
 
               {/* Visual Score Bar */}
-              <div className="relative">
+              <div className="relative mb-12">
                 <div className="flex justify-between text-xs font-medium mb-2">
                   <span className="text-emerald-600">Real</span>
                   <span className="text-amber-600">A.I.</span>
@@ -701,26 +855,95 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                 </div>
               </div>
 
-              <div className="text-slate-600 mt-6 space-y-3">
+              <div className="text-slate-600 space-y-4">
                 {result.score >= 58 && (
-                  <div>
-                    <p className="font-semibold text-slate-900 mb-2">⚠️ Why this score suggests A.I. generation:</p>
-                    <p className="mb-2">This image scored in the "Likely A.I." range because our analysis found patterns commonly seen in computer-generated images.</p>
-                    <p className="text-sm">
-                      Scores above 58 typically mean we detected multiple indicators like: overly perfect symmetry, unnaturally smooth textures, impossible lighting, anatomical errors, or missing camera information that real photos have. The higher the score (closer to 100), the more confident we are it was created by A.I.
-                    </p>
+                  <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                    <p className="font-semibold text-amber-900 mb-3">⚠️ Why this score suggests A.I. generation:</p>
+                    <div className="space-y-2 text-sm">
+                      <p>Our analysis found multiple patterns that are characteristic of A.I.-generated content:</p>
+                      <ul className="space-y-1 ml-4 mt-2">
+                        {result.signals && result.signals.filter(s => s.severity === 'high').length > 0 && (
+                          <li className="flex items-start gap-2">
+                            <span className="text-amber-600 mt-1">•</span>
+                            <span><strong>{result.signals.filter(s => s.severity === 'high').length} high-severity indicators</strong> found (like impossible anatomy or garbled text)</span>
+                          </li>
+                        )}
+                        {!result.exif_summary && result.content_type !== 'video' && (
+                          <li className="flex items-start gap-2">
+                            <span className="text-amber-600 mt-1">•</span>
+                            <span>No camera data found (real photos almost always have this)</span>
+                          </li>
+                        )}
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-600 mt-1">•</span>
+                          <span>The higher the score (closer to 100), the more confident we are in A.I. generation</span>
+                        </li>
+                      </ul>
+                      <p className="mt-3 text-amber-800">
+                        <strong>What this means:</strong> The evidence strongly suggests this {result.content_type} was created or significantly altered by A.I., not captured by a camera.
+                      </p>
+                    </div>
                   </div>
                 )}
                 {result.score <= 42 && (
-                  <p>✓ This score indicates the image appears to be authentic.</p>
+                  <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+                    <p className="font-semibold text-emerald-900 mb-3">✓ Why this score suggests authenticity:</p>
+                    <div className="space-y-2 text-sm">
+                      <p>Our analysis found multiple indicators of authentic {result.content_type === 'video' ? 'footage' : 'photography'}:</p>
+                      <ul className="space-y-1 ml-4 mt-2">
+                        {result.exif_summary && (
+                          <li className="flex items-start gap-2">
+                            <span className="text-emerald-600 mt-1">•</span>
+                            <span><strong>Camera data present</strong> (strong authenticity indicator)</span>
+                          </li>
+                        )}
+                        {result.signals && result.signals.filter(s => s.signal_type.toLowerCase().includes('natural') || s.signal_type.toLowerCase().includes('real')).length > 0 && (
+                          <li className="flex items-start gap-2">
+                            <span className="text-emerald-600 mt-1">•</span>
+                            <span>Natural imperfections and realistic details detected</span>
+                          </li>
+                        )}
+                        <li className="flex items-start gap-2">
+                          <span className="text-emerald-600 mt-1">•</span>
+                          <span>Few or no typical A.I. generation patterns found</span>
+                        </li>
+                      </ul>
+                      <p className="mt-3 text-emerald-800">
+                        <strong>What this means:</strong> The evidence suggests this is authentic {result.content_type === 'video' ? 'video footage' : 'photography'}, not A.I.-generated.
+                      </p>
+                    </div>
+                  </div>
                 )}
                 {result.score > 42 && result.score < 58 && (
-                  <div>
-                    <p className="font-semibold text-slate-900 mb-2">❓ Why this score is uncertain:</p>
-                    <p className="mb-2">This image scored in the "Uncertain" range because we found mixed evidence - some signs suggesting it's real and others suggesting A.I. generation.</p>
-                    <p className="text-sm">
-                      This can happen with heavily edited real photos, artistic images, professional photography with lots of post-processing, or very high-quality A.I. images. Scores between 43-57 mean we cannot make a confident determination either way. We recommend checking other sources or looking for additional context about where this image came from.
-                    </p>
+                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <p className="font-semibold text-slate-900 mb-3">❓ Why this score is uncertain:</p>
+                    <div className="space-y-2 text-sm">
+                      <p>Our analysis found conflicting evidence - some indicators suggesting authenticity, others suggesting A.I. generation.</p>
+                      <div className="bg-white p-3 rounded mt-3">
+                        <p className="font-semibold text-slate-700 mb-2">This uncertainty could mean:</p>
+                        <ul className="space-y-1 ml-4">
+                          <li className="flex items-start gap-2">
+                            <span className="text-slate-600 mt-1">•</span>
+                            <span>Real {result.content_type} with heavy editing or artistic filters applied</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-slate-600 mt-1">•</span>
+                            <span>Professional photography with extensive post-processing</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-slate-600 mt-1">•</span>
+                            <span>Very high-quality A.I. generation that's hard to detect</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-slate-600 mt-1">•</span>
+                            <span>Hybrid content (real {result.content_type} with A.I. enhancements)</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <p className="mt-3 text-slate-700">
+                        <strong>What this means:</strong> We cannot make a confident determination. Consider the source and context of this {result.content_type} when evaluating its authenticity.
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
