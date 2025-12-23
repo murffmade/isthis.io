@@ -79,7 +79,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
               transition={{ duration: 0.8, delay: 0.2 }}
               className={`h-full rounded-full ${
                 result.result === 'likely_real' ? 'bg-emerald-500' :
-                result.result === 'likely_ai' ? 'bg-amber-500' : 'bg-orange-500'
+                result.result === 'likely_ai' ? 'bg-amber-500' : 'bg-slate-400'
               }`}
             />
           </div>
