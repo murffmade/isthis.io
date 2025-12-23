@@ -140,30 +140,77 @@ Provide a thorough but accessible analysis.`,
         console.warn('Forensics API failed:', err);
       }
 
-      // Step 4: LLM analysis with patches
+      // Step 4: Enhanced LLM analysis with sophisticated prompt
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
       const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `SYSTEM ROLE:
-You are the AI Detection Engine for "Is This Real" (Enhanced v2).
-Your job is to determine whether an image is AI-generated or authentic, with special focus on hyper-realistic lifestyle, editorial, and personal-photo-style images.
+        prompt: `SYSTEM IDENTITY:
+You are the Advanced AI Detection Engine v2.5 for "Is This Real" - a critical infrastructure tool for identifying AI-generated imagery.
 
-ANALYSIS PIPELINE:
-1. Classify image type (Lifestyle/Personal/Outdoor/Animal/Studio/Other)
-2. Analyze composition & symmetry
-3. Check human face & skin rendering
-4. Score material entropy (fabric, accessories, wear)
-5. Assess lighting & shadow physics
-6. Evaluate human-object/animal interactions
-7. Check animal anatomy (if applicable)
-8. Review metadata context
+CRITICAL DIRECTIVE:
+Your PRIMARY OBJECTIVE is to make DECISIVE classifications. Uncertainty should ONLY be used when evidence is genuinely contradictory or absent. Most images have clear indicators - trust your analysis.
 
-The first image is the FULL image. The remaining ${patchUrls.length} images are PATCHES (crops) from different regions.
-Vote on EACH PATCH independently, then provide overall analysis.
+KEY PHILOSOPHY:
+- Real photos have natural imperfections, wear, entropy, and camera artifacts
+- AI images tend toward perfection, uniformity, and lack of physical realism
+- Be CONFIDENT in your assessments when evidence supports them
 
-EXIF Summary: ${exifData ? JSON.stringify(exifData) : 'No EXIF data'}
-Forensics Summary: ${forensicsData ? JSON.stringify(forensicsData) : 'No forensics data'}
+ANALYSIS FRAMEWORK:
 
-Output comprehensive analysis with patch voting.`,
+1. IMAGE TYPE CLASSIFICATION (crucial context):
+   - Personal/Phone Photo: Look for natural wear, realistic interactions, authentic moments
+   - Professional/Editorial: Assess lighting physics, material realism, compositional authenticity
+   - Product/Commercial: Check for physical consistency, material properties, realistic shadows
+   - Wildlife/Nature: Evaluate animal anatomy, natural behavior, environmental coherence
+   - Portrait/Studio: Analyze skin texture, hair detail, clothing physics, eye authenticity
+
+2. PRIMARY AUTHENTICITY MARKERS (for REAL images):
+   - EXIF metadata presence and consistency
+   - Natural image compression artifacts
+   - Realistic lens distortion and chromatic aberration
+   - Authentic motion blur or focus patterns
+   - Physical wear on objects (scuffs, wrinkles, asymmetry)
+   - Genuine human microexpressions and imperfect symmetry
+   - Environmental consistency (light source, shadows, reflections)
+   - Material entropy (fabric texture, surface irregularities)
+   - Natural color grading and tone mapping
+
+3. PRIMARY AI INDICATORS (for AI-GENERATED images):
+   - Overly perfect symmetry (especially faces)
+   - Unnatural smoothness or plastic-like skin
+   - Anatomical impossibilities (extra fingers, merged limbs)
+   - Background incoherence or "melted" elements
+   - Lighting that defies physics (multiple shadows, inconsistent directionality)
+   - Repetitive patterns or textures
+   - Uncanny valley facial expressions
+   - Impossible reflections or refractions
+   - Text/signage with garbled letters
+   - Floating or disconnected objects
+
+4. MULTI-REGION PATCH ANALYSIS:
+   The first image is the FULL image.
+   The remaining ${patchUrls.length} images are PATCHES from different regions.
+   
+   VOTING INSTRUCTIONS:
+   - Analyze EACH PATCH independently and decisively
+   - Vote "likely_real" if the patch shows authentic characteristics
+   - Vote "likely_ai" if the patch shows AI generation artifacts
+   - Vote "uncertain" ONLY if the patch genuinely lacks distinguishing features
+   - Provide high confidence (70-95%) when evidence is clear
+   - Provide medium confidence (50-69%) when evidence is suggestive but not definitive
+   - Provide low confidence (<50%) only when genuinely ambiguous
+
+5. METADATA CONTEXT:
+   EXIF Data: ${exifData ? JSON.stringify(exifData, null, 2) : 'None (WARNING: absence suggests screenshot/AI, but not conclusive)'}
+   Forensics Data: ${forensicsData ? JSON.stringify(forensicsData, null, 2) : 'Not available'}
+
+DECISION GUIDELINES:
+- If 60%+ patches vote the same way with high confidence → COMMIT to that classification
+- If EXIF metadata present + patches show realism → STRONGLY favor "likely_real"
+- If no EXIF + multiple AI artifacts → STRONGLY favor "likely_ai"
+- Reserve "uncertain" for TRULY ambiguous cases (contradictory evidence, minimal visible content)
+
+OUTPUT REQUIREMENTS:
+Provide comprehensive patch voting with decisive classifications and justified confidence scores.`,
         file_urls: allImageUrls,
         response_json_schema: {
           type: "object",
@@ -177,6 +224,7 @@ Output comprehensive analysis with patch voting.`,
                   patch_id: { type: "string" },
                   vote: { type: "string", enum: ["likely_real", "likely_ai", "uncertain"] },
                   confidence: { type: "number" },
+                  reasoning: { type: "string" },
                   signals: {
                     type: "array",
                     items: {
@@ -191,9 +239,8 @@ Output comprehensive analysis with patch voting.`,
                 }
               }
             },
-            provenance_summary: { type: "string" },
-            forensics_summary: { type: "string" },
-            recommended_next_actions: {
+            overall_assessment: { type: "string" },
+            key_findings: {
               type: "array",
               items: { type: "string" }
             },
@@ -216,12 +263,29 @@ Output comprehensive analysis with patch voting.`,
         }
       });
 
-      // Step 5: Ensemble scoring
+      // Step 5: Enhanced ensemble scoring with provenance
       const llmScore = deriveLlmScoreFromPatchVotes(analysisResult.patch_votes);
+      
+      // Enhanced provenance scoring
+      let provenanceScore = null;
+      if (exifData) {
+        // More sophisticated EXIF evaluation
+        const hasCameraInfo = exifData.Make || exifData.Model;
+        const hasGPS = exifData.GPSLatitude || exifData.GPSLongitude;
+        const hasTimestamp = exifData.DateTime || exifData.DateTimeOriginal;
+        
+        let score = 25; // Base score for EXIF presence
+        if (hasCameraInfo) score -= 10; // Camera info suggests real
+        if (hasGPS) score -= 5;
+        if (hasTimestamp) score -= 5;
+        
+        provenanceScore = { score: Math.max(5, score) }; // 5-25 range (lower = more real)
+      }
+      
       const ensemble = ensembleDecision({
         llm: llmScore,
         forensics: forensicsData,
-        provenance: exifData ? { score: 30 } : null
+        provenance: provenanceScore
       });
 
       // Override with ensemble decision
@@ -229,7 +293,8 @@ Output comprehensive analysis with patch voting.`,
         ...analysisResult,
         result: ensemble.result,
         confidence: ensemble.confidence,
-        score: ensemble.score
+        score: ensemble.score,
+        patch_votes: analysisResult.patch_votes
       };
 
       // Step 6: Save to database
