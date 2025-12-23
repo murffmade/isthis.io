@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import html2canvas from 'html2canvas';
 import ShareCard from './ShareCard';
+import TrainerFeedback from './TrainerFeedback';
+import { base44 } from '@/api/base44Client';
 
 const resultConfig = {
   likely_real: {
@@ -170,9 +172,19 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareGenerated, setShareGenerated] = useState(false);
+  const [user, setUser] = useState(null);
   const config = resultConfig[result.result] || resultConfig.uncertain;
   const Icon = config.icon;
   const showActionButton = result.result === 'likely_ai' && result.claims_to_be_real;
+
+  React.useEffect(() => {
+    // Check if user is a trainer
+    base44.auth.me().then(currentUser => {
+      setUser(currentUser);
+    }).catch(() => {
+      setUser(null);
+    });
+  }, []);
 
   return (
     <motion.div
