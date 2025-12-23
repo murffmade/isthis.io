@@ -13,16 +13,20 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
   
   const totalVotes = patchVotes.length;
   const aiRatio = aiVotes / totalVotes;
+  const realRatio = realVotes / totalVotes;
   const avgConfidence = patchVotes.reduce((sum, p) => sum + (p.confidence || 50), 0) / totalVotes;
   
-  // Conservative scoring: AI bias if patches disagree
+  // More decisive scoring
   let score;
   if (aiVotes > realVotes) {
-    score = 50 + (aiRatio * 50); // 50-100
+    // More AI votes: scale more aggressively toward AI
+    score = 50 + (aiRatio * 50);
   } else if (realVotes > aiVotes) {
-    score = (1 - aiRatio) * 50; // 0-50
+    // More real votes: scale more aggressively toward Real
+    score = 50 - (realRatio * 50);
   } else {
-    score = 50; // Tie = uncertain
+    // Tie = uncertain
+    score = 50;
   }
   
   return { score: Math.round(score), confidence: Math.round(avgConfidence) };
@@ -30,9 +34,9 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
 
 export function ensembleDecision({ llm, forensics, provenance }) {
   const weights = {
-    llm: 0.5,
-    forensics: 0.3,
-    provenance: 0.2
+    llm: 0.6,        // Increased LLM weight when it's the primary signal
+    forensics: 0.25,
+    provenance: 0.15
   };
   
   let weightedScore = llm.score * weights.llm;
@@ -50,19 +54,23 @@ export function ensembleDecision({ llm, forensics, provenance }) {
   
   const finalScore = Math.round(weightedScore / totalWeight);
   
-  // Conservative thresholds
+  // Wider, more decisive thresholds
   let result;
   let confidence;
   
-  if (finalScore >= 65) {
+  if (finalScore >= 60) {
+    // Likely AI
     result = 'likely_ai';
-    confidence = Math.min(95, 50 + (finalScore - 65) * 1.3);
-  } else if (finalScore <= 35) {
+    confidence = Math.min(95, 40 + (finalScore - 60) * 1.5);
+  } else if (finalScore <= 40) {
+    // Likely Real
     result = 'likely_real';
-    confidence = Math.min(95, 50 + (35 - finalScore) * 1.3);
+    confidence = Math.min(95, 40 + (40 - finalScore) * 1.5);
   } else {
+    // Uncertain - narrower band (40-60)
     result = 'uncertain';
-    confidence = Math.max(40, 100 - Math.abs(finalScore - 50) * 2);
+    // Low confidence for uncertain results
+    confidence = Math.max(20, 40 - Math.abs(finalScore - 50) * 2);
   }
   
   return {
