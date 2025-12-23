@@ -37,6 +37,62 @@ const severityColors = {
   high: 'bg-red-100 text-red-700'
 };
 
+// Helper function to add contextual explanations
+function getSignalContext(signalType, description, isAIGenerated) {
+  const lowerSignal = (signalType + ' ' + description).toLowerCase();
+  
+  // AI indicators
+  if (lowerSignal.includes('symmetry') || lowerSignal.includes('symmetric')) {
+    return 'AI often creates faces that are too symmetrical. Real faces have natural asymmetries.';
+  }
+  if (lowerSignal.includes('skin') && (lowerSignal.includes('smooth') || lowerSignal.includes('plastic') || lowerSignal.includes('perfect'))) {
+    return 'AI often smooths skin too perfectly, removing natural pores and subtle imperfections.';
+  }
+  if (lowerSignal.includes('finger') || lowerSignal.includes('hand')) {
+    return 'Hands and fingers are notoriously difficult for AI to generate correctly.';
+  }
+  if (lowerSignal.includes('background') && (lowerSignal.includes('melt') || lowerSignal.includes('incoher') || lowerSignal.includes('blur'))) {
+    return 'AI often struggles with background details, creating soft or inconsistent edges.';
+  }
+  if (lowerSignal.includes('lighting') && lowerSignal.includes('inconsistent')) {
+    return 'Real photos have consistent lighting from identifiable sources. AI can mix multiple impossible light sources.';
+  }
+  if (lowerSignal.includes('text') || lowerSignal.includes('letter') || lowerSignal.includes('garbled')) {
+    return 'AI frequently generates nonsensical or garbled text in images.';
+  }
+  if (lowerSignal.includes('repetitive') || lowerSignal.includes('pattern')) {
+    return 'AI can create unnatural repeating patterns, especially in backgrounds or textures.';
+  }
+  if (lowerSignal.includes('teeth') && lowerSignal.includes('perfect')) {
+    return 'Real teeth have natural variations in color and alignment. AI often makes them too uniform.';
+  }
+  
+  // Real indicators
+  if (lowerSignal.includes('exif') || lowerSignal.includes('metadata')) {
+    return 'Camera metadata (EXIF) is typically present in real photos taken with cameras or phones.';
+  }
+  if (lowerSignal.includes('compression') || lowerSignal.includes('artifact') || lowerSignal.includes('jpeg')) {
+    return 'Real photos show natural compression patterns from cameras. AI images often lack these.';
+  }
+  if (lowerSignal.includes('pore') || lowerSignal.includes('texture') && lowerSignal.includes('natural')) {
+    return 'Visible skin pores and natural texture are signs of authentic photography.';
+  }
+  if (lowerSignal.includes('asymmetr') && !lowerSignal.includes('lack')) {
+    return 'Natural facial asymmetry is a strong indicator of real photography.';
+  }
+  if (lowerSignal.includes('motion blur') || lowerSignal.includes('focus')) {
+    return 'Natural camera blur and focus patterns come from real lens physics.';
+  }
+  if (lowerSignal.includes('wrinkle') || lowerSignal.includes('wear') || lowerSignal.includes('imperfection')) {
+    return 'Physical wear and natural imperfections are hallmarks of real-world objects and people.';
+  }
+  if (lowerSignal.includes('chromatic aberration') || lowerSignal.includes('lens distortion')) {
+    return 'Real camera lenses create subtle optical artifacts that AI typically doesn\'t replicate.';
+  }
+  
+  return null; // No additional context
+}
+
 export default function ResultCard({ result, onTakeAction, onStartOver }) {
   const [showShareModal, setShowShareModal] = useState(false);
   const config = resultConfig[result.result] || resultConfig.uncertain;
@@ -91,23 +147,29 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
         <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
           <h3 className="font-semibold text-slate-800 mb-4">What we found</h3>
           <div className="space-y-3">
-            {result.signals.map((signal, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex items-start gap-3 p-3 rounded-xl bg-slate-50"
-              >
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${severityColors[signal.severity]}`}>
-                  {signal.severity}
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-slate-700">{signal.signal_type}</p>
-                  <p className="text-sm text-slate-500">{signal.description}</p>
-                </div>
-              </motion.div>
-            ))}
+            {result.signals.map((signal, index) => {
+              const context = getSignalContext(signal.signal_type, signal.description, result.result === 'likely_ai');
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-slate-50"
+                >
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${severityColors[signal.severity]}`}>
+                    {signal.severity}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-700">{signal.signal_type}</p>
+                    <p className="text-sm text-slate-500">{signal.description}</p>
+                    {context && (
+                      <p className="text-xs text-slate-400 mt-1 italic">💡 {context}</p>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       )}
