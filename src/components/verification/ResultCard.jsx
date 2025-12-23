@@ -23,6 +23,14 @@ const resultConfig = {
     borderColor: 'border-amber-200',
     description: 'This content shows signs of being created or modified by AI.'
   },
+  likely_deepfake: {
+    icon: AlertTriangle,
+    title: 'Likely Deepfake',
+    color: 'text-red-600',
+    bgColor: 'bg-red-50',
+    borderColor: 'border-red-200',
+    description: 'This content shows signs of being a deepfake - manipulated video with face swapping or synthetic generation.'
+  },
   uncertain: {
     icon: HelpCircle,
     title: 'Uncertain',
@@ -132,34 +140,175 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
 
       {/* Video-specific info */}
       {result.content_type === 'video' && result.forensics && (
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-6 mb-6">
-          <h3 className="font-semibold text-slate-800 mb-3 text-lg flex items-center gap-2">
-            <span>🎬</span> Video Analysis Summary
-          </h3>
-          <div className="space-y-3 text-sm">
-            <div className="flex justify-between items-center p-3 bg-white rounded-xl">
-              <span className="text-slate-600">Video Duration:</span>
-              <span className="font-semibold text-slate-900">{result.forensics.video_duration?.toFixed(1)}s</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-white rounded-xl">
-              <span className="text-slate-600">Frames Analyzed:</span>
-              <span className="font-semibold text-slate-900">{result.forensics.frames_analyzed}</span>
-            </div>
-            {result.forensics.ai_influence_percentage && (
-              <div className="p-3 bg-white rounded-xl">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-slate-600">A.I. Influence:</span>
-                  <span className="font-semibold text-slate-900">{result.forensics.ai_influence_percentage}%</span>
-                </div>
-                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all"
-                    style={{ width: `${result.forensics.ai_influence_percentage}%` }}
-                  />
-                </div>
+        <div className="space-y-4 mb-6">
+          {/* Basic Video Stats */}
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-6">
+            <h3 className="font-semibold text-slate-800 mb-3 text-lg flex items-center gap-2">
+              <span>🎬</span> Video Analysis Summary
+            </h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between items-center p-3 bg-white rounded-xl">
+                <span className="text-slate-600">Video Duration:</span>
+                <span className="font-semibold text-slate-900">{result.forensics.video_duration?.toFixed(1)}s</span>
               </div>
-            )}
+              <div className="flex justify-between items-center p-3 bg-white rounded-xl">
+                <span className="text-slate-600">Frames Analyzed:</span>
+                <span className="font-semibold text-slate-900">{result.forensics.frames_analyzed}</span>
+              </div>
+              {result.forensics.ai_influence_percentage !== undefined && (
+                <div className="p-3 bg-white rounded-xl">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-slate-600">A.I. Influence:</span>
+                    <span className="font-semibold text-slate-900">{result.forensics.ai_influence_percentage}%</span>
+                  </div>
+                  <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all"
+                      style={{ width: `${result.forensics.ai_influence_percentage}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Deepfake Analysis */}
+          {result.forensics.deepfake_analysis && (
+            <div className={`rounded-2xl border-2 p-6 ${
+              result.forensics.deepfake_analysis.is_deepfake_suspected
+                ? 'bg-gradient-to-br from-red-50 to-orange-50 border-red-200'
+                : 'bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200'
+            }`}>
+              <h3 className="font-semibold text-slate-800 mb-3 text-lg flex items-center gap-2">
+                <span>🎭</span> Deepfake Detection
+              </h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center p-3 bg-white rounded-xl">
+                  <span className="text-slate-600">Deepfake Suspected:</span>
+                  <span className={`font-bold ${
+                    result.forensics.deepfake_analysis.is_deepfake_suspected 
+                      ? 'text-red-700' 
+                      : 'text-emerald-700'
+                  }`}>
+                    {result.forensics.deepfake_analysis.is_deepfake_suspected ? 'YES' : 'NO'}
+                  </span>
+                </div>
+                {result.forensics.deepfake_analysis.deepfake_confidence !== undefined && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-slate-600">Deepfake Confidence:</span>
+                      <span className="font-semibold text-slate-900">
+                        {result.forensics.deepfake_analysis.deepfake_confidence}%
+                      </span>
+                    </div>
+                    <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full transition-all"
+                        style={{ width: `${result.forensics.deepfake_analysis.deepfake_confidence}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+                {result.forensics.deepfake_analysis.blinking_analysis && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="font-semibold text-slate-700 mb-1">👁️ Blinking Analysis:</div>
+                    <p className="text-slate-600">{result.forensics.deepfake_analysis.blinking_analysis}</p>
+                  </div>
+                )}
+                {result.forensics.deepfake_analysis.face_consistency && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="font-semibold text-slate-700 mb-1">👤 Face Consistency:</div>
+                    <p className="text-slate-600">{result.forensics.deepfake_analysis.face_consistency}</p>
+                  </div>
+                )}
+                {result.forensics.deepfake_analysis.background_distortion && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="font-semibold text-slate-700 mb-1">🌆 Background Analysis:</div>
+                    <p className="text-slate-600">{result.forensics.deepfake_analysis.background_distortion}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Scene Analysis */}
+          {result.forensics.scene_analysis && (
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border-2 border-blue-200 p-6">
+              <h3 className="font-semibold text-slate-800 mb-3 text-lg flex items-center gap-2">
+                <span>🎞️</span> Scene Analysis
+              </h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center p-3 bg-white rounded-xl">
+                  <span className="text-slate-600">Scene Changes:</span>
+                  <span className="font-semibold text-slate-900">
+                    {result.forensics.scene_analysis.scene_changes_detected || 0}
+                  </span>
+                </div>
+                {result.forensics.scene_analysis.consistency_score !== undefined && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-slate-600">Style Consistency:</span>
+                      <span className="font-semibold text-slate-900">
+                        {result.forensics.scene_analysis.consistency_score}%
+                      </span>
+                    </div>
+                    <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all"
+                        style={{ width: `${result.forensics.scene_analysis.consistency_score}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+                {result.forensics.scene_analysis.style_shifts && 
+                 result.forensics.scene_analysis.style_shifts.length > 0 && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="font-semibold text-slate-700 mb-2">⚠️ Style Shifts Detected:</div>
+                    <div className="space-y-2">
+                      {result.forensics.scene_analysis.style_shifts.map((shift, idx) => (
+                        <div key={idx} className="text-slate-600 text-xs p-2 bg-slate-50 rounded">
+                          Frames {shift.from_frame}-{shift.to_frame}: {shift.description}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Frame Comparisons */}
+          {result.forensics.frame_comparisons && result.forensics.frame_comparisons.length > 0 && (
+            <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl border-2 border-amber-200 p-6">
+              <h3 className="font-semibold text-slate-800 mb-3 text-lg flex items-center gap-2">
+                <span>🔍</span> Frame-by-Frame Anomalies
+              </h3>
+              <div className="space-y-2">
+                {result.forensics.frame_comparisons.slice(0, 5).map((comp, idx) => (
+                  <div key={idx} className="p-3 bg-white rounded-xl">
+                    <div className="flex items-start gap-2">
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${
+                        comp.severity === 'high' ? 'bg-red-100 text-red-700' :
+                        comp.severity === 'medium' ? 'bg-amber-100 text-amber-700' :
+                        'bg-slate-100 text-slate-600'
+                      }`}>
+                        {comp.severity.toUpperCase()}
+                      </span>
+                      <div className="flex-1">
+                        <div className="font-semibold text-slate-700 text-sm">{comp.frames}</div>
+                        <p className="text-slate-600 text-xs mt-1">{comp.anomaly}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {result.forensics.frame_comparisons.length > 5 && (
+                  <p className="text-xs text-slate-500 text-center pt-2">
+                    + {result.forensics.frame_comparisons.length - 5} more anomalies detected
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -294,35 +443,148 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       {result.signals && result.signals.length > 0 && (
         <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
           <h3 className="font-semibold text-slate-800 mb-4 text-lg">🔍 What we found</h3>
-          <div className="space-y-3">
-            {result.signals.map((signal, index) => {
-              const context = getSignalContext(signal.signal_type, signal.description, result.result === 'likely_ai');
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="p-4 rounded-xl bg-slate-50 border border-slate-200"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${severityColors[signal.severity]}`}>
-                      {signal.severity}
-                    </span>
-                    <span className="text-base font-bold text-slate-800">{signal.signal_type}</span>
-                  </div>
-                  <p className="text-base text-slate-700 leading-relaxed mb-3">{signal.description}</p>
-                  {context && (
-                    <div className="pt-3 border-t border-slate-200">
-                      <p className="text-sm text-slate-600 leading-relaxed">
-                        <span className="font-semibold text-slate-700">Why this matters:</span> {context}
-                      </p>
-                    </div>
+
+          {/* Category tabs for video */}
+          {result.content_type === 'video' && (() => {
+            const categories = {
+              all: result.signals,
+              deepfake: result.signals.filter(s => s.category === 'deepfake'),
+              temporal: result.signals.filter(s => s.category === 'temporal'),
+              scene_change: result.signals.filter(s => s.category === 'scene_change'),
+              ai_generation: result.signals.filter(s => s.category === 'ai_generation' || !s.category)
+            };
+
+            const [activeTab, setActiveTab] = React.useState('all');
+            const displaySignals = categories[activeTab] || result.signals;
+
+            return (
+              <>
+                <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                  <button
+                    onClick={() => setActiveTab('all')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                      activeTab === 'all' 
+                        ? 'bg-slate-900 text-white' 
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    All ({result.signals.length})
+                  </button>
+                  {categories.deepfake.length > 0 && (
+                    <button
+                      onClick={() => setActiveTab('deepfake')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                        activeTab === 'deepfake' 
+                          ? 'bg-red-600 text-white' 
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                      }`}
+                    >
+                      🎭 Deepfake ({categories.deepfake.length})
+                    </button>
                   )}
-                </motion.div>
-              );
-            })}
-          </div>
+                  {categories.temporal.length > 0 && (
+                    <button
+                      onClick={() => setActiveTab('temporal')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                        activeTab === 'temporal' 
+                          ? 'bg-amber-600 text-white' 
+                          : 'bg-amber-50 text-amber-600 hover:bg-amber-100'
+                      }`}
+                    >
+                      ⏱️ Temporal ({categories.temporal.length})
+                    </button>
+                  )}
+                  {categories.scene_change.length > 0 && (
+                    <button
+                      onClick={() => setActiveTab('scene_change')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                        activeTab === 'scene_change' 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                      }`}
+                    >
+                      🎞️ Scene ({categories.scene_change.length})
+                    </button>
+                  )}
+                  {categories.ai_generation.length > 0 && (
+                    <button
+                      onClick={() => setActiveTab('ai_generation')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                        activeTab === 'ai_generation' 
+                          ? 'bg-purple-600 text-white' 
+                          : 'bg-purple-50 text-purple-600 hover:bg-purple-100'
+                      }`}
+                    >
+                      🤖 AI Gen ({categories.ai_generation.length})
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  {displaySignals.map((signal, index) => {
+                    const context = getSignalContext(signal.signal_type, signal.description, result.result === 'likely_ai');
+                    return (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="p-4 rounded-xl bg-slate-50 border border-slate-200"
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${severityColors[signal.severity]}`}>
+                            {signal.severity}
+                          </span>
+                          <span className="text-base font-bold text-slate-800">{signal.signal_type}</span>
+                        </div>
+                        <p className="text-base text-slate-700 leading-relaxed mb-3">{signal.description}</p>
+                        {context && (
+                          <div className="pt-3 border-t border-slate-200">
+                            <p className="text-sm text-slate-600 leading-relaxed">
+                              <span className="font-semibold text-slate-700">Why this matters:</span> {context}
+                            </p>
+                          </div>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </>
+            );
+          })()}
+
+          {/* Default for non-video */}
+          {result.content_type !== 'video' && (
+            <div className="space-y-3">
+              {result.signals.map((signal, index) => {
+                const context = getSignalContext(signal.signal_type, signal.description, result.result === 'likely_ai');
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="p-4 rounded-xl bg-slate-50 border border-slate-200"
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${severityColors[signal.severity]}`}>
+                        {signal.severity}
+                      </span>
+                      <span className="text-base font-bold text-slate-800">{signal.signal_type}</span>
+                    </div>
+                    <p className="text-base text-slate-700 leading-relaxed mb-3">{signal.description}</p>
+                    {context && (
+                      <div className="pt-3 border-t border-slate-200">
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          <span className="font-semibold text-slate-700">Why this matters:</span> {context}
+                        </p>
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

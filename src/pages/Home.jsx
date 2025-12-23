@@ -70,8 +70,8 @@ export default function Home() {
         // Video analysis flow
         if (isVideo) {
           try {
-            // Extract frames from video
-            const { frames, duration } = await extractFramesFromVideo(uploadedFileObj, 5);
+            // Extract frames from video (increased for better temporal analysis)
+            const { frames, duration } = await extractFramesFromVideo(uploadedFileObj, 8);
 
             // Upload frames
             const frameUrls = await Promise.all(
@@ -81,22 +81,77 @@ export default function Home() {
               })
             );
 
-            // Analyze frames with LLM
+            // Enhanced frame-by-frame and deepfake analysis
             const frameAnalysis = await base44.integrations.Core.InvokeLLM({
-              prompt: `You are analyzing a VIDEO for AI-generated content. You have been provided with ${frames.length} frames extracted evenly throughout the video (duration: ${duration.toFixed(1)}s).
+              prompt: `You are an ADVANCED VIDEO DEEPFAKE & AI DETECTION SYSTEM analyzing a video for AI-generated content and deepfakes.
 
-  CRITICAL INSTRUCTIONS:
-  - Analyze EACH frame independently
-  - Look for temporal inconsistencies across frames (objects appearing/disappearing, style changes, lighting shifts)
-  - Consider that real videos have natural motion blur, consistent lighting, and coherent scene progression
-  - AI-generated videos often have: flickering artifacts, morphing objects, inconsistent physics, unnatural transitions
+        VIDEO METADATA:
+        - Total Frames Provided: ${frames.length}
+        - Video Duration: ${duration.toFixed(1)}s
+        - Frame Timestamps: ${frameUrls.map((f, i) => `Frame ${i+1} at ${f.timestamp.toFixed(2)}s`).join(', ')}
 
-  For each frame, identify:
-  - AI generation indicators (perfect symmetry, unnatural smoothness, impossible details)
-  - Real photo indicators (natural imperfections, motion blur, consistent physics)
-  - Temporal anomalies when comparing to other frames
+        ANALYSIS FRAMEWORK:
 
-  Provide an overall assessment of AI influence in the video.`,
+        1. FRAME-BY-FRAME COMPARISON:
+        - Compare consecutive frames for consistency
+        - Detect morphing artifacts (faces/objects changing shape between frames)
+        - Identify unnatural transitions or jumps
+        - Look for flickering in lighting, textures, or facial features
+        - Check for temporal coherence in motion and physics
+
+        2. DEEPFAKE-SPECIFIC DETECTION:
+        Face & Head Analysis:
+        - Unnatural or absent blinking patterns (real humans blink 15-20 times/min)
+        - Facial feature misalignment between frames
+        - Head movements that don't match speech or body language
+        - Jaw movements inconsistent with audio/speech
+        - Skin tone shifts between frames
+        - Hair that appears "glued" or lacks natural movement
+
+        Background & Boundary Analysis:
+        - Distorted or warped backgrounds around the head/face
+        - Unnatural edge blending where face meets background
+        - Background elements that shift unnaturally when head moves
+        - Color bleeding or artifacts around face boundaries
+
+        Lighting & Shadows:
+        - Face lighting that doesn't match scene lighting
+        - Shadows that don't align with light sources
+        - Inconsistent lighting direction on face vs. environment
+
+        Facial Expression & Movement:
+        - Micro-expressions that appear unnatural or delayed
+        - Facial features that don't move cohesively
+        - Eye gaze that doesn't track properly
+        - Teeth/mouth interior that looks artificial
+
+        3. SCENE-BASED ANALYSIS:
+        - Detect scene changes or cuts
+        - Identify shifts in generation style or quality between scenes
+        - Look for consistency in AI artifacts across different scenes
+        - Flag if different parts use different generation techniques
+
+        4. TEMPORAL CONSISTENCY:
+        - Object persistence (objects appearing/disappearing)
+        - Style consistency throughout video
+        - Quality shifts that suggest spliced content
+        - Motion blur patterns (real vs. AI-generated blur)
+
+        5. AI GENERATION PATTERNS:
+        - Overly smooth or plastic-like skin textures
+        - Perfect symmetry in faces or objects
+        - Impossible physics or anatomy
+        - Unnatural color grading shifts
+        - Compression artifacts typical of AI synthesis
+
+        INSTRUCTIONS:
+        - Analyze EACH frame with the above framework
+        - For consecutive frames, explicitly compare and note any anomalies
+        - Provide confidence scores for each finding
+        - Classify as: "likely_real", "likely_deepfake", "likely_ai", or "uncertain"
+        - Calculate AI influence percentage and deepfake likelihood percentage separately
+
+        Return comprehensive frame-by-frame analysis with deepfake assessment.`,
               file_urls: frameUrls.map(f => f.url),
               response_json_schema: {
                 type: "object",
@@ -108,7 +163,7 @@ export default function Home() {
                       properties: {
                         frame_index: { type: "number" },
                         timestamp: { type: "number" },
-                        assessment: { type: "string", enum: ["likely_real", "likely_ai", "uncertain"] },
+                        assessment: { type: "string", enum: ["likely_real", "likely_ai", "likely_deepfake", "uncertain"] },
                         confidence: { type: "number" },
                         signals: {
                           type: "array",
@@ -117,18 +172,66 @@ export default function Home() {
                             properties: {
                               signal_type: { type: "string" },
                               description: { type: "string" },
-                              severity: { type: "string", enum: ["low", "medium", "high"] }
+                              severity: { type: "string", enum: ["low", "medium", "high"] },
+                              category: { type: "string", enum: ["deepfake", "ai_generation", "temporal", "scene_change"] }
                             }
                           }
+                        },
+                        deepfake_indicators: {
+                          type: "array",
+                          items: { type: "string" }
                         }
                       }
+                    }
+                  },
+                  frame_comparisons: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        frames: { type: "string" },
+                        anomaly: { type: "string" },
+                        severity: { type: "string", enum: ["low", "medium", "high"] }
+                      }
+                    }
+                  },
+                  deepfake_analysis: {
+                    type: "object",
+                    properties: {
+                      is_deepfake_suspected: { type: "boolean" },
+                      deepfake_confidence: { type: "number" },
+                      key_deepfake_indicators: {
+                        type: "array",
+                        items: { type: "string" }
+                      },
+                      blinking_analysis: { type: "string" },
+                      face_consistency: { type: "string" },
+                      background_distortion: { type: "string" }
+                    }
+                  },
+                  scene_analysis: {
+                    type: "object",
+                    properties: {
+                      scene_changes_detected: { type: "number" },
+                      style_shifts: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            from_frame: { type: "number" },
+                            to_frame: { type: "number" },
+                            description: { type: "string" }
+                          }
+                        }
+                      },
+                      consistency_score: { type: "number" }
                     }
                   },
                   temporal_inconsistencies: {
                     type: "array",
                     items: { type: "string" }
                   },
-                  overall_result: { type: "string", enum: ["likely_real", "likely_ai", "uncertain"] },
+                  overall_result: { type: "string", enum: ["likely_real", "likely_ai", "likely_deepfake", "uncertain"] },
                   overall_confidence: { type: "number" },
                   summary: { type: "string" },
                   ai_influence_percentage: { type: "number" }
@@ -136,8 +239,10 @@ export default function Home() {
               }
             });
 
-            // Aggregate signals from all frames
+            // Aggregate signals from all frames and frame comparisons
             const allSignals = [];
+
+            // Frame-specific signals
             frameAnalysis.frame_analyses.forEach((frame, idx) => {
               if (frame.signals) {
                 frame.signals.forEach(signal => {
@@ -149,13 +254,50 @@ export default function Home() {
               }
             });
 
-            // Add temporal inconsistencies as signals
+            // Frame comparison anomalies
+            if (frameAnalysis.frame_comparisons && frameAnalysis.frame_comparisons.length > 0) {
+              frameAnalysis.frame_comparisons.forEach(comparison => {
+                allSignals.push({
+                  signal_type: `Frame Comparison (${comparison.frames})`,
+                  description: comparison.anomaly,
+                  severity: comparison.severity,
+                  category: "temporal"
+                });
+              });
+            }
+
+            // Temporal inconsistencies
             if (frameAnalysis.temporal_inconsistencies && frameAnalysis.temporal_inconsistencies.length > 0) {
               frameAnalysis.temporal_inconsistencies.forEach(inconsistency => {
                 allSignals.push({
                   signal_type: "Temporal Inconsistency",
                   description: inconsistency,
-                  severity: "high"
+                  severity: "high",
+                  category: "temporal"
+                });
+              });
+            }
+
+            // Deepfake-specific signals
+            if (frameAnalysis.deepfake_analysis?.key_deepfake_indicators) {
+              frameAnalysis.deepfake_analysis.key_deepfake_indicators.forEach(indicator => {
+                allSignals.push({
+                  signal_type: "Deepfake Indicator",
+                  description: indicator,
+                  severity: "high",
+                  category: "deepfake"
+                });
+              });
+            }
+
+            // Scene analysis signals
+            if (frameAnalysis.scene_analysis?.style_shifts) {
+              frameAnalysis.scene_analysis.style_shifts.forEach(shift => {
+                allSignals.push({
+                  signal_type: "Style Shift Detected",
+                  description: `${shift.description} (frames ${shift.from_frame} to ${shift.to_frame})`,
+                  severity: "medium",
+                  category: "scene_change"
                 });
               });
             }
@@ -172,7 +314,10 @@ export default function Home() {
               forensics: { 
                 video_duration: duration,
                 frames_analyzed: frames.length,
-                ai_influence_percentage: frameAnalysis.ai_influence_percentage 
+                ai_influence_percentage: frameAnalysis.ai_influence_percentage,
+                deepfake_analysis: frameAnalysis.deepfake_analysis,
+                scene_analysis: frameAnalysis.scene_analysis,
+                frame_comparisons: frameAnalysis.frame_comparisons
               }
             });
 
