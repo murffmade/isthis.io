@@ -37,57 +37,57 @@ const severityColors = {
   high: 'bg-red-100 text-red-700'
 };
 
-// Helper function to add contextual explanations
+// Helper function to add contextual explanations in plain English
 function getSignalContext(signalType, description, isAIGenerated) {
   const lowerSignal = (signalType + ' ' + description).toLowerCase();
   
   // AI indicators
   if (lowerSignal.includes('symmetry') || lowerSignal.includes('symmetric')) {
-    return 'AI often creates faces that are too symmetrical. Real faces have natural asymmetries.';
+    return 'A.I. often creates faces that are too perfectly symmetrical. Real faces have natural differences between left and right sides.';
   }
   if (lowerSignal.includes('skin') && (lowerSignal.includes('smooth') || lowerSignal.includes('plastic') || lowerSignal.includes('perfect'))) {
-    return 'AI often smooths skin too perfectly, removing natural pores and subtle imperfections.';
+    return 'A.I. often smooths skin too much, removing natural pores and tiny imperfections that real skin has.';
   }
   if (lowerSignal.includes('finger') || lowerSignal.includes('hand')) {
-    return 'Hands and fingers are notoriously difficult for AI to generate correctly.';
+    return 'Hands and fingers are very difficult for A.I. to create correctly - they often have extra or missing fingers.';
   }
   if (lowerSignal.includes('background') && (lowerSignal.includes('melt') || lowerSignal.includes('incoher') || lowerSignal.includes('blur'))) {
-    return 'AI often struggles with background details, creating soft or inconsistent edges.';
+    return 'A.I. often struggles with background details, creating blurry or strange edges around the subject.';
   }
   if (lowerSignal.includes('lighting') && lowerSignal.includes('inconsistent')) {
-    return 'Real photos have consistent lighting from identifiable sources. AI can mix multiple impossible light sources.';
+    return 'Real photos have light coming from one direction. A.I. sometimes creates impossible lighting from multiple sources.';
   }
   if (lowerSignal.includes('text') || lowerSignal.includes('letter') || lowerSignal.includes('garbled')) {
-    return 'AI frequently generates nonsensical or garbled text in images.';
+    return 'A.I. frequently creates nonsensical or scrambled text in images - it can\'t spell properly yet.';
   }
   if (lowerSignal.includes('repetitive') || lowerSignal.includes('pattern')) {
-    return 'AI can create unnatural repeating patterns, especially in backgrounds or textures.';
+    return 'A.I. sometimes creates unnatural repeating patterns, especially in backgrounds or textures.';
   }
   if (lowerSignal.includes('teeth') && lowerSignal.includes('perfect')) {
-    return 'Real teeth have natural variations in color and alignment. AI often makes them too uniform.';
+    return 'Real teeth have natural variations in color and alignment. A.I. often makes them too uniform and perfect.';
   }
   
   // Real indicators
   if (lowerSignal.includes('exif') || lowerSignal.includes('metadata')) {
-    return 'Camera metadata (EXIF) is typically present in real photos taken with cameras or phones.';
+    return 'Camera information (called EXIF data) is automatically saved in real photos taken with cameras or phones. A.I. images typically don\'t have this.';
   }
   if (lowerSignal.includes('compression') || lowerSignal.includes('artifact') || lowerSignal.includes('jpeg')) {
-    return 'Real photos show natural compression patterns from cameras. AI images often lack these.';
+    return 'Real photos have natural compression patterns from how cameras save images. A.I. images often lack these technical fingerprints.';
   }
   if (lowerSignal.includes('pore') || lowerSignal.includes('texture') && lowerSignal.includes('natural')) {
-    return 'Visible skin pores and natural texture are signs of authentic photography.';
+    return 'Visible skin pores and natural texture are signs of authentic photography - A.I. often misses these tiny details.';
   }
   if (lowerSignal.includes('asymmetr') && !lowerSignal.includes('lack')) {
-    return 'Natural facial asymmetry is a strong indicator of real photography.';
+    return 'Natural facial asymmetry (one side slightly different from the other) is a strong sign of a real photo.';
   }
   if (lowerSignal.includes('motion blur') || lowerSignal.includes('focus')) {
-    return 'Natural camera blur and focus patterns come from real lens physics.';
+    return 'Natural camera blur and focus effects come from real camera lenses - A.I. often gets this wrong.';
   }
   if (lowerSignal.includes('wrinkle') || lowerSignal.includes('wear') || lowerSignal.includes('imperfection')) {
-    return 'Physical wear and natural imperfections are hallmarks of real-world objects and people.';
+    return 'Physical wear and natural imperfections are signs of real objects and people - A.I. tends to make things too perfect.';
   }
   if (lowerSignal.includes('chromatic aberration') || lowerSignal.includes('lens distortion')) {
-    return 'Real camera lenses create subtle optical artifacts that AI typically doesn\'t replicate.';
+    return 'Real camera lenses create subtle color fringing and warping at the edges that A.I. typically doesn\'t replicate.';
   }
   
   return null; // No additional context
@@ -203,24 +203,54 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
           <ul className="space-y-2 ml-4">
             <li className="flex items-start gap-2">
               <span className="text-emerald-600 font-bold">•</span>
-              <span><strong>Likely Real (0-42):</strong> The image shows strong signs of being authentic, like camera metadata, natural imperfections, and realistic lighting.</span>
+              <span><strong>Likely Real (0-42):</strong> Shows strong signs of being authentic, like camera information, natural imperfections, and realistic lighting.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-amber-600 font-bold">•</span>
-              <span><strong>Likely AI (58-100):</strong> The image shows typical AI patterns, like overly perfect symmetry, unnatural smoothness, or impossible details.</span>
+              <span><strong>Likely A.I. (58-100):</strong> Shows typical computer-generated patterns, like overly perfect symmetry, unnatural smoothness, or impossible details.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-slate-600 font-bold">•</span>
-              <span><strong>Uncertain (43-57):</strong> We found mixed signals or not enough clear evidence to make a confident determination.</span>
+              <span><strong>Uncertain (43-57):</strong> Mixed signals or not enough clear evidence to make a confident determination.</span>
             </li>
           </ul>
           {result.score && (
-            <p className="pt-2 border-t border-slate-100">
-              <strong>This image scored: {result.score}/100</strong>
-              {result.score >= 58 && ' - indicating AI generation patterns'}
-              {result.score <= 42 && ' - indicating authentic photography'}
-              {result.score > 42 && result.score < 58 && ' - with inconclusive evidence'}
-            </p>
+            <div className="pt-4 border-t border-slate-100">
+              <p className="font-semibold text-slate-900 mb-3">
+                This image scored: {result.score}/100
+              </p>
+
+              {/* Visual Score Bar */}
+              <div className="relative">
+                <div className="flex justify-between text-xs font-medium mb-2">
+                  <span className="text-emerald-600">Real</span>
+                  <span className="text-amber-600">A.I.</span>
+                </div>
+                <div className="h-3 rounded-full overflow-hidden bg-gradient-to-r from-emerald-500 via-slate-300 to-amber-500">
+                  {/* Score indicator */}
+                  <div 
+                    className="absolute top-8 -translate-x-1/2 flex flex-col items-center"
+                    style={{ left: `${result.score}%` }}
+                  >
+                    <div className="w-0.5 h-4 bg-slate-900"></div>
+                    <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                      {result.score}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-between text-xs text-slate-500 mt-1">
+                  <span>0</span>
+                  <span>50</span>
+                  <span>100</span>
+                </div>
+              </div>
+
+              <p className="text-slate-600 mt-6">
+                {result.score >= 58 && '⚠️ This score indicates the image was likely created by artificial intelligence.'}
+                {result.score <= 42 && '✓ This score indicates the image appears to be authentic.'}
+                {result.score > 42 && result.score < 58 && '❓ This score falls in the uncertain range - we found conflicting evidence.'}
+              </p>
+            </div>
           )}
         </div>
       </div>
