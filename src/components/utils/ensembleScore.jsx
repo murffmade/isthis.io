@@ -12,7 +12,23 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
   const uncertainVotes = patchVotes.filter(p => p.vote === 'uncertain').length;
   
   const totalVotes = patchVotes.length;
-  const avgConfidence = patchVotes.reduce((sum, p) => sum + (p.confidence || 50), 0) / totalVotes;
+  
+  // Enhanced: Weight confidence by per-signal detection_confidence if available
+  const avgConfidence = patchVotes.reduce((sum, p) => {
+    let patchConfidence = p.confidence || 50;
+    
+    // If this patch has signals with detection_confidence, use weighted average
+    if (p.signals && p.signals.length > 0) {
+      const signalsWithDetectionConf = p.signals.filter(s => s.detection_confidence);
+      if (signalsWithDetectionConf.length > 0) {
+        const avgSignalConf = signalsWithDetectionConf.reduce((s, sig) => s + sig.detection_confidence, 0) / signalsWithDetectionConf.length;
+        // Blend patch confidence with signal-level confidence
+        patchConfidence = (patchConfidence * 0.6) + (avgSignalConf * 0.4);
+      }
+    }
+    
+    return sum + patchConfidence;
+  }, 0) / totalVotes;
   
   // Calculate voting strength
   const aiRatio = aiVotes / totalVotes;

@@ -88,7 +88,8 @@ Provide a thorough but accessible analysis.`,
                   properties: {
                     signal_type: { type: "string" },
                     description: { type: "string" },
-                    severity: { type: "string", enum: ["low", "medium", "high"] }
+                    severity: { type: "string", enum: ["low", "medium", "high"] },
+                    detection_confidence: { type: "number" }
                   }
                 }
               },
@@ -140,19 +141,67 @@ Provide a thorough but accessible analysis.`,
         console.warn('Forensics API failed:', err);
       }
 
-      // Step 4: Enhanced LLM analysis with sophisticated prompt
+      // Step 4: Enhanced LLM analysis with few-shot learning examples
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
       const analysisResult = await base44.integrations.Core.InvokeLLM({
         prompt: `SYSTEM IDENTITY:
-You are the Advanced AI Detection Engine v2.5 for "Is This Real" - a critical infrastructure tool for identifying AI-generated imagery.
+You are the Advanced AI Detection Engine v3.0 for "Is This Real" - a critical infrastructure tool for identifying AI-generated imagery.
+
+FEW-SHOT LEARNING EXAMPLES:
+
+EXAMPLE 1 - REAL PHOTO:
+Image: Outdoor portrait of a woman at a beach
+Signals Found:
+- Natural skin texture with visible pores and fine lines (detection_confidence: 92%)
+- Asymmetric facial features - left eye slightly lower than right (detection_confidence: 88%)
+- Wind-blown hair with individual strands showing motion blur (detection_confidence: 85%)
+- Fabric wrinkles on clothing with realistic shadow gradients (detection_confidence: 90%)
+- Background bokeh with natural chromatic aberration at edges (detection_confidence: 87%)
+- EXIF metadata present: Canon EOS R5, f/2.8, ISO 400 (detection_confidence: 95%)
+Classification: likely_real, Confidence: 89%
+
+EXAMPLE 2 - AI-GENERATED IMAGE:
+Image: Portrait of a professional woman in office setting
+Signals Found:
+- Overly perfect facial symmetry - both eyes exactly aligned (detection_confidence: 91%)
+- Plastic-like skin texture with no visible pores (detection_confidence: 94%)
+- Hair lacks individual strand definition, appears "painted" (detection_confidence: 88%)
+- Background elements have soft, melted edges around the subject (detection_confidence: 86%)
+- Lighting source is ambiguous - no clear shadow directionality (detection_confidence: 83%)
+- Teeth too white and perfectly uniform (detection_confidence: 89%)
+- No EXIF metadata present (detection_confidence: 70%)
+Classification: likely_ai, Confidence: 87%
+
+EXAMPLE 3 - REAL PHOTO WITH SOME CONFUSION:
+Image: Professional product photography
+Signals Found:
+- Sharp focus with natural depth of field gradient (detection_confidence: 82%)
+- Surface imperfections on product visible (scratches, dust) (detection_confidence: 85%)
+- Natural reflection on glossy surface following physics (detection_confidence: 88%)
+- Studio lighting setup with multiple controlled light sources (detection_confidence: 75%)
+- Clean background BUT this is expected for product shots (detection_confidence: 60%)
+- EXIF metadata present: Sony A7III (detection_confidence: 93%)
+Classification: likely_real, Confidence: 84%
+
+EXAMPLE 4 - AI-GENERATED WITH SUBTLE ARTIFACTS:
+Image: Landscape with mountains and lake
+Signals Found:
+- Overall composition looks natural BUT trees have repetitive patterns (detection_confidence: 79%)
+- Water reflection doesn't precisely match mountain shapes (detection_confidence: 82%)
+- Sky gradient is too smooth, lacks natural cloud texture variation (detection_confidence: 76%)
+- Rock formations have impossible geometry in background (detection_confidence: 85%)
+- Foreground vegetation has "copy-paste" appearance (detection_confidence: 81%)
+- No EXIF data, no compression artifacts typical of cameras (detection_confidence: 88%)
+Classification: likely_ai, Confidence: 81%
 
 CRITICAL DIRECTIVE:
-Your PRIMARY OBJECTIVE is to make DECISIVE classifications. Uncertainty should ONLY be used when evidence is genuinely contradictory or absent. Most images have clear indicators - trust your analysis.
+Your PRIMARY OBJECTIVE is to make DECISIVE classifications. Learn from the examples above - each signal should have its own detection_confidence based on how clear that specific indicator is. Uncertainty should ONLY be used when evidence is genuinely contradictory or absent.
 
 KEY PHILOSOPHY:
 - Real photos have natural imperfections, wear, entropy, and camera artifacts
 - AI images tend toward perfection, uniformity, and lack of physical realism
 - Be CONFIDENT in your assessments when evidence supports them
+- EACH SIGNAL has varying reliability - assign detection_confidence accordingly
 
 ANALYSIS FRAMEWORK:
 
@@ -164,40 +213,41 @@ ANALYSIS FRAMEWORK:
    - Portrait/Studio: Analyze skin texture, hair detail, clothing physics, eye authenticity
 
 2. PRIMARY AUTHENTICITY MARKERS (for REAL images):
-   - EXIF metadata presence and consistency
-   - Natural image compression artifacts
-   - Realistic lens distortion and chromatic aberration
-   - Authentic motion blur or focus patterns
-   - Physical wear on objects (scuffs, wrinkles, asymmetry)
-   - Genuine human microexpressions and imperfect symmetry
-   - Environmental consistency (light source, shadows, reflections)
-   - Material entropy (fabric texture, surface irregularities)
-   - Natural color grading and tone mapping
+   - EXIF metadata presence and consistency (usually 90-95% confidence if present)
+   - Natural image compression artifacts (JPEG blocking, sensor noise) (80-90% confidence)
+   - Realistic lens distortion and chromatic aberration (85-92% confidence)
+   - Authentic motion blur or focus patterns (80-88% confidence)
+   - Physical wear on objects (scuffs, wrinkles, asymmetry) (85-93% confidence)
+   - Genuine human microexpressions and imperfect symmetry (88-95% confidence)
+   - Environmental consistency (light source, shadows, reflections) (75-90% confidence)
+   - Material entropy (fabric texture, surface irregularities) (82-91% confidence)
+   - Natural color grading and tone mapping (70-85% confidence)
 
 3. PRIMARY AI INDICATORS (for AI-GENERATED images):
-   - Overly perfect symmetry (especially faces)
-   - Unnatural smoothness or plastic-like skin
-   - Anatomical impossibilities (extra fingers, merged limbs)
-   - Background incoherence or "melted" elements
-   - Lighting that defies physics (multiple shadows, inconsistent directionality)
-   - Repetitive patterns or textures
-   - Uncanny valley facial expressions
-   - Impossible reflections or refractions
-   - Text/signage with garbled letters
-   - Floating or disconnected objects
+   - Overly perfect symmetry (especially faces) (85-95% confidence)
+   - Unnatural smoothness or plastic-like skin (88-94% confidence)
+   - Anatomical impossibilities (extra fingers, merged limbs) (95-99% confidence)
+   - Background incoherence or "melted" elements (82-92% confidence)
+   - Lighting that defies physics (multiple shadows, inconsistent) (80-91% confidence)
+   - Repetitive patterns or textures (78-88% confidence)
+   - Uncanny valley facial expressions (75-85% confidence)
+   - Impossible reflections or refractions (83-93% confidence)
+   - Text/signage with garbled letters (90-98% confidence)
+   - Floating or disconnected objects (85-94% confidence)
 
 4. MULTI-REGION PATCH ANALYSIS:
    The first image is the FULL image.
    The remaining ${patchUrls.length} images are PATCHES from different regions.
    
    VOTING INSTRUCTIONS:
-   - Analyze EACH PATCH independently and decisively
+   - Analyze EACH PATCH independently and decisively like the examples above
    - Vote "likely_real" if the patch shows authentic characteristics
    - Vote "likely_ai" if the patch shows AI generation artifacts
    - Vote "uncertain" ONLY if the patch genuinely lacks distinguishing features
    - Provide high confidence (70-95%) when evidence is clear
    - Provide medium confidence (50-69%) when evidence is suggestive but not definitive
    - Provide low confidence (<50%) only when genuinely ambiguous
+   - ASSIGN detection_confidence to EACH signal found in the patch
 
 5. METADATA CONTEXT:
    EXIF Data: ${exifData ? JSON.stringify(exifData, null, 2) : 'None (WARNING: absence suggests screenshot/AI, but not conclusive)'}
@@ -208,9 +258,10 @@ DECISION GUIDELINES:
 - If EXIF metadata present + patches show realism → STRONGLY favor "likely_real"
 - If no EXIF + multiple AI artifacts → STRONGLY favor "likely_ai"
 - Reserve "uncertain" for TRULY ambiguous cases (contradictory evidence, minimal visible content)
+- Weight signals by their individual detection_confidence values
 
 OUTPUT REQUIREMENTS:
-Provide comprehensive patch voting with decisive classifications and justified confidence scores.`,
+Provide comprehensive patch voting with decisive classifications, justified confidence scores, and per-signal detection_confidence values.`,
         file_urls: allImageUrls,
         response_json_schema: {
           type: "object",
@@ -232,7 +283,8 @@ Provide comprehensive patch voting with decisive classifications and justified c
                       properties: {
                         signal_type: { type: "string" },
                         description: { type: "string" },
-                        severity: { type: "string", enum: ["low", "medium", "high"] }
+                        severity: { type: "string", enum: ["low", "medium", "high"] },
+                        detection_confidence: { type: "number" }
                       }
                     }
                   }
