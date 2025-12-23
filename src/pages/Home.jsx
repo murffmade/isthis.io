@@ -96,7 +96,7 @@ export default function Home() {
         if (isVideo) {
           try {
             // Extract frames from video (increased for better temporal analysis)
-            const { frames, duration } = await extractFramesFromVideo(uploadedFileObj, 8);
+            const { frames, metadata } = await extractFramesFromVideo(uploadedFileObj, 8);
 
             // Upload frames
             const frameUrls = await Promise.all(
@@ -110,10 +110,22 @@ export default function Home() {
             const frameAnalysis = await base44.integrations.Core.InvokeLLM({
               prompt: `You are an ADVANCED VIDEO DEEPFAKE & AI DETECTION SYSTEM analyzing a video for AI-generated content and deepfakes.
 
-        VIDEO METADATA:
-        - Total Frames Provided: ${frames.length}
-        - Video Duration: ${duration.toFixed(1)}s
-        - Frame Timestamps: ${frameUrls.map((f, i) => `Frame ${i+1} at ${f.timestamp.toFixed(2)}s`).join(', ')}
+            VIDEO METADATA:
+            - Total Frames Provided: ${frames.length}
+            - Video Duration: ${metadata.duration.toFixed(1)}s
+            - Resolution: ${metadata.width}x${metadata.height} (${metadata.aspectRatio} aspect ratio)
+            - File Size: ${metadata.fileSizeMB}MB
+            - Format: ${metadata.mimeType}
+            - Estimated Bitrate: ${metadata.estimatedBitrate} kbps
+            - Audio Track: ${metadata.hasAudio ? 'Present' : 'None detected'}
+            - Frame Timestamps: ${frameUrls.map((f, i) => `Frame ${i+1} at ${f.timestamp.toFixed(2)}s`).join(', ')}
+
+            METADATA ANALYSIS FOR MANIPULATION DETECTION:
+            - AI-generated videos often have unusual bitrates (too perfect or inconsistent)
+            - Deepfakes may lack proper audio synchronization or audio tracks
+            - Check if resolution/bitrate ratios are typical for the claimed source
+            - Look for signs of re-encoding or compression artifacts that suggest editing
+            - Unusual file sizes for the duration/quality may indicate synthetic generation
 
         ANALYSIS FRAMEWORK:
 
@@ -234,6 +246,18 @@ export default function Home() {
                       background_distortion: { type: "string" }
                     }
                   },
+                  metadata_analysis: {
+                    type: "object",
+                    properties: {
+                      manipulation_indicators: {
+                        type: "array",
+                        items: { type: "string" }
+                      },
+                      technical_assessment: { type: "string" },
+                      bitrate_analysis: { type: "string" },
+                      audio_sync_assessment: { type: "string" }
+                    }
+                  },
                   scene_analysis: {
                     type: "object",
                     properties: {
@@ -337,12 +361,14 @@ export default function Home() {
               summary: frameAnalysis.summary,
               patch_urls: frameUrls.map(f => f.url),
               forensics: { 
-                video_duration: duration,
+                video_duration: metadata.duration,
                 frames_analyzed: frames.length,
                 ai_influence_percentage: frameAnalysis.ai_influence_percentage,
                 deepfake_analysis: frameAnalysis.deepfake_analysis,
                 scene_analysis: frameAnalysis.scene_analysis,
-                frame_comparisons: frameAnalysis.frame_comparisons
+                frame_comparisons: frameAnalysis.frame_comparisons,
+                metadata_analysis: frameAnalysis.metadata_analysis,
+                video_metadata: metadata
               }
             });
 

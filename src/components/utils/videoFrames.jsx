@@ -1,5 +1,5 @@
 /**
- * Extract frames from a video file for analysis
+ * Extract frames and metadata from a video file for analysis
  */
 
 export async function extractFramesFromVideo(videoFile, numFrames = 5) {
@@ -23,6 +23,22 @@ export async function extractFramesFromVideo(videoFile, numFrames = 5) {
       
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
+      
+      // Extract detailed video metadata
+      const metadata = {
+        width: video.videoWidth,
+        height: video.videoHeight,
+        duration: duration,
+        aspectRatio: (video.videoWidth / video.videoHeight).toFixed(2),
+        fileSize: videoFile.size,
+        fileSizeMB: (videoFile.size / (1024 * 1024)).toFixed(2),
+        mimeType: videoFile.type,
+        fileName: videoFile.name,
+        // Estimate bitrate
+        estimatedBitrate: Math.round((videoFile.size * 8) / duration / 1000), // kbps
+        // Check for audio tracks
+        hasAudio: video.mozHasAudio !== false || Boolean(video.webkitAudioDecodedByteCount) || Boolean(video.audioTracks?.length)
+      };
       
       const captureFrame = (time) => {
         video.currentTime = time;
@@ -48,9 +64,7 @@ export async function extractFramesFromVideo(videoFile, numFrames = 5) {
           URL.revokeObjectURL(videoUrl);
           resolve({
             frames,
-            duration,
-            width: video.videoWidth,
-            height: video.videoHeight
+            metadata
           });
         }
       };

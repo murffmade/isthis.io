@@ -141,16 +141,59 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       {/* Video-specific info */}
       {result.content_type === 'video' && result.forensics && (
         <div className="space-y-4 mb-6">
+          {/* Video Technical Details */}
+          {result.forensics.video_metadata && (
+            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border-2 border-indigo-200 p-6">
+              <h3 className="font-semibold text-slate-800 mb-3 text-lg flex items-center gap-2">
+                <span>📹</span> Video Technical Details
+              </h3>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="p-3 bg-white rounded-xl">
+                  <div className="text-slate-500 text-xs mb-1">Resolution</div>
+                  <div className="font-semibold text-slate-900">
+                    {result.forensics.video_metadata.width}x{result.forensics.video_metadata.height}
+                  </div>
+                </div>
+                <div className="p-3 bg-white rounded-xl">
+                  <div className="text-slate-500 text-xs mb-1">Duration</div>
+                  <div className="font-semibold text-slate-900">
+                    {result.forensics.video_metadata.duration.toFixed(1)}s
+                  </div>
+                </div>
+                <div className="p-3 bg-white rounded-xl">
+                  <div className="text-slate-500 text-xs mb-1">File Size</div>
+                  <div className="font-semibold text-slate-900">
+                    {result.forensics.video_metadata.fileSizeMB}MB
+                  </div>
+                </div>
+                <div className="p-3 bg-white rounded-xl">
+                  <div className="text-slate-500 text-xs mb-1">Bitrate</div>
+                  <div className="font-semibold text-slate-900">
+                    {result.forensics.video_metadata.estimatedBitrate} kbps
+                  </div>
+                </div>
+                <div className="p-3 bg-white rounded-xl">
+                  <div className="text-slate-500 text-xs mb-1">Aspect Ratio</div>
+                  <div className="font-semibold text-slate-900">
+                    {result.forensics.video_metadata.aspectRatio}
+                  </div>
+                </div>
+                <div className="p-3 bg-white rounded-xl">
+                  <div className="text-slate-500 text-xs mb-1">Audio Track</div>
+                  <div className="font-semibold text-slate-900">
+                    {result.forensics.video_metadata.hasAudio ? '✓ Present' : '✗ None'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Basic Video Stats */}
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-6">
             <h3 className="font-semibold text-slate-800 mb-3 text-lg flex items-center gap-2">
-              <span>🎬</span> Video Analysis Summary
+              <span>🎬</span> Analysis Summary
             </h3>
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between items-center p-3 bg-white rounded-xl">
-                <span className="text-slate-600">Video Duration:</span>
-                <span className="font-semibold text-slate-900">{result.forensics.video_duration?.toFixed(1)}s</span>
-              </div>
               <div className="flex justify-between items-center p-3 bg-white rounded-xl">
                 <span className="text-slate-600">Frames Analyzed:</span>
                 <span className="font-semibold text-slate-900">{result.forensics.frames_analyzed}</span>
@@ -171,6 +214,49 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
               )}
             </div>
           </div>
+
+          {/* Metadata Analysis */}
+          {result.forensics.metadata_analysis && (
+            <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl border-2 border-slate-200 p-6">
+              <h3 className="font-semibold text-slate-800 mb-3 text-lg flex items-center gap-2">
+                <span>🔬</span> Technical Analysis
+              </h3>
+              <div className="space-y-3 text-sm">
+                {result.forensics.metadata_analysis.technical_assessment && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="font-semibold text-slate-700 mb-1">Overall Assessment:</div>
+                    <p className="text-slate-600">{result.forensics.metadata_analysis.technical_assessment}</p>
+                  </div>
+                )}
+                {result.forensics.metadata_analysis.bitrate_analysis && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="font-semibold text-slate-700 mb-1">📊 Bitrate Analysis:</div>
+                    <p className="text-slate-600">{result.forensics.metadata_analysis.bitrate_analysis}</p>
+                  </div>
+                )}
+                {result.forensics.metadata_analysis.audio_sync_assessment && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="font-semibold text-slate-700 mb-1">🎵 Audio Assessment:</div>
+                    <p className="text-slate-600">{result.forensics.metadata_analysis.audio_sync_assessment}</p>
+                  </div>
+                )}
+                {result.forensics.metadata_analysis.manipulation_indicators && 
+                 result.forensics.metadata_analysis.manipulation_indicators.length > 0 && (
+                  <div className="p-3 bg-white rounded-xl">
+                    <div className="font-semibold text-slate-700 mb-2">⚠️ Manipulation Indicators:</div>
+                    <ul className="space-y-1">
+                      {result.forensics.metadata_analysis.manipulation_indicators.map((indicator, idx) => (
+                        <li key={idx} className="text-slate-600 text-xs flex items-start gap-2">
+                          <span className="text-amber-600 mt-0.5">•</span>
+                          <span>{indicator}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Deepfake Analysis */}
           {result.forensics.deepfake_analysis && (
@@ -194,19 +280,11 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                   </span>
                 </div>
                 {result.forensics.deepfake_analysis.deepfake_confidence !== undefined && (
-                  <div className="p-3 bg-white rounded-xl">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-slate-600">Deepfake Confidence:</span>
-                      <span className="font-semibold text-slate-900">
-                        {result.forensics.deepfake_analysis.deepfake_confidence}%
-                      </span>
-                    </div>
-                    <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full transition-all"
-                        style={{ width: `${result.forensics.deepfake_analysis.deepfake_confidence}%` }}
-                      />
-                    </div>
+                  <div className="flex justify-between items-center p-3 bg-white rounded-xl">
+                    <span className="text-slate-600">Detection Confidence:</span>
+                    <span className="font-semibold text-slate-900">
+                      {result.forensics.deepfake_analysis.deepfake_confidence}%
+                    </span>
                   </div>
                 )}
                 {result.forensics.deepfake_analysis.blinking_analysis && (
@@ -245,19 +323,11 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                   </span>
                 </div>
                 {result.forensics.scene_analysis.consistency_score !== undefined && (
-                  <div className="p-3 bg-white rounded-xl">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-slate-600">Style Consistency:</span>
-                      <span className="font-semibold text-slate-900">
-                        {result.forensics.scene_analysis.consistency_score}%
-                      </span>
-                    </div>
-                    <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all"
-                        style={{ width: `${result.forensics.scene_analysis.consistency_score}%` }}
-                      />
-                    </div>
+                  <div className="flex justify-between items-center p-3 bg-white rounded-xl">
+                    <span className="text-slate-600">Style Consistency:</span>
+                    <span className="font-semibold text-slate-900">
+                      {result.forensics.scene_analysis.consistency_score}%
+                    </span>
                   </div>
                 )}
                 {result.forensics.scene_analysis.style_shifts && 
@@ -328,24 +398,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
           </div>
         </div>
 
-        {/* Confidence Score */}
-        <div className="mt-6 pt-6 border-t border-white/50">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-slate-700">Confidence Estimate</span>
-            <span className={`text-lg font-bold ${config.color}`}>{result.confidence}%</span>
-          </div>
-          <div className="h-2 bg-white rounded-full overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${result.confidence}%` }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className={`h-full rounded-full ${
-                result.result === 'likely_real' ? 'bg-emerald-500' :
-                result.result === 'likely_ai' ? 'bg-amber-500' : 'bg-orange-500'
-              }`}
-            />
-          </div>
-        </div>
+
       </div>
 
       {/* Camera & EXIF Metadata Section */}
