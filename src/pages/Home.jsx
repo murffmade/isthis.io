@@ -18,6 +18,7 @@ import AnalysisChecklist from '@/components/verification/AnalysisChecklist';
 import { generatePatchesFromFile } from '@/components/utils/imagePatches';
 import { analyzeForensics } from '@/components/utils/forensicsApi';
 import { deriveLlmScoreFromPatchVotes, ensembleDecision } from '@/components/utils/ensembleScore';
+import { extractFramesFromVideo } from '@/components/utils/videoFrames';
 
 export default function Home() {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -56,15 +57,137 @@ export default function Home() {
   };
 
   const handleAnalyze = async () => {
-    if (!uploadedFile && !urlInput) {
-      toast.error('Please upload an image or paste a URL');
-      return;
-    }
+      if (!uploadedFile && !urlInput) {
+        toast.error('Please upload an image or video or paste a URL');
+        return;
+      }
 
-    setAnalyzing(true);
-    try {
-      // URL-only analysis (existing flow)
-      if (!uploadedFileObj && urlInput) {
+      setAnalyzing(true);
+      try {
+        // Check if uploaded file is a video
+        const isVideo = uploadedFileObj && uploadedFileObj.type.startsWith('video/');
+
+        // Video analysis flow
+        if (isVideo) {
+          try {
+            // Extract frames from video
+            const { frames, duration } = await extractFramesFromVideo(uploadedFileObj, 5);
+
+            // Upload frames
+            const frameUrls = await Promise.all(
+              frames.map(async (frame) => {
+                const { file_url } = await base44.integrations.Core.UploadFile({ file: frame.file });
+                return { url: file_url, timestamp: frame.timestamp };
+              })
+            );
+
+            // Analyze frames with LLM
+            const frameAnalysis = await base44.integrations.Core.InvokeLLM({
+              prompt: `You are analyzing a VIDEO for AI-generated content. You have been provided with ${frames.length} frames extracted evenly throughout the video (duration: ${duration.toFixed(1)}s).
+
+  CRITICAL INSTRUCTIONS:
+  - Analyze EACH frame independently
+  - Look for temporal inconsistencies across frames (objects appearing/disappearing, style changes, lighting shifts)
+  - Consider that real videos have natural motion blur, consistent lighting, and coherent scene progression
+  - AI-generated videos often have: flickering artifacts, morphing objects, inconsistent physics, unnatural transitions
+
+  For each frame, identify:
+  - AI generation indicators (perfect symmetry, unnatural smoothness, impossible details)
+  - Real photo indicators (natural imperfections, motion blur, consistent physics)
+  - Temporal anomalies when comparing to other frames
+
+  Provide an overall assessment of AI influence in the video.`,
+              file_urls: frameUrls.map(f => f.url),
+              response_json_schema: {
+                type: "object",
+                properties: {
+                  frame_analyses: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        frame_index: { type: "number" },
+                        timestamp: { type: "number" },
+                        assessment: { type: "string", enum: ["likely_real", "likely_ai", "uncertain"] },
+                        confidence: { type: "number" },
+                        signals: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              signal_type: { type: "string" },
+                              description: { type: "string" },
+                              severity: { type: "string", enum: ["low", "medium", "high"] }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  temporal_inconsistencies: {
+                    type: "array",
+                    items: { type: "string" }
+                  },
+                  overall_result: { type: "string", enum: ["likely_real", "likely_ai", "uncertain"] },
+                  overall_confidence: { type: "number" },
+                  summary: { type: "string" },
+                  ai_influence_percentage: { type: "number" }
+                }
+              }
+            });
+
+            // Aggregate signals from all frames
+            const allSignals = [];
+            frameAnalysis.frame_analyses.forEach((frame, idx) => {
+              if (frame.signals) {
+                frame.signals.forEach(signal => {
+                  allSignals.push({
+                    ...signal,
+                    signal_type: `Frame ${idx + 1} (${frame.timestamp.toFixed(1)}s): ${signal.signal_type}`
+                  });
+                });
+              }
+            });
+
+            // Add temporal inconsistencies as signals
+            if (frameAnalysis.temporal_inconsistencies && frameAnalysis.temporal_inconsistencies.length > 0) {
+              frameAnalysis.temporal_inconsistencies.forEach(inconsistency => {
+                allSignals.push({
+                  signal_type: "Temporal Inconsistency",
+                  description: inconsistency,
+                  severity: "high"
+                });
+              });
+            }
+
+            const record = await base44.entities.AnalysisRecord.create({
+              content_type: 'video',
+              file_url: uploadedFile,
+              thumbnail_url: frameUrls[0]?.url,
+              result: frameAnalysis.overall_result,
+              confidence: frameAnalysis.overall_confidence,
+              signals: allSignals,
+              summary: frameAnalysis.summary,
+              patch_urls: frameUrls.map(f => f.url),
+              forensics: { 
+                video_duration: duration,
+                frames_analyzed: frames.length,
+                ai_influence_percentage: frameAnalysis.ai_influence_percentage 
+              }
+            });
+
+            setResult({ ...record, ...frameAnalysis });
+            return;
+          } catch (error) {
+            console.error('Video analysis error:', error);
+            toast.error('Video analysis failed. Please try again.');
+            setAnalyzing(false);
+            return;
+          }
+        }
+
+        // URL-only analysis (existing flow)
+        if (!uploadedFileObj && urlInput) {
         const analysisResult = await base44.integrations.Core.InvokeLLM({
           prompt: `You are an expert AI content detector. Analyze this URL for signs of AI-generated content: ${urlInput}. Evaluate if the content is AI-generated vs authentic.
 

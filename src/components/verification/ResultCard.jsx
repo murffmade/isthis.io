@@ -111,14 +111,55 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       transition={{ duration: 0.4 }}
       className="w-full max-w-2xl mx-auto"
     >
-      {/* Analyzed Image */}
+      {/* Analyzed Media */}
       {(result.file_url || result.thumbnail_url) && (
         <div className="mb-6 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm">
-          <img 
-            src={result.file_url || result.thumbnail_url} 
-            alt="Analyzed content"
-            className="w-full h-auto max-h-96 object-contain"
-          />
+          {result.content_type === 'video' ? (
+            <video 
+              src={result.file_url} 
+              controls
+              className="w-full h-auto max-h-96 object-contain"
+            />
+          ) : (
+            <img 
+              src={result.file_url || result.thumbnail_url} 
+              alt="Analyzed content"
+              className="w-full h-auto max-h-96 object-contain"
+            />
+          )}
+        </div>
+      )}
+
+      {/* Video-specific info */}
+      {result.content_type === 'video' && result.forensics && (
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-3 text-lg flex items-center gap-2">
+            <span>🎬</span> Video Analysis Summary
+          </h3>
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between items-center p-3 bg-white rounded-xl">
+              <span className="text-slate-600">Video Duration:</span>
+              <span className="font-semibold text-slate-900">{result.forensics.video_duration?.toFixed(1)}s</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-white rounded-xl">
+              <span className="text-slate-600">Frames Analyzed:</span>
+              <span className="font-semibold text-slate-900">{result.forensics.frames_analyzed}</span>
+            </div>
+            {result.forensics.ai_influence_percentage && (
+              <div className="p-3 bg-white rounded-xl">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-slate-600">A.I. Influence:</span>
+                  <span className="font-semibold text-slate-900">{result.forensics.ai_influence_percentage}%</span>
+                </div>
+                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all"
+                    style={{ width: `${result.forensics.ai_influence_percentage}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
