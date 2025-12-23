@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, AlertTriangle, HelpCircle, ChevronRight, Info, Share2 } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, HelpCircle, ChevronRight, Info, Download, Copy, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ShareModal from './ShareModal';
+import { toast } from 'sonner';
+import html2canvas from 'html2canvas';
+import ShareCard from './ShareCard';
 
 const resultConfig = {
   likely_real: {
@@ -94,7 +96,9 @@ function getSignalContext(signalType, description, isAIGenerated) {
 }
 
 export default function ResultCard({ result, onTakeAction, onStartOver }) {
-  const [showShareModal, setShowShareModal] = useState(false);
+  const shareCardRef = useRef(null);
+  const [generating, setGenerating] = useState(false);
+  const [copied, setCopied] = useState(false);
   const config = resultConfig[result.result] || resultConfig.uncertain;
   const Icon = config.icon;
   const showActionButton = result.result === 'likely_ai' && result.claims_to_be_real;
@@ -263,6 +267,150 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
         </p>
       </div>
 
+      {/* Share Section */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+        <h3 className="font-semibold text-slate-800 mb-4">Share This Verification</h3>
+
+        {/* Download & Copy */}
+        <div className="mb-4">
+          <h4 className="text-sm font-medium text-slate-600 mb-3">Save or Copy</h4>
+          <div className="flex gap-3">
+            <Button
+              onClick={async () => {
+                setGenerating(true);
+                try {
+                  const cardElement = shareCardRef.current;
+                  const canvas = await html2canvas(cardElement, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false
+                  });
+                  const url = canvas.toDataURL('image/png');
+                  const link = document.createElement('a');
+                  link.download = `is-this-real-verification-${Date.now()}.png`;
+                  link.href = url;
+                  link.click();
+                  toast.success('Image downloaded');
+                } catch (error) {
+                  toast.error('Failed to download image');
+                } finally {
+                  setGenerating(false);
+                }
+              }}
+              disabled={generating}
+              className="flex-1 h-11 bg-slate-900 hover:bg-slate-800"
+            >
+              {generating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Image
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={async () => {
+                setGenerating(true);
+                try {
+                  const cardElement = shareCardRef.current;
+                  const canvas = await html2canvas(cardElement, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false
+                  });
+                  const url = canvas.toDataURL('image/png');
+                  const blob = await (await fetch(url)).blob();
+                  await navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': blob })
+                  ]);
+                  setCopied(true);
+                  toast.success('Image copied to clipboard');
+                  setTimeout(() => setCopied(false), 2000);
+                } catch (error) {
+                  toast.error('Failed to copy image. Try downloading instead.');
+                } finally {
+                  setGenerating(false);
+                }
+              }}
+              disabled={generating}
+              variant="outline"
+              className="flex-1 h-11"
+            >
+              {copied ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Image
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+
+        {/* Social Sharing */}
+        <div>
+          <h4 className="text-sm font-medium text-slate-600 mb-3">Share to Social Media</h4>
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={() => {
+                const appUrl = window.location.origin;
+                const text = `I verified content using Is This Real? Result: ${config.title} (${result.confidence}% confidence)`;
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(appUrl)}`, '_blank', 'width=600,height=400');
+              }}
+              className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 transition-colors flex flex-col items-center gap-2"
+            >
+              <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
+                <span className="text-white font-bold text-xs">𝕏</span>
+              </div>
+              <span className="text-xs font-medium text-slate-700">X (Twitter)</span>
+            </button>
+            <button
+              onClick={() => {
+                const appUrl = window.location.origin;
+                const text = `I verified content using Is This Real? Result: ${config.title} (${result.confidence}% confidence)`;
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(appUrl)}&quote=${encodeURIComponent(text)}`, '_blank', 'width=600,height=400');
+              }}
+              className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 transition-colors flex flex-col items-center gap-2"
+            >
+              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                <span className="text-white font-bold text-xs">f</span>
+              </div>
+              <span className="text-xs font-medium text-slate-700">Facebook</span>
+            </button>
+            <button
+              onClick={() => {
+                const appUrl = window.location.origin;
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(appUrl)}`, '_blank', 'width=600,height=400');
+              }}
+              className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 transition-colors flex flex-col items-center gap-2"
+            >
+              <div className="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center">
+                <span className="text-white font-bold text-xs">in</span>
+              </div>
+              <span className="text-xs font-medium text-slate-700">LinkedIn</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Note */}
+        <div className="text-center text-xs text-slate-500 mt-4">
+          Share responsibly. This card provides context, not definitive proof.
+        </div>
+      </div>
+
+      {/* Hidden ShareCard for image generation */}
+      <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+        <ShareCard result={result} cardRef={shareCardRef} />
+      </div>
+
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-3">
         {showActionButton && (
@@ -275,14 +423,6 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
           </Button>
         )}
         <Button 
-          onClick={() => setShowShareModal(true)}
-          variant="outline"
-          className="flex-1 h-12 border-slate-200 hover:bg-slate-50"
-        >
-          <Share2 className="w-4 h-4 mr-2" />
-          Share Result
-        </Button>
-        <Button 
           onClick={onStartOver}
           variant="outline"
           className="flex-1 h-12 border-slate-200 hover:bg-slate-50"
@@ -290,14 +430,6 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
           Check Another
         </Button>
       </div>
-
-      {/* Share Modal */}
-      {showShareModal && (
-        <ShareModal 
-          result={result}
-          onClose={() => setShowShareModal(false)}
-        />
-      )}
     </motion.div>
   );
 }
