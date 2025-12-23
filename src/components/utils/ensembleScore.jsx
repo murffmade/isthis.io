@@ -62,7 +62,9 @@ export function ensembleDecision({ llm, forensics, provenance }) {
     confidence = Math.min(95, 50 + (35 - finalScore) * 1.3);
   } else {
     result = 'uncertain';
-    confidence = Math.max(40, 100 - Math.abs(finalScore - 50) * 2);
+    // When the result is uncertain, the confidence should be low, reflecting the inability to confidently classify.
+    confidence = Math.max(25, 100 - Math.abs(finalScore - 50) * 4); // Scale inversely, max 25% if perfectly balanced
+    confidence = Math.min(confidence, 40); // Cap uncertainty confidence at a maximum of 40%
   }
   
   return {
