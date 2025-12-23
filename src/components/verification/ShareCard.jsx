@@ -1,24 +1,36 @@
 import React from 'react';
-import { Shield, CheckCircle2, AlertTriangle, HelpCircle } from 'lucide-react';
+import { Shield, CheckCircle2, AlertTriangle, HelpCircle, Sparkles } from 'lucide-react';
 
 const resultConfig = {
   likely_real: {
     icon: CheckCircle2,
     title: 'Likely Real',
+    emoji: '✓',
     color: '#059669',
-    bgGradient: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)'
+    darkColor: '#047857',
+    lightColor: '#d1fae5',
+    bgGradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    pattern: 'radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 50%)'
   },
   likely_ai: {
     icon: AlertTriangle,
     title: 'Likely AI-Generated',
-    color: '#d97706',
-    bgGradient: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)'
+    emoji: '⚠️',
+    color: '#f59e0b',
+    darkColor: '#d97706',
+    lightColor: '#fef3c7',
+    bgGradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+    pattern: 'radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.15) 0%, transparent 50%)'
   },
   uncertain: {
     icon: HelpCircle,
     title: 'Uncertain',
-    color: '#475569',
-    bgGradient: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)'
+    emoji: '❓',
+    color: '#64748b',
+    darkColor: '#475569',
+    lightColor: '#f1f5f9',
+    bgGradient: 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)',
+    pattern: 'radial-gradient(circle at 50% 50%, rgba(148, 163, 184, 0.15) 0%, transparent 50%)'
   }
 };
 
@@ -30,164 +42,264 @@ export default function ShareCard({ result, cardRef }) {
     <div 
       ref={cardRef}
       style={{ 
-        width: '600px', 
-        background: config.bgGradient,
-        padding: '48px',
-        borderRadius: '24px',
+        width: '800px',
+        height: '800px',
+        background: `linear-gradient(135deg, #0f172a 0%, #1e293b 100%)`,
+        padding: '0',
         position: 'relative',
-        fontFamily: 'Inter, system-ui, sans-serif'
+        fontFamily: 'Inter, system-ui, sans-serif',
+        overflow: 'hidden'
       }}
     >
-      {/* Content */}
-      <div style={{ 
-        background: 'white', 
-        borderRadius: '20px', 
-        padding: '40px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
-      }}>
-        {/* Header */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '16px',
-          marginBottom: '32px'
-        }}>
-          <div style={{
-            width: '64px',
-            height: '64px',
-            borderRadius: '16px',
-            background: config.color,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Icon style={{ width: '32px', height: '32px', color: 'white' }} />
-          </div>
-          <div>
-            <h2 style={{ 
-              fontSize: '32px', 
-              fontWeight: '700', 
-              color: config.color,
-              margin: 0,
-              lineHeight: 1.2
-            }}>
-              {config.title}
-            </h2>
-            <p style={{ 
-              fontSize: '16px', 
-              color: '#64748b',
-              margin: '4px 0 0 0'
-            }}>
-              Content Verification Result
-            </p>
-          </div>
-        </div>
-
-        {/* Confidence */}
-        <div style={{ marginBottom: '24px' }}>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '12px'
-          }}>
-            <span style={{ 
-              fontSize: '14px', 
-              fontWeight: '500',
-              color: '#334155'
-            }}>
-              Confidence Estimate
-            </span>
-            <span style={{ 
-              fontSize: '28px', 
-              fontWeight: '700',
-              color: config.color
-            }}>
-              {result.confidence}%
-            </span>
-          </div>
-          <div style={{ 
-            height: '12px', 
-            background: '#f1f5f9',
-            borderRadius: '6px',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              width: `${result.confidence}%`,
-              height: '100%',
-              background: config.color,
-              borderRadius: '6px'
-            }} />
-          </div>
-        </div>
-
-        {/* Summary */}
-        {result.summary && (
-          <div style={{
-            padding: '20px',
-            background: '#f8fafc',
-            borderRadius: '12px',
-            marginBottom: '24px'
-          }}>
-            <p style={{ 
-              fontSize: '14px', 
-              color: '#475569',
-              margin: 0,
-              lineHeight: 1.6
-            }}>
-              {result.summary}
-            </p>
-          </div>
-        )}
-
-        {/* Disclaimer */}
-        <div style={{ 
-          fontSize: '11px', 
-          color: '#94a3b8',
-          lineHeight: 1.5,
-          borderTop: '1px solid #e2e8f0',
-          paddingTop: '16px'
-        }}>
-          AI analysis isn't perfect and may be wrong. Always check multiple sources.
-        </div>
-      </div>
-
-      {/* Watermark */}
-      <div style={{ 
+      {/* Decorative Background Pattern */}
+      <div style={{
         position: 'absolute',
-        bottom: '20px',
-        right: '48px',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: config.pattern,
+        opacity: 0.5
+      }} />
+      
+      {/* Decorative Circles */}
+      <div style={{
+        position: 'absolute',
+        top: '-100px',
+        right: '-100px',
+        width: '300px',
+        height: '300px',
+        borderRadius: '50%',
+        background: config.bgGradient,
+        opacity: 0.1,
+        filter: 'blur(40px)'
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '-80px',
+        left: '-80px',
+        width: '250px',
+        height: '250px',
+        borderRadius: '50%',
+        background: config.bgGradient,
+        opacity: 0.1,
+        filter: 'blur(40px)'
+      }} />
+
+      {/* Content Container */}
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
+        height: '100%',
         display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        opacity: 0.7
+        flexDirection: 'column',
+        padding: '60px'
       }}>
+        {/* Header with Logo */}
         <div style={{
-          width: '32px',
-          height: '32px',
-          borderRadius: '8px',
-          background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'space-between',
+          marginBottom: '60px'
         }}>
-          <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
-        </div>
-        <div>
-          <div style={{ 
-            fontSize: '14px', 
-            fontWeight: '700',
-            color: '#1e293b',
-            lineHeight: 1
-          }}>
-            Is This Real?
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 8px 20px rgba(99, 102, 241, 0.3)'
+            }}>
+              <Shield style={{ width: '24px', height: '24px', color: 'white' }} />
+            </div>
+            <div>
+              <div style={{ 
+                fontSize: '22px', 
+                fontWeight: '700',
+                color: 'white',
+                lineHeight: 1
+              }}>
+                IsThis.io
+              </div>
+              <div style={{ 
+                fontSize: '13px',
+                color: '#94a3b8',
+                lineHeight: 1.4,
+                marginTop: '2px'
+              }}>
+                A.I. Detection
+              </div>
+            </div>
           </div>
-          <div style={{ 
-            fontSize: '10px',
-            color: '#64748b',
-            lineHeight: 1
+          <div style={{
+            padding: '8px 16px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '20px',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
           }}>
-            AI Content Verification
+            <span style={{
+              fontSize: '13px',
+              color: 'white',
+              fontWeight: '600'
+            }}>
+              Verified Content
+            </span>
+          </div>
+        </div>
+
+        {/* Main Result Card */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.98)',
+          borderRadius: '28px',
+          padding: '50px',
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+          border: '1px solid rgba(255, 255, 255, 0.2)'
+        }}>
+          {/* Result Icon and Title */}
+          <div>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '20px',
+              marginBottom: '40px'
+            }}>
+              <div style={{
+                width: '100px',
+                height: '100px',
+                borderRadius: '24px',
+                background: config.bgGradient,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: `0 12px 30px ${config.color}40`
+              }}>
+                <span style={{ fontSize: '48px' }}>{config.emoji}</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <h2 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: '800', 
+                  color: '#0f172a',
+                  margin: 0,
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.02em'
+                }}>
+                  {config.title}
+                </h2>
+                <p style={{ 
+                  fontSize: '22px', 
+                  color: '#64748b',
+                  margin: '8px 0 0 0',
+                  fontWeight: '500'
+                }}>
+                  Analysis Complete
+                </p>
+              </div>
+            </div>
+
+            {/* Confidence Bar */}
+            <div style={{
+              background: config.lightColor,
+              borderRadius: '20px',
+              padding: '32px',
+              marginBottom: '32px'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                marginBottom: '16px'
+              }}>
+                <span style={{ 
+                  fontSize: '18px', 
+                  fontWeight: '600',
+                  color: '#334155'
+                }}>
+                  Confidence Level
+                </span>
+                <span style={{ 
+                  fontSize: '56px', 
+                  fontWeight: '800',
+                  color: config.darkColor,
+                  lineHeight: 1
+                }}>
+                  {result.confidence}%
+                </span>
+              </div>
+              <div style={{ 
+                height: '20px', 
+                background: 'white',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                <div style={{
+                  width: `${result.confidence}%`,
+                  height: '100%',
+                  background: config.bgGradient,
+                  borderRadius: '10px',
+                  transition: 'width 1s ease-out'
+                }} />
+              </div>
+            </div>
+
+            {/* Summary */}
+            {result.summary && (
+              <div style={{
+                padding: '28px',
+                background: '#f8fafc',
+                borderRadius: '16px',
+                border: '2px solid #e2e8f0'
+              }}>
+                <p style={{ 
+                  fontSize: '17px', 
+                  color: '#334155',
+                  margin: 0,
+                  lineHeight: 1.7,
+                  fontWeight: '500'
+                }}>
+                  {result.summary.length > 200 ? result.summary.substring(0, 200) + '...' : result.summary}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div style={{
+            marginTop: '32px',
+            paddingTop: '24px',
+            borderTop: '2px solid #e2e8f0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <div style={{ 
+              fontSize: '14px', 
+              color: '#94a3b8',
+              lineHeight: 1.5,
+              maxWidth: '70%'
+            }}>
+              ⚡ Results may not be perfect. Always verify from multiple sources.
+            </div>
+            <div style={{
+              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              padding: '12px 24px',
+              borderRadius: '12px',
+              fontSize: '15px',
+              fontWeight: '700',
+              color: 'white',
+              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+            }}>
+              Try it free →
+            </div>
           </div>
         </div>
       </div>
