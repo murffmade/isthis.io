@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import exifr from 'exifr';
 
 import ResultCard from '@/components/verification/ResultCard';
 import ProfileDropdown from '@/components/shared/ProfileDropdown';
@@ -13,9 +14,13 @@ import PreferencesModal from '@/components/shared/PreferencesModal';
 import StripeCheckout from '@/components/payment/StripeCheckout';
 import BottomNav from '@/components/mobile/BottomNav';
 import SplashScreen from '@/components/mobile/SplashScreen';
+import { generatePatchesFromFile } from '@/components/utils/imagePatches';
+import { analyzeForensics } from '@/components/utils/forensicsApi';
+import { deriveLlmScoreFromPatchVotes, ensembleDecision } from '@/components/utils/ensembleScore';
 
 export default function Home() {
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadedFileObj, setUploadedFileObj] = useState(null);
   const [urlInput, setUrlInput] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
@@ -40,6 +45,7 @@ export default function Home() {
     if (!file) return;
 
     try {
+      setUploadedFileObj(file);
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setUploadedFile(file_url);
       toast.success('File uploaded! Click "Verify Now" to analyze.');
@@ -56,12 +62,10 @@ export default function Home() {
 
     setAnalyzing(true);
     try {
-      const prompt = uploadedFile
-        ? `Analyze this image for signs of AI generation. Look for visual artifacts, inconsistencies, and AI fingerprints.`
-        : `Analyze this URL for signs of AI-generated content: ${urlInput}. Evaluate if the content is AI-generated vs authentic.`;
-
-      const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an expert AI content detector. ${prompt}
+      // URL-only analysis (existing flow)
+      if (!uploadedFileObj && urlInput) {
+        const analysisResult = await base44.integrations.Core.InvokeLLM({
+          prompt: `You are an expert AI content detector. Analyze this URL for signs of AI-generated content: ${urlInput}. Evaluate if the content is AI-generated vs authentic.
 
 Analyze for these signals:
 - Visual artifacts (hands, eyes, teeth, symmetry issues)
@@ -71,20 +75,130 @@ Analyze for these signals:
 - Known AI generation patterns
 
 Provide a thorough but accessible analysis.`,
-        file_urls: uploadedFile ? [uploadedFile] : undefined,
-        add_context_from_internet: !!urlInput,
+          add_context_from_internet: true,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              result: { type: "string", enum: ["likely_real", "likely_ai", "uncertain"] },
+              confidence: { type: "number" },
+              signals: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    signal_type: { type: "string" },
+                    description: { type: "string" },
+                    severity: { type: "string", enum: ["low", "medium", "high"] }
+                  }
+                }
+              },
+              summary: { type: "string" }
+            },
+            required: ["result", "confidence", "signals", "summary"]
+          }
+        });
+
+        const record = await base44.entities.AnalysisRecord.create({
+          content_type: 'url',
+          source_url: urlInput,
+          platform: 'direct_upload',
+          ...analysisResult
+        });
+
+        setResult({ ...record, ...analysisResult });
+        return;
+      }
+
+      // Enhanced image analysis with patches + forensics + EXIF
+      let exifData = null;
+      let patchUrls = [];
+      let forensicsData = null;
+
+      // Step 1: Parse EXIF
+      try {
+        exifData = await exifr.parse(uploadedFileObj);
+      } catch (err) {
+        console.warn('EXIF parsing failed:', err);
+      }
+
+      // Step 2: Generate and upload patches
+      try {
+        const patches = await generatePatchesFromFile(uploadedFileObj, 8);
+        const uploadPromises = patches.map(async (patch) => {
+          const { file_url } = await base44.integrations.Core.UploadFile({ file: patch.file });
+          return { id: patch.id, url: file_url };
+        });
+        patchUrls = await Promise.all(uploadPromises);
+      } catch (err) {
+        console.warn('Patch generation failed:', err);
+      }
+
+      // Step 3: Call forensics API
+      try {
+        forensicsData = await analyzeForensics({ imageUrl: uploadedFile });
+      } catch (err) {
+        console.warn('Forensics API failed:', err);
+      }
+
+      // Step 4: LLM analysis with patches
+      const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
+      const analysisResult = await base44.integrations.Core.InvokeLLM({
+        prompt: `SYSTEM ROLE:
+You are the AI Detection Engine for "Is This Real" (Enhanced v2).
+Your job is to determine whether an image is AI-generated or authentic, with special focus on hyper-realistic lifestyle, editorial, and personal-photo-style images.
+
+ANALYSIS PIPELINE:
+1. Classify image type (Lifestyle/Personal/Outdoor/Animal/Studio/Other)
+2. Analyze composition & symmetry
+3. Check human face & skin rendering
+4. Score material entropy (fabric, accessories, wear)
+5. Assess lighting & shadow physics
+6. Evaluate human-object/animal interactions
+7. Check animal anatomy (if applicable)
+8. Review metadata context
+
+The first image is the FULL image. The remaining ${patchUrls.length} images are PATCHES (crops) from different regions.
+Vote on EACH PATCH independently, then provide overall analysis.
+
+EXIF Summary: ${exifData ? JSON.stringify(exifData) : 'No EXIF data'}
+Forensics Summary: ${forensicsData ? JSON.stringify(forensicsData) : 'No forensics data'}
+
+Output comprehensive analysis with patch voting.`,
+        file_urls: allImageUrls,
         response_json_schema: {
           type: "object",
           properties: {
-            result: {
-              type: "string",
-              enum: ["likely_real", "likely_ai", "uncertain"],
-              description: "Primary determination"
+            classification: { type: "string" },
+            patch_votes: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  patch_id: { type: "string" },
+                  vote: { type: "string", enum: ["likely_real", "likely_ai", "uncertain"] },
+                  confidence: { type: "number" },
+                  signals: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        signal_type: { type: "string" },
+                        description: { type: "string" },
+                        severity: { type: "string", enum: ["low", "medium", "high"] }
+                      }
+                    }
+                  }
+                }
+              }
             },
-            confidence: {
-              type: "number",
-              description: "Confidence percentage 0-100"
+            provenance_summary: { type: "string" },
+            forensics_summary: { type: "string" },
+            recommended_next_actions: {
+              type: "array",
+              items: { type: "string" }
             },
+            result: { type: "string", enum: ["likely_real", "likely_ai", "uncertain"] },
+            confidence: { type: "number" },
             signals: {
               type: "array",
               items: {
@@ -96,31 +210,45 @@ Provide a thorough but accessible analysis.`,
                 }
               }
             },
-            claims_to_be_real: {
-              type: "boolean",
-              description: "Whether content presents itself as authentic real footage"
-            },
-            summary: {
-              type: "string",
-              description: "2-3 sentence plain English summary"
-            }
+            summary: { type: "string" }
           },
-          required: ["result", "confidence", "signals", "summary"]
+          required: ["patch_votes", "result", "confidence", "signals", "summary"]
         }
       });
 
-      // Save to database
-      const record = await base44.entities.AnalysisRecord.create({
-        content_type: uploadedFile ? 'image' : 'url',
-        source_url: urlInput || null,
-        platform: 'direct_upload',
-        file_url: uploadedFile || null,
-        thumbnail_url: uploadedFile || null,
-        ...analysisResult
+      // Step 5: Ensemble scoring
+      const llmScore = deriveLlmScoreFromPatchVotes(analysisResult.patch_votes);
+      const ensemble = ensembleDecision({
+        llm: llmScore,
+        forensics: forensicsData,
+        provenance: exifData ? { score: 30 } : null
       });
 
-      setResult({ ...record, ...analysisResult });
+      // Override with ensemble decision
+      const finalResult = {
+        ...analysisResult,
+        result: ensemble.result,
+        confidence: ensemble.confidence,
+        score: ensemble.score
+      };
+
+      // Step 6: Save to database
+      const record = await base44.entities.AnalysisRecord.create({
+        content_type: 'image',
+        source_url: urlInput || null,
+        platform: 'direct_upload',
+        file_url: uploadedFile,
+        thumbnail_url: uploadedFile,
+        exif_summary: exifData ? JSON.stringify(exifData) : null,
+        patch_urls: patchUrls.map(p => p.url),
+        forensics: forensicsData,
+        ensemble: ensemble,
+        ...finalResult
+      });
+
+      setResult({ ...record, ...finalResult });
     } catch (error) {
+      console.error('Analysis error:', error);
       toast.error('Analysis failed. Please try again.');
     } finally {
       setAnalyzing(false);
@@ -130,6 +258,7 @@ Provide a thorough but accessible analysis.`,
   const handleStartOver = () => {
     setResult(null);
     setUploadedFile(null);
+    setUploadedFileObj(null);
     setUrlInput('');
   };
 
