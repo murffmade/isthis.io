@@ -250,11 +250,29 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                 </div>
               </div>
 
-              <p className="text-slate-600 mt-6">
-                {result.score >= 58 && '⚠️ This score indicates the image was likely created by artificial intelligence.'}
-                {result.score <= 42 && '✓ This score indicates the image appears to be authentic.'}
-                {result.score > 42 && result.score < 58 && '❓ This score falls in the uncertain range - we found conflicting evidence.'}
-              </p>
+              <div className="text-slate-600 mt-6 space-y-3">
+                {result.score >= 58 && (
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-2">⚠️ Why this score suggests A.I. generation:</p>
+                    <p className="mb-2">This image scored in the "Likely A.I." range because our analysis found patterns commonly seen in computer-generated images.</p>
+                    <p className="text-sm">
+                      Scores above 58 typically mean we detected multiple indicators like: overly perfect symmetry, unnaturally smooth textures, impossible lighting, anatomical errors, or missing camera information that real photos have. The higher the score (closer to 100), the more confident we are it was created by A.I.
+                    </p>
+                  </div>
+                )}
+                {result.score <= 42 && (
+                  <p>✓ This score indicates the image appears to be authentic.</p>
+                )}
+                {result.score > 42 && result.score < 58 && (
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-2">❓ Why this score is uncertain:</p>
+                    <p className="mb-2">This image scored in the "Uncertain" range because we found mixed evidence - some signs suggesting it's real and others suggesting A.I. generation.</p>
+                    <p className="text-sm">
+                      This can happen with heavily edited real photos, artistic images, professional photography with lots of post-processing, or very high-quality A.I. images. Scores between 43-57 mean we cannot make a confident determination either way. We recommend checking other sources or looking for additional context about where this image came from.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
