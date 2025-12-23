@@ -193,6 +193,9 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       transition={{ duration: 0.4 }}
       className="w-full max-w-2xl mx-auto"
     >
+      {/* Trainer Feedback */}
+      <TrainerFeedback result={result} user={user} />
+
       {/* Analyzed Media */}
       {(result.file_url || result.thumbnail_url) && (
         <div className="mb-6 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm">
