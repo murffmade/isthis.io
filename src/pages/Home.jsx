@@ -14,6 +14,7 @@ import PreferencesModal from '@/components/shared/PreferencesModal';
 import StripeCheckout from '@/components/payment/StripeCheckout';
 import BottomNav from '@/components/mobile/BottomNav';
 import SplashScreen from '@/components/mobile/SplashScreen';
+import AnalysisChecklist from '@/components/verification/AnalysisChecklist';
 import { generatePatchesFromFile } from '@/components/utils/imagePatches';
 import { analyzeForensics } from '@/components/utils/forensicsApi';
 import { deriveLlmScoreFromPatchVotes, ensembleDecision } from '@/components/utils/ensembleScore';
@@ -417,7 +418,16 @@ Provide comprehensive patch voting with decisive classifications, justified conf
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-16 pb-safe">
         <AnimatePresence mode="wait">
-          {!result ? (
+          {analyzing ? (
+            <motion.div
+              key="analyzing"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <AnalysisChecklist />
+            </motion.div>
+          ) : !result ? (
             <motion.div
               key="input"
               initial={{ opacity: 0, y: 20 }}

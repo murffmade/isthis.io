@@ -106,6 +106,17 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       transition={{ duration: 0.4 }}
       className="w-full max-w-2xl mx-auto"
     >
+      {/* Analyzed Image */}
+      {(result.file_url || result.thumbnail_url) && (
+        <div className="mb-6 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img 
+            src={result.file_url || result.thumbnail_url} 
+            alt="Analyzed content"
+            className="w-full h-auto max-h-96 object-contain"
+          />
+        </div>
+      )}
+
       {/* Main Result Card */}
       <div className={`rounded-2xl border-2 ${config.borderColor} ${config.bgColor} p-8 mb-6`}>
         <div className="flex items-start gap-5">
@@ -181,6 +192,38 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
           <p className="text-slate-600 leading-relaxed">{result.summary}</p>
         </div>
       )}
+
+      {/* How We Scored This */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+        <h3 className="font-semibold text-slate-800 mb-3">How We Scored This</h3>
+        <div className="space-y-3 text-sm text-slate-600">
+          <p>
+            Our system gives each image a score between 0 and 100:
+          </p>
+          <ul className="space-y-2 ml-4">
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-600 font-bold">•</span>
+              <span><strong>Likely Real (0-42):</strong> The image shows strong signs of being authentic, like camera metadata, natural imperfections, and realistic lighting.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-amber-600 font-bold">•</span>
+              <span><strong>Likely AI (58-100):</strong> The image shows typical AI patterns, like overly perfect symmetry, unnatural smoothness, or impossible details.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-slate-600 font-bold">•</span>
+              <span><strong>Uncertain (43-57):</strong> We found mixed signals or not enough clear evidence to make a confident determination.</span>
+            </li>
+          </ul>
+          {result.score && (
+            <p className="pt-2 border-t border-slate-100">
+              <strong>This image scored: {result.score}/100</strong>
+              {result.score >= 58 && ' - indicating AI generation patterns'}
+              {result.score <= 42 && ' - indicating authentic photography'}
+              {result.score > 42 && result.score < 58 && ' - with inconclusive evidence'}
+            </p>
+          )}
+        </div>
+      </div>
 
       {/* Disclaimer */}
       <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 mb-6">
