@@ -15,6 +15,8 @@ import SystemMetrics from '@/components/admin/SystemMetrics';
 import AnalysisOverview from '@/components/admin/AnalysisOverview';
 import RoleManagement from '@/components/admin/RoleManagement';
 import TierManagement from '@/components/admin/TierManagement';
+import PayoutManagement from '@/components/admin/PayoutManagement';
+import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 
 function AdminStats() {
   const { data: allUsers = [] } = useQuery({
@@ -378,8 +380,10 @@ export default function Admin() {
           <div className="flex gap-1 overflow-x-auto">
               {[
                 { id: 'overview', label: 'Overview', icon: BarChart3 },
+                { id: 'analytics', label: 'Analytics', icon: TrendingUp },
                 { id: 'roles', label: 'Roles & Permissions', icon: Shield },
                 { id: 'influencers', label: 'Influencers', icon: DollarSign },
+                { id: 'payouts', label: 'Payouts', icon: DollarSign },
                 { id: 'activity', label: 'User Activity', icon: Activity },
                 { id: 'system', label: 'System Metrics', icon: TrendingUp },
                 { id: 'analyses', label: 'Analyses', icon: Shield },
@@ -459,6 +463,7 @@ export default function Admin() {
           </div>
         )}
 
+        {activeTab === 'analytics' && <AnalyticsDashboard />}
         {activeTab === 'roles' && (
           <div>
             <RoleManagement />
@@ -470,6 +475,7 @@ export default function Admin() {
             <AffiliatePerformance />
           </div>
         )}
+        {activeTab === 'payouts' && <PayoutManagement />}
         {activeTab === 'activity' && <UserActivityLogs />}
         {activeTab === 'system' && <SystemMetrics />}
         {activeTab === 'analyses' && <AnalysisOverview />}

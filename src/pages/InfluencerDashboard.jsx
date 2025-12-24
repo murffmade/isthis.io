@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DollarSign, Link as LinkIcon, Copy, Users, TrendingUp, CheckCircle2, ExternalLink, BarChart3, Edit2, Plus, Trash2, Calendar, Activity, Award, Crown } from 'lucide-react';
 import TierProgress from '@/components/influencer/TierProgress';
 import AnalyticsCharts from '@/components/influencer/AnalyticsCharts';
+import PayoutHistory from '@/components/influencer/PayoutHistory';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
@@ -376,6 +377,11 @@ export default function InfluencerDashboard() {
         {/* Analytics Charts */}
         <div className="mt-8">
           <AnalyticsCharts clicks={clicks} />
+        </div>
+
+        {/* Payout History */}
+        <div className="mt-8">
+          <PayoutHistory influencerId={influencer.id} />
         </div>
 
         {/* Recent Activity */}
