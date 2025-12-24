@@ -20,6 +20,8 @@ import PayoutManagement from '@/components/admin/PayoutManagement';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 import ContentModeration from '@/components/admin/ContentModeration';
 import AuditTrail from '@/components/admin/AuditTrail';
+import BlogManagement from '@/components/admin/BlogManagement';
+import LearningManagement from '@/components/admin/LearningManagement';
 
 function AdminStats() {
   const { data: allUsers = [] } = useQuery({
@@ -386,6 +388,8 @@ export default function Admin() {
                 { id: 'analytics', label: 'Analytics', icon: TrendingUp },
                 { id: 'moderation', label: 'Content Moderation', icon: Shield },
                 { id: 'audit', label: 'Audit Trail', icon: Activity },
+                { id: 'blog', label: 'Blog', icon: FileText },
+                { id: 'learning', label: 'Learning', icon: BookOpen },
                 { id: 'roles', label: 'Roles & Permissions', icon: Shield },
                 { id: 'influencers', label: 'Influencers', icon: DollarSign },
                 { id: 'payouts', label: 'Payouts', icon: DollarSign },
@@ -471,6 +475,8 @@ export default function Admin() {
         {activeTab === 'analytics' && <AnalyticsDashboard />}
         {activeTab === 'moderation' && <ContentModeration />}
         {activeTab === 'audit' && <AuditTrail />}
+        {activeTab === 'blog' && <BlogManagement />}
+        {activeTab === 'learning' && <LearningManagement />}
         {activeTab === 'roles' && (
           <div className="space-y-8">
             <RoleManagement />
