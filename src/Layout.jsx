@@ -1,6 +1,8 @@
 import React from 'react';
 import { Toaster } from 'sonner';
 import { createPageUrl } from '@/utils';
+import ScrollToTop from '@/components/shared/ScrollToTop';
+import PushNotifications from '@/components/notifications/PushNotifications';
 
 export default function Layout({ children, currentPageName }) {
   const footerLinks = [
@@ -14,6 +16,8 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
+      <ScrollToTop />
+      <PushNotifications />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
@@ -24,6 +28,53 @@ export default function Layout({ children, currentPageName }) {
         body {
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
+          overscroll-behavior-y: none;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+          * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+          }
+          
+          input, textarea, select {
+            font-size: 16px !important; /* Prevents zoom on focus iOS */
+          }
+        }
+        
+        /* Smooth momentum scrolling */
+        .overflow-y-auto, .overflow-auto {
+          -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Safe area padding for notched devices */
+        .safe-top {
+          padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .pb-safe {
+          padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        }
+        
+        /* Slide up animation for notifications */
+        @keyframes slide-up {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        
+        .animate-slide-up {
+          animation: slide-up 0.3s ease-out;
         }
       `}</style>
       <Toaster 

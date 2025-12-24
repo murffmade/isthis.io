@@ -15,6 +15,7 @@ import StripeCheckout from '@/components/payment/StripeCheckout';
 import BottomNav from '@/components/mobile/BottomNav';
 import SplashScreen from '@/components/mobile/SplashScreen';
 import AnalysisChecklist from '@/components/verification/AnalysisChecklist';
+import { sendNotification } from '@/components/notifications/PushNotifications';
 import { generatePatchesFromFile } from '@/components/utils/imagePatches';
 import { analyzeForensics } from '@/components/utils/forensicsApi';
 import { deriveLlmScoreFromPatchVotes, ensembleDecision } from '@/components/utils/ensembleScore';
@@ -399,6 +400,13 @@ export default function Home() {
             });
 
             setResult({ ...record, ...frameAnalysis });
+            
+            // Send notification
+            sendNotification(
+              'Video Analysis Complete',
+              `Result: ${frameAnalysis.overall_result.replace('_', ' ')} (${frameAnalysis.overall_confidence}% confidence)`
+            );
+            
             return;
           } catch (error) {
             console.error('Video analysis error:', error);
@@ -453,8 +461,15 @@ Provide a thorough but accessible analysis.`,
         });
 
         setResult({ ...record, ...analysisResult });
+
+        // Send notification
+        sendNotification(
+          'URL Analysis Complete',
+          `Result: ${analysisResult.result.replace('_', ' ')} (${analysisResult.confidence}% confidence)`
+        );
+
         return;
-      }
+        }
 
       // Enhanced image analysis with patches + forensics + EXIF
       let exifData = null;
@@ -761,7 +776,13 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
       });
 
       setResult({ ...record, ...finalResult });
-    } catch (error) {
+
+      // Send notification
+      sendNotification(
+        'Image Analysis Complete',
+        `Result: ${finalResult.result.replace('_', ' ')} (${finalResult.confidence}% confidence)`
+      );
+      } catch (error) {
       console.error('Analysis error:', error);
       toast.error('Analysis failed. Please try again.');
     } finally {
