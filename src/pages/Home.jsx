@@ -698,34 +698,76 @@ Provide a thorough but accessible analysis.`,
       - Background incoherence: perspective/scale errors
       - Repetitive textures from latent space
 
-      B) HUMAN ART INDICATORS:
-      - Visible layer construction if unflattened
-      - Brush pressure variation (Wacom artifacts)
-      - Human errors: crooked lines, color outside lines
-      - Style inconsistency (artist fatigue)
-      - Sketch layers or construction lines
-      - Canvas texture or paper grain
-      - Authentic artist signatures
-      - Tool-specific patterns (Procreate, Photoshop brushes)
+      B) HUMAN ART INDICATORS (Hand-Drawn/Traditional):
 
-      C) CRITICAL AI ART TELLS:
-      - NO metadata (AI never generates EXIF)
-      - Too-perfect consistency across entire image
-      - Uniform style that never varies
-      - Diffusion model "smoothness" - mathematically perfect gradients
-      - Impossible style fusion (e.g., Van Gogh + photorealism)
-      - Backgrounds less detailed than subjects
-      - "AI coherence" - everything fits TOO well
+      TRADITIONAL MEDIA MARKERS (Strong authenticity):
+      - Canvas weave texture: Visible fabric pattern from real canvas
+      - Paper grain: Authentic paper texture (rough, smooth, watercolor)
+      - Brush stroke irregularities: Inconsistent pressure, thickness variation
+      - Paint texture: Visible impasto (3D paint buildup), brush hair marks
+      - Pencil/charcoal grain: Material interaction with paper surface
+      - Watercolor bleeding: Natural water diffusion at edges
+      - Pen ink flow variation: Inconsistent ink density, pooling
+      - Eraser marks: Visible smudging or paper damage from erasing
 
-      D) HYBRID DETECTION:
-      - Partial quality inconsistency
-      - AI-filled areas with different noise
-      - Style shifts between regions
+      DIGITAL ART (Human-Created) MARKERS:
+      - Layer construction artifacts if unflattened
+      - Brush pressure variation: Tablet pen pressure sensitivity (lighter/heavier strokes)
+      - Undo/redo patterns: Visible correction attempts, overlapping lines
+      - Selection boundaries: Imperfect masking edges
+      - Human timing errors: Rushed areas vs detailed areas
+      - Tool-specific patterns: Recognizable Procreate, Photoshop, Clip Studio brushes
+      - Authentic mistakes: Lines that go outside intended areas, accidental marks
 
-      METADATA: ${exifData ? 'Present (unusual for art)' : 'NONE (expected for AI art)'}
-      NO EXIF + Art Style + Perfect Consistency = 85%+ likely AI
+      HUMAN IMPERFECTION INDICATORS (Critical):
+      - Asymmetric line weights: Lines vary naturally, not algorithmically
+      - Inconsistent detail level: Artist fatigue = less detail over time
+      - Correction marks: Visible attempts to fix mistakes
+      - Natural tremor: Hand shake in long lines (not smooth bezier curves)
+      - Proportion errors: Slightly wrong perspective or anatomy (human error)
+      - Color outside lines: Accidental strokes beyond boundaries
+      - Sketch/construction lines: Visible planning marks not erased
+      - Speed variation: Fast loose strokes vs slow careful strokes
+      - Authentic artist signatures: Hand-written, not perfect font-like text
 
-      Analyze all patches focusing on artistic style consistency and AI generation patterns.`;
+      C) CRITICAL AI ART TELLS (vs Hand-Drawn):
+      - NO metadata (AI never generates EXIF, hand-drawn scans may have scanner info)
+      - PERFECT consistency: Every stroke has identical quality/style
+      - NO human errors: Zero mistakes, corrections, or accidental marks
+      - Mathematical gradients: Too smooth, no natural color variation
+      - Perfect symmetry: Bilateral symmetry that's pixel-perfect (humans can't do this)
+      - Uniform brush strokes: Every stroke looks algorithmically identical
+      - No medium interaction: Missing canvas texture, paper grain, or paint buildup
+      - Impossible style fusion: Mixing art styles that don't naturally blend
+      - "AI coherence": Everything fits together too perfectly, no happy accidents
+      - No construction artifacts: Missing sketch lines, planning marks, or guidelines
+      - Perfect line quality: Smooth vector-like curves without natural tremor
+      - Backgrounds less detailed: AI focuses on subject, hand artists vary more naturally
+      - No correction layers: AI generates final image, humans have visible fixes
+      - Repetitive patterns: Same pattern/texture repeated identically (copy-paste effect)
+
+      D) HYBRID DETECTION (Hand-Drawn Base + AI Enhancement):
+      - Quality inconsistency: Hand-drawn base with AI-enhanced sections
+      - Noise pattern shifts: Hand-drawn texture vs AI smoothness in different areas
+      - Style breaks: Sudden change from natural imperfections to AI perfection
+      - Detail mismatch: Hand-drawn loose areas next to AI-detailed areas
+      - Edge quality variation: Natural hand edges vs AI-perfect boundaries
+      - Color consistency breaks: Hand-mixed colors vs AI-generated gradients
+
+      METADATA: ${exifData ? 'Present (unusual for art)' : 'NONE (expected for AI art, hand-drawn scans may have scanner data)'}
+
+      CRITICAL SCORING FOR HAND-DRAWN vs AI ART:
+      - Hand-drawn evidence (texture, errors, corrections) = SUBTRACT 30-40 points from AI score
+      - Perfect consistency + No human errors = ADD 35-45 points to AI score  
+      - NO EXIF + Art Style + Perfect Consistency = 85%+ likely AI
+      - Scanner metadata + Canvas/paper texture = 70-80% likely hand-drawn scan
+
+      Your analysis MUST distinguish between:
+      1. Traditional hand-drawn/painted art (physical media scanned)
+      2. Digital art created by humans (Procreate, Photoshop with tablet)
+      3. AI-generated art (Midjourney, DALL-E, Stable Diffusion)
+
+      Analyze all patches for human imperfection markers vs AI perfection patterns.`;
 
       const analysisResult = await base44.integrations.Core.InvokeLLM({
         prompt: isPhoto ? photoAnalysisPrompt : illustrationAnalysisPrompt + `
