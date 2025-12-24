@@ -121,11 +121,11 @@ export default function Home() {
         setUploadedFile(file_url);
         setUploading(false);
 
-        // Pre-classify image type (photo vs drawing/illustration vs screenshot)
+        // Pre-classify image type - ALWAYS analyze visually
         if (file.type.startsWith('image/')) {
           setClassifying(true);
           try {
-            // First check for EXIF data - if present, it's definitely a photo
+            // Check for EXIF data
             let hasExif = false;
             try {
               const exifrModule = await import('exifr');
@@ -135,44 +135,37 @@ export default function Home() {
               console.warn('EXIF check failed:', err);
             }
 
-            if (hasExif) {
-              // EXIF present = definitely a photo
-              setImageClassification({
-                type: 'photo',
-                confidence: 98,
-                reasoning: 'Camera EXIF metadata detected - this is definitely a photograph'
-              });
-              setUserConfirmedType(false);
-            } else {
-              // No EXIF - use visual analysis
-              const classification = await base44.integrations.Core.InvokeLLM({
-                prompt: `Analyze this image and determine if it is:
-        1. PHOTO: A photograph taken with a camera (real-world scene captured by a camera)
-        2. SCREENSHOT: A screen capture from a device (computer, phone, tablet) showing UI elements, apps, websites, or digital content
-        3. DRAWING/ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
+            // ALWAYS do visual analysis regardless of EXIF
+            const classification = await base44.integrations.Core.InvokeLLM({
+              prompt: `Analyze this image and determine if it is:
+        1. PHOTO: A photograph taken with a camera of a real-world scene (not a screen)
+        2. SCREENSHOT: A screen capture showing UI elements, apps, websites, or digital content
+        3. DIGITAL_ART: Computer-generated art, 3D renders, vector graphics, or digitally created artwork
+        4. ILLUSTRATION: Hand-drawn art, paintings, sketches (traditional or digital drawing/painting)
 
-        Consider:
-        - SCREENSHOT indicators: UI elements (buttons, menus, status bars), browser chrome, app interfaces, text on digital backgrounds, pixel-perfect alignment, system fonts
-        - PHOTO indicators: Real-world scenes, natural lighting, organic textures, camera perspective
-        - ILLUSTRATION indicators: Artistic style, hand-drawn elements, stylized rendering, creative composition
+        CRITICAL ANALYSIS REQUIREMENTS:
+        - EXIF Status: ${hasExif ? 'PRESENT (suggests camera, but verify visually)' : 'MISSING (rules out direct camera capture)'}
+        - SCREENSHOT indicators: UI elements, buttons, menus, status bars, browser chrome, app interfaces, text on digital backgrounds, pixel-perfect alignment, system fonts, window borders
+        - PHOTO indicators: Real-world scenes captured by camera, natural lighting, organic textures, camera perspective, physical objects/environments
+        - DIGITAL_ART indicators: 3D renders, vector graphics, computer-generated imagery, perfect gradients, no brush strokes
+        - ILLUSTRATION indicators: Artistic hand-drawn style, visible brush strokes, painting techniques, sketch lines, traditional art aesthetics
 
-        CRITICAL: No EXIF metadata is present, which rules out direct camera capture.
+        IMPORTANT: Even if EXIF is present, if the image shows a screen with UI elements, it's a SCREENSHOT, not a PHOTO.
 
-        Respond with "photo", "screenshot", or "drawing".`,
-                file_urls: [file_url],
-                response_json_schema: {
-                  type: "object",
-                  properties: {
-                    type: { type: "string", enum: ["photo", "screenshot", "drawing"] },
-                    confidence: { type: "number" },
-                    reasoning: { type: "string" }
-                  }
+        Respond with "photo", "screenshot", "digital_art", or "illustration".`,
+              file_urls: [file_url],
+              response_json_schema: {
+                type: "object",
+                properties: {
+                  type: { type: "string", enum: ["photo", "screenshot", "digital_art", "illustration"] },
+                  confidence: { type: "number" },
+                  reasoning: { type: "string" }
                 }
-              });
+              }
+            });
 
-              setImageClassification(classification);
-              setUserConfirmedType(false);
-            }
+            setImageClassification(classification);
+            setUserConfirmedType(false);
           } catch (error) {
             console.error('Classification failed:', error);
             setImageClassification({ type: 'photo', confidence: 50, reasoning: 'Could not classify' });
@@ -638,21 +631,22 @@ Provide a thorough but accessible analysis.`,
       // Step 4: Use pre-classification or re-classify
       const classificationResult = imageClassification || await base44.integrations.Core.InvokeLLM({
         prompt: `You are an image classifier. Determine if this image is:
-      1. PHOTO: A photograph taken with a camera (could be edited, but originated as a photo)
-      2. SCREENSHOT: A screen capture from a device showing UI elements, apps, or digital content
-      3. ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
+      1. PHOTO: A photograph taken with a camera of a real-world scene
+      2. SCREENSHOT: A screen capture showing UI elements, apps, or digital content
+      3. DIGITAL_ART: Computer-generated art, 3D renders, vector graphics
+      4. ILLUSTRATION: Hand-drawn art, paintings, sketches
 
       Consider:
-      - EXIF metadata: ${exifData ? 'EXIF present - definitely photo' : 'NO EXIF - could be screenshot or illustration'}
-      - SCREENSHOT indicators: UI elements, menus, status bars, browser chrome, app interfaces
-      - Visual style: photorealistic vs digital UI vs artistic/stylized
+      - EXIF metadata: ${exifData ? 'EXIF present (suggests camera, verify visually)' : 'NO EXIF'}
+      - SCREENSHOT indicators: UI elements, menus, status bars, browser chrome
+      - Visual style: photorealistic vs digital UI vs CG vs hand-drawn
 
-      Return "photo", "screenshot", or "illustration"`,
+      Return "photo", "screenshot", "digital_art", or "illustration"`,
         file_urls: [uploadedFile],
         response_json_schema: {
           type: "object",
           properties: {
-            image_type: { type: "string", enum: ["photo", "screenshot", "illustration"] },
+            image_type: { type: "string", enum: ["photo", "screenshot", "digital_art", "illustration"] },
             confidence: { type: "number" },
             reasoning: { type: "string" }
           },
@@ -1503,7 +1497,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
 
       // Step 6: Save to database with classification info
       const record = await base44.entities.AnalysisRecord.create({
-        classification: classificationResult.image_type,
+        classification: classificationResult.image_type || classificationResult.type,
         classification_confidence: classificationResult.confidence,
         classification_reasoning: classificationResult.reasoning,
         content_type: 'image',
@@ -1519,6 +1513,24 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
       });
 
       setResult({ ...record, ...finalResult });
+
+      // Save training feedback if user corrected the classification
+      if (imageClassification?.userCorrected) {
+        try {
+          await base44.entities.TrainingFeedback.create({
+            analysis_id: record.id,
+            actual_label: imageClassification.type, // User's correction
+            ai_prediction: imageClassification.originalPrediction, // AI's original guess
+            confidence_match: false,
+            notes: `User corrected image type classification from ${imageClassification.originalPrediction} to ${imageClassification.type}`,
+            content_type: 'image',
+            file_url: uploadedFile,
+            status: 'pending'
+          });
+        } catch (error) {
+          console.error('Failed to save classification feedback:', error);
+        }
+      }
 
       // Send notification
       sendNotification(
@@ -1776,50 +1788,55 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
 
                   {/* Image Type Classification UI */}
                   {imageClassification && !userConfirmedType && (
-                    <div className="mb-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
-                      <div className="flex items-start gap-3 mb-3">
-                        <div className="text-2xl">🤖</div>
-                        <div className="flex-1">
-                          <p className="font-semibold text-slate-900 mb-1">We detected this as:</p>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="px-3 py-1 bg-blue-600 text-white font-bold rounded-full text-sm">
-                              {imageClassification.type === 'photo' ? '📷 Photo' : imageClassification.type === 'screenshot' ? '🖥️ Screenshot' : '🎨 Drawing/Illustration'}
-                            </span>
-                            <span className="text-xs text-slate-600">
-                              {imageClassification.confidence}% confident
-                            </span>
-                          </div>
-                          <p className="text-sm text-slate-600">{imageClassification.reasoning}</p>
+                    <div className="mb-4 p-5 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
+                      <div className="mb-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="text-xl">🤖</div>
+                          <p className="font-bold text-slate-900">AI Classification</p>
+                        </div>
+                        <p className="text-sm text-slate-600 mb-1">{imageClassification.reasoning}</p>
+                        <p className="text-xs text-slate-500">Confidence: {imageClassification.confidence}%</p>
+                      </div>
+
+                      <div className="space-y-2 mb-4">
+                        <p className="text-sm font-semibold text-slate-700">Select the correct type:</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            { value: 'photo', icon: '📷', label: 'Photo' },
+                            { value: 'screenshot', icon: '🖥️', label: 'Screenshot' },
+                            { value: 'digital_art', icon: '🎨', label: 'Digital Art' },
+                            { value: 'illustration', icon: '✏️', label: 'Illustration' }
+                          ].map((option) => (
+                            <button
+                              key={option.value}
+                              onClick={() => {
+                                const aiPrediction = imageClassification.type;
+                                setImageClassification({
+                                  ...imageClassification,
+                                  type: option.value,
+                                  userCorrected: option.value !== aiPrediction,
+                                  originalPrediction: aiPrediction
+                                });
+                              }}
+                              className={`p-3 rounded-lg border-2 transition-all text-sm font-semibold ${
+                                imageClassification.type === option.value
+                                  ? 'border-blue-600 bg-blue-600 text-white shadow-md'
+                                  : 'border-slate-300 bg-white text-slate-700 hover:border-blue-300'
+                              }`}
+                            >
+                              <div className="text-xl mb-1">{option.icon}</div>
+                              {option.label}
+                            </button>
+                          ))}
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <p className="text-sm font-semibold text-slate-700">Is this correct?</p>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => setUserConfirmedType(true)}
-                            className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors text-sm"
-                          >
-                            ✓ Yes, Continue
-                          </button>
-                          <button
-                            onClick={() => {
-                              const currentType = imageClassification.type;
-                              const nextType = currentType === 'photo' ? 'screenshot' : currentType === 'screenshot' ? 'drawing' : 'photo';
-                              setImageClassification({
-                                ...imageClassification,
-                                type: nextType,
-                                confidence: 100,
-                                reasoning: 'User corrected the classification'
-                              });
-                              setUserConfirmedType(true);
-                            }}
-                            className="flex-1 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors text-sm"
-                          >
-                            ✗ Change Type
-                          </button>
-                        </div>
-                      </div>
+                      <button
+                        onClick={() => setUserConfirmedType(true)}
+                        className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-colors"
+                      >
+                        ✓ Confirm & Continue
+                      </button>
                     </div>
                   )}
 
