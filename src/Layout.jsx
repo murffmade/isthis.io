@@ -29,24 +29,67 @@ export default function Layout({ children, currentPageName }) {
       <ScrollToTop />
       <PushNotifications />
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+          --color-primary: 79 70 229;
+          --color-secondary: 99 102 241;
+          --radius: 1rem;
+        }
 
         * {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          letter-spacing: -0.01em;
         }
 
         body {
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
           overscroll-behavior-y: none;
+          background: #fafafa;
         }
 
         /* Modern gradients and effects */
         .gradient-mesh {
           background: 
-            radial-gradient(at 40% 20%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-            radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.1) 0px, transparent 50%),
-            radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
+            radial-gradient(at 40% 20%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+            radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.06) 0px, transparent 50%),
+            radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
+            linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .glass-effect {
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(20px) saturate(180%);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .shadow-soft {
+          box-shadow: 0 2px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+        }
+
+        .shadow-medium {
+          box-shadow: 0 4px 32px -8px rgba(0, 0, 0, 0.08), 0 2px 12px -4px rgba(0, 0, 0, 0.05);
+        }
+
+        .button-shine {
+          position: relative;
+          overflow: hidden;
+        }
+
+        .button-shine::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          transition: left 0.5s;
+        }
+
+        .button-shine:hover::before {
+          left: 100%;
         }
         
         /* Mobile optimizations */
@@ -112,7 +155,7 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Global Footer */}
-      <footer className="bg-slate-900 text-white border-t border-slate-800">
+      <footer className="bg-gradient-to-b from-slate-900 to-slate-950 text-white border-t border-slate-800">
         <div className="max-w-6xl mx-auto px-6 py-12">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             {/* Brand */}

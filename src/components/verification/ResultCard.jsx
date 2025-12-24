@@ -552,16 +552,16 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       )}
 
       {/* Main Result Card */}
-      <div className={`rounded-2xl border-2 ${config.borderColor} ${config.bgColor} p-8 mb-6`}>
+      <div className={`rounded-3xl border-2 ${config.borderColor} ${config.bgColor} p-8 mb-6 shadow-soft`}>
         <div className="flex items-start gap-5">
-          <div className={`w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-sm`}>
-            <Icon className={`w-8 h-8 ${config.color}`} />
+          <div className={`w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-medium`}>
+            <Icon className={`w-10 h-10 ${config.color}`} />
           </div>
           <div className="flex-1">
-            <h2 className={`text-2xl font-bold ${config.color} mb-1`}>
+            <h2 className={`text-3xl font-extrabold ${config.color} mb-2 tracking-tight`}>
               {config.title}
             </h2>
-            <p className="text-slate-600">
+            <p className="text-slate-600 text-lg leading-relaxed">
               {config.description}
             </p>
           </div>

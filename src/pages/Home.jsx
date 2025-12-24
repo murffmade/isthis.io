@@ -963,21 +963,21 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
       
       <div className="min-h-screen gradient-mesh pb-20 md:pb-0">
       {/* Header */}
-      <header className="border-b border-slate-100/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50 safe-top shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+      <header className="glass-effect sticky top-0 z-50 safe-top shadow-soft">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <button 
               onClick={handleStartOver}
-              className="flex items-center gap-2 sm:gap-3 active:scale-95 transition-transform"
+              className="flex items-center gap-3 active:scale-[0.97] transition-all duration-200"
             >
               <AppIcon size="md" />
               <div>
-                <h1 className="text-base sm:text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
-                <p className="text-xs text-slate-500 hidden sm:block">Is This Real?</p>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-tight">IsThis.io</h1>
+                <p className="text-xs text-slate-600 hidden sm:block font-medium">AI Content Verification</p>
               </div>
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <HelpButton />
               <div className="hidden md:block">
                 <ProfileDropdown onOpenSettings={() => setShowPreferences(true)} />
@@ -1007,26 +1007,26 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               exit={{ opacity: 0, y: -20 }}
             >
               {/* Hero */}
-              <div className="text-center mb-8 sm:mb-16">
+              <div className="text-center mb-12 sm:mb-20">
                 <motion.div 
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-slate-100 text-slate-600 text-xs sm:text-sm mb-4 sm:mb-6"
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 text-indigo-700 text-xs sm:text-sm mb-6 shadow-soft font-medium"
                 >
-                  <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <Sparkles className="w-4 h-4" />
                   Free AI Detection Tool
                 </motion.div>
-                <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-4 sm:mb-6 leading-tight px-4">
+                <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-slate-900 mb-6 leading-[1.1] px-4 tracking-tight">
                   Is This Real?
                 </h1>
-                <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto mb-6 sm:mb-8 px-4">
-                  Upload any image or video to instantly verify if it's real or AI-generated.
+                <p className="text-lg sm:text-2xl text-slate-600 max-w-3xl mx-auto mb-8 px-4 font-light leading-relaxed">
+                  Instantly verify if images and videos are real or AI-generated with advanced detection technology
                 </p>
               </div>
 
               {/* Upload Section */}
-              <div className="max-w-2xl mx-auto mb-8 sm:mb-16" data-tour="upload-zone">
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-slate-200/50 p-4 sm:p-8 shadow-xl shadow-slate-200/50">
+              <div className="max-w-3xl mx-auto mb-12 sm:mb-20" data-tour="upload-zone">
+                <div className="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-medium">
                   <div className="mb-4 sm:mb-6">
                     <input
                       type="file"
@@ -1038,8 +1038,8 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     />
                     <label 
                       htmlFor="file-upload"
-                      className={`block border-2 border-dashed border-slate-300 rounded-xl p-8 sm:p-12 text-center transition-all bg-slate-50 ${
-                        uploading ? 'cursor-wait opacity-75' : 'cursor-pointer active:scale-[0.98] hover:border-slate-400'
+                      className={`block border-2 border-dashed border-indigo-200 rounded-2xl p-10 sm:p-14 text-center transition-all bg-gradient-to-br from-indigo-50/50 to-purple-50/50 ${
+                        uploading ? 'cursor-wait opacity-75' : 'cursor-pointer active:scale-[0.99] hover:border-indigo-300 hover:bg-indigo-50/70'
                       }`}
                     >
                       {uploading ? (
@@ -1099,7 +1099,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   <button
                     onClick={handleAnalyze}
                     disabled={analyzing || (!uploadedFile && !urlInput)}
-                    className="w-full py-4 sm:py-4 bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base sm:text-lg touch-manipulation"
+                    className="w-full py-4 sm:py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.98] text-white font-bold rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-base sm:text-lg touch-manipulation shadow-lg shadow-indigo-500/30 button-shine"
                     data-tour="verify-button"
                   >
                     {analyzing ? (
@@ -1118,43 +1118,43 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               </div>
 
               {/* How It Works */}
-              <div className="max-w-4xl mx-auto mb-8 sm:mb-16" data-tour="how-it-works">
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-6 sm:mb-8">How It Works</h2>
-                <div className="grid grid-cols-3 sm:grid-cols-3 gap-4 sm:gap-6">
+              <div className="max-w-5xl mx-auto mb-12 sm:mb-20" data-tour="how-it-works">
+                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-10 sm:mb-12 tracking-tight">How It Works</h2>
+                <div className="grid grid-cols-3 gap-6 sm:gap-10">
                   {[
-                    { icon: Upload, title: 'Upload', desc: 'Upload an image, video, or paste a URL from anywhere' },
-                    { icon: Zap, title: 'Analyze', desc: 'Our AI analyzes visual artifacts, patterns, and inconsistencies' },
-                    { icon: CheckCircle2, title: 'Get Results', desc: 'Receive a clear verdict with confidence score and detailed explanation' }
+                    { icon: Upload, title: 'Upload', desc: 'Upload an image, video, or paste a URL from anywhere', color: 'from-blue-500 to-indigo-600' },
+                    { icon: Zap, title: 'Analyze', desc: 'Our AI analyzes visual artifacts, patterns, and inconsistencies', color: 'from-indigo-500 to-purple-600' },
+                    { icon: CheckCircle2, title: 'Get Results', desc: 'Receive a clear verdict with confidence score and detailed explanation', color: 'from-purple-500 to-pink-600' }
                   ].map((step, i) => (
                     <motion.div
                       key={i}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.1 }}
-                      className="text-center p-3 sm:p-6"
+                      className="text-center group"
                     >
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-slate-900 flex items-center justify-center mx-auto mb-2 sm:mb-4">
-                        <step.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                      <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${step.color} flex items-center justify-center mx-auto mb-4 sm:mb-5 shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
+                        <step.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                       </div>
-                      <h3 className="font-semibold text-slate-900 mb-1 sm:mb-2 text-sm sm:text-base">{step.title}</h3>
-                      <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">{step.desc}</p>
+                      <h3 className="font-bold text-slate-900 mb-2 text-base sm:text-lg">{step.title}</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed hidden sm:block px-2">{step.desc}</p>
                     </motion.div>
                   ))}
                 </div>
               </div>
 
               {/* Pricing */}
-              <section className="py-8 sm:py-16 border-t border-slate-200">
-                <div className="text-center mb-8 sm:mb-12 px-4">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3 sm:mb-4">Upgrade for More Power</h2>
-                  <p className="text-base sm:text-lg text-slate-600">Get unlimited verifications and advanced features</p>
+              <section className="py-12 sm:py-20">
+                <div className="text-center mb-10 sm:mb-16 px-4">
+                  <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Choose Your Plan</h2>
+                  <p className="text-lg sm:text-xl text-slate-600 font-light">Get unlimited verifications and advanced features</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
                   {/* Free */}
-                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-slate-200 p-5 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">Free</h3>
-                    <div className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">$0</div>
+                  <div className="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-soft hover:shadow-medium transition-shadow duration-300">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Free</h3>
+                    <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-5 tracking-tight">$0</div>
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -1175,10 +1175,10 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   </div>
 
                   {/* Annual */}
-                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-slate-200 p-5 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">Premium</h3>
-                    <div className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">$29</div>
-                    <div className="text-xs sm:text-sm text-slate-500 mb-4">per year</div>
+                  <div className="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-soft hover:shadow-medium transition-shadow duration-300">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Premium</h3>
+                    <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-1 tracking-tight">$29</div>
+                    <div className="text-sm text-slate-500 mb-5 font-medium">per year</div>
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -1204,13 +1204,13 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   </div>
 
                   {/* Lifetime */}
-                  <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl sm:rounded-2xl border-2 border-slate-900 p-5 sm:p-6 text-white relative">
-                    <div className="absolute -top-2.5 sm:-top-3 left-1/2 -translate-x-1/2 px-2.5 sm:px-3 py-1 bg-emerald-500 rounded-full text-xs font-bold text-white">
+                  <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white relative shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-shadow duration-300 transform hover:scale-105 transition-all">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-white rounded-full text-xs font-bold text-indigo-600 shadow-lg">
                       BEST VALUE
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold mb-2">Lifetime</h3>
-                    <div className="text-2xl sm:text-3xl font-bold mb-1">$99</div>
-                    <div className="text-xs sm:text-sm text-slate-400 mb-4">one-time payment</div>
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2">Lifetime</h3>
+                    <div className="text-3xl sm:text-4xl font-extrabold mb-1 tracking-tight">$99</div>
+                    <div className="text-sm text-indigo-100 mb-5 font-medium">one-time payment</div>
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
