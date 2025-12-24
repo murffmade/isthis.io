@@ -1642,7 +1642,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
             <div className="flex items-center gap-3">
               {/* Usage Counter */}
               {currentUser && (
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white/80 rounded-lg border border-slate-200 shadow-sm">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 rounded-lg border border-slate-200 shadow-sm">
                   {tier.limit ? (
                     <>
                       <span className={`text-sm font-bold ${usageCount >= tier.limit ? 'text-red-600' : 'text-slate-900'}`}>
