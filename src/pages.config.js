@@ -5,6 +5,7 @@ import Admin from './pages/Admin';
 import AffiliateDashboard from './pages/AffiliateDashboard';
 import AffiliateMarketing from './pages/AffiliateMarketing';
 import AnalysisDashboard from './pages/AnalysisDashboard';
+import Announcements from './pages/Announcements';
 import BatchAnalysis from './pages/BatchAnalysis';
 import Blog from './pages/Blog';
 import BlogDashboard from './pages/BlogDashboard';
@@ -20,6 +21,7 @@ import GiftRedemption from './pages/GiftRedemption';
 import History from './pages/History';
 import HolidayGift from './pages/HolidayGift';
 import Home from './pages/Home';
+import InfluencerDashboard from './pages/InfluencerDashboard';
 import Learn from './pages/Learn';
 import ModelPerformance from './pages/ModelPerformance';
 import MyGifts from './pages/MyGifts';
@@ -27,13 +29,11 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Safe from './pages/Safe';
 import Scam from './pages/Scam';
+import Settings from './pages/Settings';
 import Support from './pages/Support';
 import TermsOfService from './pages/TermsOfService';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import Settings from './pages/Settings';
-import InfluencerDashboard from './pages/InfluencerDashboard';
-import Announcements from './pages/Announcements';
 import __Layout from './Layout.jsx';
 
 
@@ -45,6 +45,7 @@ export const PAGES = {
     "AffiliateDashboard": AffiliateDashboard,
     "AffiliateMarketing": AffiliateMarketing,
     "AnalysisDashboard": AnalysisDashboard,
+    "Announcements": Announcements,
     "BatchAnalysis": BatchAnalysis,
     "Blog": Blog,
     "BlogDashboard": BlogDashboard,
@@ -60,6 +61,7 @@ export const PAGES = {
     "History": History,
     "HolidayGift": HolidayGift,
     "Home": Home,
+    "InfluencerDashboard": InfluencerDashboard,
     "Learn": Learn,
     "ModelPerformance": ModelPerformance,
     "MyGifts": MyGifts,
@@ -67,13 +69,11 @@ export const PAGES = {
     "PrivacyPolicy": PrivacyPolicy,
     "Safe": Safe,
     "Scam": Scam,
+    "Settings": Settings,
     "Support": Support,
     "TermsOfService": TermsOfService,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "Settings": Settings,
-    "InfluencerDashboard": InfluencerDashboard,
-    "Announcements": Announcements,
 }
 
 export const pagesConfig = {

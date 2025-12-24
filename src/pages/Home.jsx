@@ -21,6 +21,7 @@ import { generatePatchesFromFile } from '@/components/utils/imagePatches';
 import { analyzeForensics } from '@/components/utils/forensicsApi';
 import { deriveLlmScoreFromPatchVotes, ensembleDecision } from '@/components/utils/ensembleScore';
 import { extractFramesFromVideo } from '@/components/utils/videoFrames';
+import { moderateImage, moderateVideo } from '@/components/utils/contentModeration';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import HelpButton from '@/components/onboarding/HelpButton';
 
@@ -93,10 +94,17 @@ export default function Home() {
       }, 150);
       
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      
+
       clearInterval(progressInterval);
       setUploadProgress(100);
-      
+
+      // Run content moderation in background
+      if (file.type.startsWith('image/')) {
+        moderateImage(file_url).catch(console.error);
+      } else if (file.type.startsWith('video/')) {
+        moderateVideo(file_url).catch(console.error);
+      }
+
       setTimeout(() => {
         setUploadedFile(file_url);
         setUploading(false);

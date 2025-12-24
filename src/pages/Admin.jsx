@@ -17,6 +17,7 @@ import RoleManagement from '@/components/admin/RoleManagement';
 import TierManagement from '@/components/admin/TierManagement';
 import PayoutManagement from '@/components/admin/PayoutManagement';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
+import ContentModeration from '@/components/admin/ContentModeration';
 
 function AdminStats() {
   const { data: allUsers = [] } = useQuery({
@@ -381,6 +382,7 @@ export default function Admin() {
               {[
                 { id: 'overview', label: 'Overview', icon: BarChart3 },
                 { id: 'analytics', label: 'Analytics', icon: TrendingUp },
+                { id: 'moderation', label: 'Content Moderation', icon: Shield },
                 { id: 'roles', label: 'Roles & Permissions', icon: Shield },
                 { id: 'influencers', label: 'Influencers', icon: DollarSign },
                 { id: 'payouts', label: 'Payouts', icon: DollarSign },
@@ -464,6 +466,7 @@ export default function Admin() {
         )}
 
         {activeTab === 'analytics' && <AnalyticsDashboard />}
+        {activeTab === 'moderation' && <ContentModeration />}
         {activeTab === 'roles' && (
           <div>
             <RoleManagement />
