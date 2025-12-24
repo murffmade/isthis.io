@@ -28,6 +28,7 @@ import AnalysisDashboard from './pages/AnalysisDashboard';
 import FeedbackQueue from './pages/FeedbackQueue';
 import ContentGenerator from './pages/ContentGenerator';
 import BlogEditor from './pages/BlogEditor';
+import BlogDashboard from './pages/BlogDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -62,6 +63,7 @@ export const PAGES = {
     "FeedbackQueue": FeedbackQueue,
     "ContentGenerator": ContentGenerator,
     "BlogEditor": BlogEditor,
+    "BlogDashboard": BlogDashboard,
 }
 
 export const pagesConfig = {
