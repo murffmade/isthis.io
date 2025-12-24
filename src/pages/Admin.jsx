@@ -19,6 +19,7 @@ import UserRoleAssignment from '@/components/admin/UserRoleAssignment';
 import PayoutManagement from '@/components/admin/PayoutManagement';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 import ContentModeration from '@/components/admin/ContentModeration';
+import AuditTrail from '@/components/admin/AuditTrail';
 
 function AdminStats() {
   const { data: allUsers = [] } = useQuery({
@@ -384,6 +385,7 @@ export default function Admin() {
                 { id: 'overview', label: 'Overview', icon: BarChart3 },
                 { id: 'analytics', label: 'Analytics', icon: TrendingUp },
                 { id: 'moderation', label: 'Content Moderation', icon: Shield },
+                { id: 'audit', label: 'Audit Trail', icon: Activity },
                 { id: 'roles', label: 'Roles & Permissions', icon: Shield },
                 { id: 'influencers', label: 'Influencers', icon: DollarSign },
                 { id: 'payouts', label: 'Payouts', icon: DollarSign },
@@ -468,6 +470,7 @@ export default function Admin() {
 
         {activeTab === 'analytics' && <AnalyticsDashboard />}
         {activeTab === 'moderation' && <ContentModeration />}
+        {activeTab === 'audit' && <AuditTrail />}
         {activeTab === 'roles' && (
           <div className="space-y-8">
             <RoleManagement />
