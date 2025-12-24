@@ -25,6 +25,7 @@ import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
 import ModelPerformance from './pages/ModelPerformance';
 import AnalysisDashboard from './pages/AnalysisDashboard';
+import FeedbackQueue from './pages/FeedbackQueue';
 import __Layout from './Layout.jsx';
 
 
@@ -56,6 +57,7 @@ export const PAGES = {
     "True": True,
     "ModelPerformance": ModelPerformance,
     "AnalysisDashboard": AnalysisDashboard,
+    "FeedbackQueue": FeedbackQueue,
 }
 
 export const pagesConfig = {
