@@ -1220,27 +1220,30 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
       
       <div className="min-h-screen gradient-mesh pb-20 md:pb-0">
       {/* Header */}
-      <header className="sticky top-0 z-50 safe-top backdrop-blur-xl bg-white/80 border-b border-slate-200/50 shadow-lg shadow-slate-900/5">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+      <header className="sticky top-0 z-50 safe-top backdrop-blur-xl bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border-b border-indigo-200/50 shadow-lg shadow-indigo-900/10">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 via-purple-600/5 to-pink-600/5"></div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 relative">
           <div className="flex items-center justify-between">
             <button 
               onClick={handleStartOver}
-              className="group flex items-center gap-3 py-2 px-3 -mx-3 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 active:scale-[0.98] transition-all duration-300"
+              className="group flex items-center gap-3 py-2 px-3 -mx-3 rounded-xl hover:bg-white/60 active:scale-[0.98] transition-all duration-300"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl blur-md opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-                <AppIcon size="md" />
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-pink-600 rounded-xl blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-300" />
+                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center shadow-lg">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
               </div>
               <div>
                 <h1 className="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent tracking-tight leading-tight">
                   IsThis.io
                 </h1>
-                <p className="text-xs text-slate-600 hidden sm:block font-semibold">AI Content Verification</p>
+                <p className="text-xs text-slate-700 hidden sm:block font-semibold">AI Content Verification</p>
               </div>
             </button>
 
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+              <div className="p-1.5 rounded-lg hover:bg-white/60 transition-colors">
                 <HelpButton />
               </div>
               <div className="hidden md:block ml-1">
