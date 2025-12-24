@@ -1220,8 +1220,8 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
       
       <div className="min-h-screen gradient-mesh pb-20 md:pb-0">
       {/* Header */}
-      <header className="sticky top-0 z-50 safe-top backdrop-blur-xl bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border-b border-indigo-200/50 shadow-lg shadow-indigo-900/10">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 via-purple-600/5 to-pink-600/5"></div>
+      <header className="sticky top-0 z-50 safe-top backdrop-blur-xl bg-gradient-to-r from-slate-50 via-slate-100 to-slate-50 border-b border-slate-300/50 shadow-lg shadow-slate-900/10">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2C3E50]/5 via-[#7F8C8D]/5 to-[#BDC3C7]/5"></div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 relative">
           <div className="flex items-center justify-between">
             <button 
@@ -1229,13 +1229,13 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               className="group flex items-center gap-3 py-2 px-3 -mx-3 rounded-xl hover:bg-white/60 active:scale-[0.98] transition-all duration-300"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-pink-600 rounded-xl blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-300" />
-                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center shadow-lg">
+                <div className="absolute inset-0 bg-[#3498DB] rounded-xl blur-md opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
+                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#3498DB] to-[#2C3E50] flex items-center justify-center shadow-lg">
                   <Shield className="w-6 h-6 text-white" />
                 </div>
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent tracking-tight leading-tight">
+                <h1 className="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-[#2C3E50] via-[#3498DB] to-[#2C3E50] bg-clip-text text-transparent tracking-tight leading-tight">
                   IsThis.io
                 </h1>
                 <p className="text-xs text-slate-700 hidden sm:block font-semibold">AI Content Verification</p>
