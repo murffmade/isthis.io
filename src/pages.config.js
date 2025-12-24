@@ -21,8 +21,8 @@ import Safe from './pages/Safe';
 import Scam from './pages/Scam';
 import Support from './pages/Support';
 import TermsOfService from './pages/TermsOfService';
-import True from './pages/True';
 import TrainerDashboard from './pages/TrainerDashboard';
+import True from './pages/True';
 import __Layout from './Layout.jsx';
 
 
@@ -50,8 +50,8 @@ export const PAGES = {
     "Scam": Scam,
     "Support": Support,
     "TermsOfService": TermsOfService,
-    "True": True,
     "TrainerDashboard": TrainerDashboard,
+    "True": True,
 }
 
 export const pagesConfig = {

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User, Settings, History, CreditCard, ChevronDown, Gift } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { User, Settings, History, CreditCard, ChevronDown, Gift, LogOut } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +12,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function ProfileDropdown({ onOpenSettings }) {
+  const handleSignOut = () => {
+    base44.auth.logout();
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -43,6 +48,11 @@ export default function ProfileDropdown({ onOpenSettings }) {
             <History className="w-4 h-4" />
             History
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600">
+          <LogOut className="w-4 h-4" />
+          Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

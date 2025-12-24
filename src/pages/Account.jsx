@@ -299,6 +299,21 @@ export default function AccountPage() {
             </p>
           </motion.div>
         )}
+
+        {/* Sign Out Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-8 pt-8 border-t border-slate-200 text-center"
+        >
+          <button
+            onClick={() => base44.auth.logout()}
+            className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors"
+          >
+            Sign Out
+          </button>
+        </motion.div>
       </main>
 
       {/* Mobile Bottom Nav */}
