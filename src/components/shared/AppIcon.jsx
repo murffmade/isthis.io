@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield } from 'lucide-react';
+import { Sparkles, Shield, Zap } from 'lucide-react';
 
 export default function AppIcon({ size = 'md', className = '' }) {
   const sizes = {
@@ -17,8 +17,12 @@ export default function AppIcon({ size = 'md', className = '' }) {
   };
 
   return (
-    <div className={`${sizes[size]} rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center ${className}`}>
-      <Shield className={`${iconSizes[size]} text-white`} />
+    <div className={`${sizes[size]} rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/30 relative overflow-hidden ${className}`}>
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent"></div>
+      <div className="relative flex items-center justify-center">
+        <Shield className={`${iconSizes[size]} text-white`} />
+        <Sparkles className={`${iconSizes[size]} text-white absolute opacity-60 animate-pulse`} style={{ fontSize: '60%' }} />
+      </div>
     </div>
   );
 }
