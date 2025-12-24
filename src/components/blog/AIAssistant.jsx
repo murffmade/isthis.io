@@ -23,19 +23,21 @@ export default function AIAssistant({
   const generateTitleMutation = useMutation({
     mutationFn: async () => {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Generate 5 compelling, clear article titles about: ${metadata.topic || 'the given topic'}.
+        prompt: `Generate 5 casual, approachable article titles about: ${metadata.topic || 'the given topic'}.
 
 Audience level: ${metadata.audience_level}
 Tone: ${metadata.tone}
 
 Requirements:
-- Clear and specific
-- SEO-friendly
-- Engaging but not clickbait
+- Use everyday language that anyone can understand
+- Make it relatable and practical
+- Focus on real-world problems and solutions
+- Avoid jargon, academic terms, or overly technical language
+- Sound like a conversation with a friend, not a textbook
 - 50-70 characters ideal
-- Include key terms
+- Address what regular people actually care about
 
-Return 5 diverse title options.`,
+Return 5 diverse title options that feel casual and accessible.`,
         response_json_schema: {
           type: "object",
           properties: {
