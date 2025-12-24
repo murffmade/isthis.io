@@ -125,30 +125,53 @@ export default function Home() {
         if (file.type.startsWith('image/')) {
           setClassifying(true);
           try {
-            const classification = await base44.integrations.Core.InvokeLLM({
-              prompt: `Analyze this image and determine if it is:
-      1. PHOTO: A photograph taken with a camera (could be edited, but originated as a photo)
-      2. DRAWING/ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
+            // First check for EXIF data - if present, it's definitely a photo
+            let hasExif = false;
+            try {
+              const exifrModule = await import('exifr');
+              const exifData = await exifrModule.default.parse(file);
+              hasExif = !!(exifData && Object.keys(exifData).length > 0);
+            } catch (err) {
+              console.warn('EXIF check failed:', err);
+            }
 
-      Consider:
-      - Visual style: photorealistic vs artistic/stylized
-      - Content: Real-world scenes vs creative/stylized artwork
-      - Technique: Camera capture vs hand-drawn/painted
+            if (hasExif) {
+              // EXIF present = definitely a photo
+              setImageClassification({
+                type: 'photo',
+                confidence: 98,
+                reasoning: 'Camera EXIF metadata detected - this is definitely a photograph'
+              });
+              setUserConfirmedType(false);
+            } else {
+              // No EXIF - use visual analysis
+              const classification = await base44.integrations.Core.InvokeLLM({
+                prompt: `Analyze this image and determine if it is:
+        1. PHOTO: A photograph taken with a camera (could be edited, but originated as a photo)
+        2. DRAWING/ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
 
-      Respond with just "photo" or "drawing".`,
-              file_urls: [file_url],
-              response_json_schema: {
-                type: "object",
-                properties: {
-                  type: { type: "string", enum: ["photo", "drawing"] },
-                  confidence: { type: "number" },
-                  reasoning: { type: "string" }
+        Consider:
+        - Visual style: photorealistic vs artistic/stylized
+        - Content: Real-world scenes vs creative/stylized artwork
+        - Technique: Camera capture vs hand-drawn/painted
+
+        CRITICAL: If this looks like a photograph but has no EXIF, it may be a screenshot, edited photo, or AI-generated realistic image.
+
+        Respond with just "photo" or "drawing".`,
+                file_urls: [file_url],
+                response_json_schema: {
+                  type: "object",
+                  properties: {
+                    type: { type: "string", enum: ["photo", "drawing"] },
+                    confidence: { type: "number" },
+                    reasoning: { type: "string" }
+                  }
                 }
-              }
-            });
+              });
 
-            setImageClassification(classification);
-            setUserConfirmedType(false);
+              setImageClassification(classification);
+              setUserConfirmedType(false);
+            }
           } catch (error) {
             console.error('Classification failed:', error);
             setImageClassification({ type: 'photo', confidence: 50, reasoning: 'Could not classify' });
