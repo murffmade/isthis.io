@@ -36,234 +36,152 @@ const resultConfig = {
 
 export default function ShareCard({ result, cardRef, affiliateCode }) {
   const config = resultConfig[result.result] || resultConfig.uncertain;
-  const Icon = config.icon;
-
+  
   return (
     <div 
       ref={cardRef}
       style={{ 
         width: '1200px',
         height: '630px',
-        background: `linear-gradient(135deg, #0f172a 0%, #1e293b 100%)`,
-        padding: '0',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
         position: 'relative',
-        fontFamily: 'Inter, system-ui, sans-serif',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
         overflow: 'hidden'
       }}
     >
-      {/* Decorative Background Pattern */}
+      {/* Subtle gradient overlay */}
       <div style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: config.pattern,
-        opacity: 0.5
-      }} />
-      
-      {/* Decorative Circles */}
-      <div style={{
-        position: 'absolute',
-        top: '-100px',
-        right: '-100px',
-        width: '300px',
-        height: '300px',
-        borderRadius: '50%',
-        background: config.bgGradient,
-        opacity: 0.1,
-        filter: 'blur(40px)'
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '-80px',
-        left: '-80px',
-        width: '250px',
-        height: '250px',
-        borderRadius: '50%',
-        background: config.bgGradient,
-        opacity: 0.1,
-        filter: 'blur(40px)'
+        inset: 0,
+        background: `radial-gradient(circle at 30% 30%, ${config.color}15 0%, transparent 60%)`,
+        opacity: 0.6
       }} />
 
-      {/* Content Container */}
+      {/* Main content */}
       <div style={{
         position: 'relative',
         zIndex: 1,
         height: '100%',
         display: 'flex',
-        flexDirection: 'row',
-        padding: '50px',
-        gap: '40px'
+        padding: '60px'
       }}>
-        {/* Left side - Analyzed Image */}
+        {/* Left: Image */}
         {(result.file_url || result.thumbnail_url) && (
           <div style={{
-            flex: '0 0 45%',
+            width: '480px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            marginRight: '60px'
           }}>
             <div style={{
               width: '100%',
-              borderRadius: '24px',
+              height: '480px',
+              borderRadius: '20px',
               overflow: 'hidden',
-              border: '4px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
-              background: 'white'
+              boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+              border: '3px solid rgba(255,255,255,0.1)'
             }}>
               <img 
                 src={result.file_url || result.thumbnail_url}
-                alt="Analyzed content"
+                alt="Analyzed"
                 style={{
                   width: '100%',
-                  height: '530px',
-                  objectFit: 'cover',
-                  display: 'block'
+                  height: '100%',
+                  objectFit: 'cover'
                 }}
+                crossOrigin="anonymous"
               />
             </div>
           </div>
         )}
 
-        {/* Right side - Result Info */}
+        {/* Right: Info */}
         <div style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: '0 20px'
+          gap: '40px'
         }}>
-          {/* Logo */}
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '12px',
-            marginBottom: '40px'
-          }}>
+          {/* Branding */}
+          <div>
             <div style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '14px',
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)'
+              fontSize: '42px',
+              fontWeight: '800',
+              background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              marginBottom: '8px',
+              letterSpacing: '-0.03em'
             }}>
-              <Shield style={{ width: '28px', height: '28px', color: 'white' }} />
+              IsThis.io
             </div>
-            <div>
-              <div style={{ 
-                fontSize: '26px', 
-                fontWeight: '800',
-                color: 'white',
-                lineHeight: 1,
-                letterSpacing: '-0.02em'
-              }}>
-                IsThis.io
-              </div>
-              <div style={{ 
-                fontSize: '14px',
-                color: '#94a3b8',
-                lineHeight: 1.4,
-                marginTop: '4px',
-                fontWeight: '500'
-              }}>
-                A.I. Content Detection
-              </div>
+            <div style={{
+              fontSize: '16px',
+              color: '#94a3b8',
+              fontWeight: '600'
+            }}>
+              AI Content Verification
             </div>
           </div>
 
-          {/* Result Badge */}
+          {/* Result */}
           <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '16px',
-            padding: '20px 28px',
+            padding: '32px 40px',
             background: config.bgGradient,
             borderRadius: '20px',
-            marginBottom: '32px',
-            boxShadow: `0 12px 32px ${config.color}50`,
-            border: '2px solid rgba(255, 255, 255, 0.2)'
+            boxShadow: `0 20px 40px ${config.color}40`,
+            border: '2px solid rgba(255,255,255,0.2)'
           }}>
-            <span style={{ fontSize: '48px', lineHeight: 1 }}>{config.emoji}</span>
-            <div>
-              <h2 style={{ 
-                fontSize: '48px', 
-                fontWeight: '900', 
-                color: 'white',
-                margin: 0,
-                lineHeight: 1,
-                letterSpacing: '-0.03em',
-                textShadow: '0 2px 8px rgba(0,0,0,0.15)'
-              }}>
-                {config.title}
-              </h2>
+            <div style={{
+              fontSize: '56px',
+              fontWeight: '900',
+              color: 'white',
+              lineHeight: 1.1,
+              letterSpacing: '-0.04em',
+              textShadow: '0 4px 12px rgba(0,0,0,0.2)'
+            }}>
+              {config.title}
+            </div>
+            <div style={{
+              fontSize: '22px',
+              color: 'rgba(255,255,255,0.95)',
+              marginTop: '12px',
+              fontWeight: '600'
+            }}>
+              {result.confidence}% confidence
             </div>
           </div>
 
           {/* Summary */}
           {result.summary && (
             <div style={{
-              padding: '24px 28px',
-              background: 'rgba(255, 255, 255, 0.12)',
+              padding: '28px 32px',
+              background: 'rgba(255,255,255,0.08)',
               borderRadius: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              marginBottom: '28px',
+              border: '1px solid rgba(255,255,255,0.12)',
               backdropFilter: 'blur(10px)'
             }}>
-              <p style={{ 
-                fontSize: '17px', 
+              <div style={{
+                fontSize: '18px',
                 color: 'white',
-                margin: 0,
                 lineHeight: 1.6,
-                fontWeight: '500'
+                fontWeight: '500',
+                opacity: 0.95
               }}>
-                {result.summary.length > 120 ? result.summary.substring(0, 120) + '...' : result.summary}
-              </p>
-            </div>
-          )}
-
-          {/* Signals Count */}
-          {result.signals && result.signals.length > 0 && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '16px 24px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '12px',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              marginBottom: '32px'
-            }}>
-              <span style={{ fontSize: '24px' }}>🔍</span>
-              <span style={{
-                fontSize: '15px',
-                color: 'white',
-                fontWeight: '600'
-              }}>
-                {result.signals.length} detection signal{result.signals.length !== 1 ? 's' : ''} analyzed
-              </span>
+                {result.summary.length > 140 ? result.summary.substring(0, 140) + '...' : result.summary}
+              </div>
             </div>
           )}
 
           {/* Footer */}
           <div style={{
-            paddingTop: '24px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.15)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
+            fontSize: '15px',
+            color: '#64748b',
+            fontWeight: '600'
           }}>
-            <div style={{ 
-              fontSize: '13px', 
-              color: '#94a3b8',
-              lineHeight: 1.4,
-              fontWeight: '500'
-            }}>
-              Free A.I. Detection • isthis.io{affiliateCode ? `?ref=${affiliateCode}` : ''}
-            </div>
+            Free AI Detection Tool • isthis.io{affiliateCode ? `?ref=${affiliateCode}` : ''}
           </div>
         </div>
       </div>
