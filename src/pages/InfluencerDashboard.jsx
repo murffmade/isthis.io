@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DollarSign, Link as LinkIcon, Copy, Users, TrendingUp, CheckCircle2, ExternalLink, BarChart3, Edit2, Plus, Trash2, Calendar, Activity, Award } from 'lucide-react';
+import { DollarSign, Link as LinkIcon, Copy, Users, TrendingUp, CheckCircle2, ExternalLink, BarChart3, Edit2, Plus, Trash2, Calendar, Activity, Award, Crown } from 'lucide-react';
+import TierProgress from '@/components/influencer/TierProgress';
+import AnalyticsCharts from '@/components/influencer/AnalyticsCharts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
@@ -85,7 +87,8 @@ export default function InfluencerDashboard() {
   };
 
   const conversions = clicks.filter(c => c.converted);
-  const totalEarnings = conversions.reduce((sum, c) => sum + (c.conversion_value * 0.3), 0);
+  const commissionRate = (influencer?.commission_rate || 30) / 100;
+  const totalEarnings = conversions.reduce((sum, c) => sum + (c.conversion_value * commissionRate), 0);
   
   // Analytics
   const last7Days = clicks.filter(c => new Date() - new Date(c.created_date) < 7 * 24 * 60 * 60 * 1000);
@@ -367,98 +370,65 @@ export default function InfluencerDashboard() {
           </div>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Performance Chart */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="glass-effect rounded-2xl p-8 shadow-soft"
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <Activity className="w-6 h-6 text-indigo-600" />
-              <h2 className="text-xl font-bold text-slate-900 tracking-tight">Performance Overview</h2>
+        {/* Tier Progress */}
+        <TierProgress influencer={influencer} />
+
+        {/* Analytics Charts */}
+        <div className="mt-8">
+          <AnalyticsCharts clicks={clicks} />
+        </div>
+
+        {/* Recent Activity */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="glass-effect rounded-2xl p-8 shadow-soft mt-8"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <Activity className="w-6 h-6 text-slate-600" />
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Recent Activity</h2>
+          </div>
+
+          {clicks.length === 0 ? (
+            <div className="text-center py-12 text-slate-500">
+              <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p className="font-medium">No clicks yet</p>
+              <p className="text-sm">Start sharing your link!</p>
             </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-                <div>
-                  <div className="text-sm font-medium text-slate-600">Last 7 Days</div>
-                  <div className="text-2xl font-bold text-slate-900">{last7Days.length} clicks</div>
-                </div>
-                <Calendar className="w-8 h-8 text-slate-400" />
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-                <div>
-                  <div className="text-sm font-medium text-slate-600">Last 30 Days</div>
-                  <div className="text-2xl font-bold text-slate-900">{last30Days.length} clicks</div>
-                </div>
-                <BarChart3 className="w-8 h-8 text-slate-400" />
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl border border-emerald-200">
-                <div>
-                  <div className="text-sm font-semibold text-emerald-700">Pending Payout</div>
-                  <div className="text-2xl font-bold text-emerald-900">${influencer.pending_payout || totalEarnings.toFixed(2)}</div>
-                </div>
-                <DollarSign className="w-8 h-8 text-emerald-600" />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Recent Activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="glass-effect rounded-2xl p-8 shadow-soft"
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <BarChart3 className="w-6 h-6 text-slate-600" />
-              <h2 className="text-xl font-bold text-slate-900 tracking-tight">Recent Activity</h2>
-            </div>
-
-            {clicks.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
-                <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p className="font-medium">No clicks yet</p>
-                <p className="text-sm">Start sharing your link!</p>
-              </div>
-            ) : (
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {clicks.slice().reverse().slice(0, 10).map((click, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
-                    <div className="flex items-center gap-3">
-                      {click.converted ? (
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
-                          <CheckCircle2 className="w-5 h-5 text-white" />
-                        </div>
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center">
-                          <Users className="w-5 h-5 text-slate-500" />
-                        </div>
-                      )}
-                      <div>
-                        <div className="text-sm font-semibold text-slate-900">
-                          {click.converted ? 'Conversion' : 'Click'}
-                        </div>
-                        <div className="text-xs text-slate-500">
-                          {new Date(click.created_date).toLocaleString()}
-                        </div>
+          ) : (
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {clicks.slice().reverse().slice(0, 10).map((click, i) => (
+                <div key={i} className="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
+                  <div className="flex items-center gap-3">
+                    {click.converted ? (
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+                        <CheckCircle2 className="w-5 h-5 text-white" />
                       </div>
-                    </div>
-                    {click.converted && (
-                      <div className="text-sm font-bold text-emerald-600">
-                        +${(click.conversion_value * 0.3).toFixed(2)}
+                    ) : (
+                      <div className="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center">
+                        <Users className="w-5 h-5 text-slate-500" />
                       </div>
                     )}
+                    <div>
+                      <div className="text-sm font-semibold text-slate-900">
+                        {click.converted ? 'Conversion' : 'Click'}
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        {new Date(click.created_date).toLocaleString()}
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
-        </div>
+                  {click.converted && (
+                    <div className="text-sm font-bold text-emerald-600">
+                      +${(click.conversion_value * (influencer.commission_rate / 100)).toFixed(2)}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
       </main>
     </div>
   );

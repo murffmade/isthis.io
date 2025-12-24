@@ -13,6 +13,8 @@ import AffiliatePerformance from '@/components/admin/AffiliatePerformance';
 import UserActivityLogs from '@/components/admin/UserActivityLogs';
 import SystemMetrics from '@/components/admin/SystemMetrics';
 import AnalysisOverview from '@/components/admin/AnalysisOverview';
+import RoleManagement from '@/components/admin/RoleManagement';
+import TierManagement from '@/components/admin/TierManagement';
 
 function AdminStats() {
   const { data: allUsers = [] } = useQuery({
@@ -374,31 +376,32 @@ export default function Admin() {
         {/* Tabs */}
         <div className="mb-8 border-b border-slate-200">
           <div className="flex gap-1 overflow-x-auto">
-            {[
-              { id: 'overview', label: 'Overview', icon: BarChart3 },
-              { id: 'influencers', label: 'Influencers', icon: DollarSign },
-              { id: 'activity', label: 'User Activity', icon: Activity },
-              { id: 'system', label: 'System Metrics', icon: TrendingUp },
-              { id: 'analyses', label: 'Analyses', icon: Shield },
-              { id: 'announcements', label: 'Announcements', icon: Megaphone },
-              { id: 'users', label: 'User Management', icon: Users }
-            ].map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'border-indigo-600 text-indigo-600'
-                      : 'border-transparent text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {tab.label}
-                </button>
-              );
-            })}
+              {[
+                { id: 'overview', label: 'Overview', icon: BarChart3 },
+                { id: 'roles', label: 'Roles & Permissions', icon: Shield },
+                { id: 'influencers', label: 'Influencers', icon: DollarSign },
+                { id: 'activity', label: 'User Activity', icon: Activity },
+                { id: 'system', label: 'System Metrics', icon: TrendingUp },
+                { id: 'analyses', label: 'Analyses', icon: Shield },
+                { id: 'announcements', label: 'Announcements', icon: Megaphone },
+                { id: 'users', label: 'User Management', icon: Users }
+              ].map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 whitespace-nowrap ${
+                      activeTab === tab.id
+                        ? 'border-indigo-600 text-indigo-600'
+                        : 'border-transparent text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
+                  </button>
+                );
+              })}
           </div>
         </div>
 
@@ -456,7 +459,17 @@ export default function Admin() {
           </div>
         )}
 
-        {activeTab === 'influencers' && <AffiliatePerformance />}
+        {activeTab === 'roles' && (
+          <div>
+            <RoleManagement />
+          </div>
+        )}
+        {activeTab === 'influencers' && (
+          <div className="space-y-8">
+            <TierManagement />
+            <AffiliatePerformance />
+          </div>
+        )}
         {activeTab === 'activity' && <UserActivityLogs />}
         {activeTab === 'system' && <SystemMetrics />}
         {activeTab === 'analyses' && <AnalysisOverview />}
