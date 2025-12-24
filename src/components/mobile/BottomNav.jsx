@@ -61,11 +61,11 @@ export default function BottomNav({ currentPage = 'home' }) {
                   }}
                   className={`flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 ${
                     isActive 
-                      ? 'text-slate-900' 
+                      ? 'text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text' 
                       : 'text-slate-400 active:text-slate-600'
                   }`}
                 >
-                  <Icon className={`w-6 h-6 ${isActive ? 'fill-slate-900' : ''}`} />
+                  <Icon className={`w-6 h-6 ${isActive ? 'text-purple-600' : ''}`} />
                   <span className="text-xs font-medium">{item.label}</span>
                 </button>
               );
@@ -77,11 +77,11 @@ export default function BottomNav({ currentPage = 'home' }) {
                 to={createPageUrl(item.page)}
                 className={`flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 ${
                   isActive 
-                    ? 'text-slate-900' 
+                    ? 'text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text' 
                     : 'text-slate-400 active:text-slate-600'
                 }`}
               >
-                <Icon className={`w-6 h-6 ${isActive ? 'fill-slate-900' : ''}`} />
+                <Icon className={`w-6 h-6 ${isActive ? 'text-purple-600' : ''}`} />
                 <span className="text-xs font-medium">{item.label}</span>
               </Link>
             );
@@ -90,10 +90,10 @@ export default function BottomNav({ currentPage = 'home' }) {
           <button
             onClick={() => setShowMore(!showMore)}
             className={`flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 ${
-              showMore ? 'text-slate-900' : 'text-slate-400'
+              showMore ? 'text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text' : 'text-slate-400'
             }`}
           >
-            <MoreHorizontal className="w-6 h-6" />
+            <MoreHorizontal className={`w-6 h-6 ${showMore ? 'text-purple-600' : ''}`} />
             <span className="text-xs font-medium">More</span>
           </button>
         </div>
