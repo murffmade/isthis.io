@@ -1,11 +1,54 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, ArrowLeft, BookOpen, Video, FileText, ExternalLink, Edit, BarChart3 } from 'lucide-react';
+import { Shield, ArrowLeft, Trophy, Edit, BarChart3 } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import BottomNav from '@/components/mobile/BottomNav';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
+import ModuleCard from '@/components/learning/ModuleCard';
+import ProgressStats from '@/components/learning/ProgressStats';
 
 export default function Learn() {
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me().catch(() => null)
+  });
+
+  const { data: modules = [], isLoading } = useQuery({
+    queryKey: ['learningModules'],
+    queryFn: async () => {
+      const mods = await base44.entities.LearningModule.filter({ published: true });
+      return mods.sort((a, b) => (a.order || 0) - (b.order || 0));
+    }
+  });
+
+  const { data: userProgress = [] } = useQuery({
+    queryKey: ['userProgress', currentUser?.email],
+    queryFn: async () => {
+      if (!currentUser) return [];
+      return base44.entities.UserProgress.filter({ user_email: currentUser.email });
+    },
+    enabled: !!currentUser
+  });
+
+  const { data: userAchievements = [] } = useQuery({
+    queryKey: ['userAchievements', currentUser?.email],
+    queryFn: async () => {
+      if (!currentUser) return [];
+      return base44.entities.UserAchievement.filter({ user_email: currentUser.email });
+    },
+    enabled: !!currentUser
+  });
+
+  const stats = {
+    totalPoints: userProgress.reduce((sum, p) => sum + (modules.find(m => m.id === p.module_id)?.points || 0), 0) + 
+                 userAchievements.length * 50,
+    modulesCompleted: userProgress.filter(p => p.status === 'completed').length,
+    currentStreak: 0,
+    achievementsUnlocked: userAchievements.length
+  };
+
   const dashboards = [
     {
       title: 'Blog Dashboard',
@@ -23,73 +66,11 @@ export default function Learn() {
     }
   ];
 
-  const resources = [
-    {
-      category: 'Getting Started',
-      items: [
-        {
-          title: 'How to Verify an Image',
-          type: 'Guide',
-          icon: FileText,
-          description: 'Step-by-step guide to checking if an image is AI-generated'
-        },
-        {
-          title: 'Understanding Confidence Scores',
-          type: 'Article',
-          icon: BookOpen,
-          description: 'Learn what our confidence scores mean and how to interpret them'
-        },
-        {
-          title: 'Platform Overview (3 min)',
-          type: 'Video',
-          icon: Video,
-          description: 'Quick video walkthrough of all features'
-        }
-      ]
-    },
-    {
-      category: 'Advanced Topics',
-      items: [
-        {
-          title: 'Detecting AI-Generated Faces',
-          type: 'Guide',
-          icon: FileText,
-          description: 'Common tells in AI-generated portraits and people'
-        },
-        {
-          title: 'Video Deepfake Detection',
-          type: 'Article',
-          icon: BookOpen,
-          description: 'How to spot synthetic video content'
-        },
-        {
-          title: 'Understanding Detection Signals',
-          type: 'Guide',
-          icon: FileText,
-          description: 'Deep dive into the signals our AI looks for'
-        }
-      ]
-    },
-    {
-      category: 'For Developers',
-      items: [
-        {
-          title: 'API Documentation',
-          type: 'Docs',
-          icon: BookOpen,
-          description: 'Complete API reference and integration guides',
-          link: createPageUrl('APIDocs')
-        },
-        {
-          title: 'Enterprise Solutions',
-          type: 'Guide',
-          icon: FileText,
-          description: 'White-label and custom deployment options',
-          link: createPageUrl('Enterprise')
-        }
-      ]
-    }
-  ];
+  const categorizedModules = {
+    getting_started: modules.filter(m => m.category === 'getting_started'),
+    advanced: modules.filter(m => m.category === 'advanced'),
+    developer: modules.filter(m => m.category === 'developer')
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-20 md:pb-0">
@@ -121,19 +102,35 @@ export default function Learn() {
       </header>
 
       {/* Hero */}
-      <section className="py-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="py-12 px-6">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-8"
           >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 text-sm font-semibold mb-4">
+              <Trophy className="w-4 h-4" />
+              Interactive Learning
+            </div>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              Learn About AI Content Verification
+              Master AI Content Verification
             </h2>
-            <p className="text-xl text-slate-600">
-              Guides, tutorials, and resources to help you verify digital content
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Learn through interactive modules, quizzes, and earn achievements as you progress
             </p>
           </motion.div>
+
+          {/* Progress Stats */}
+          {currentUser && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <ProgressStats stats={stats} />
+            </motion.div>
+          )}
         </div>
       </section>
 
@@ -165,41 +162,90 @@ export default function Learn() {
         </div>
       </section>
 
-      {/* Resources */}
+      {/* Learning Modules */}
       <section className="py-8 px-6">
-        <div className="max-w-5xl mx-auto space-y-12">
-          {resources.map((section, i) => (
-            <div key={i}>
-              <h3 className="text-2xl font-bold text-slate-900 mb-6">{section.category}</h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {section.items.map((item, j) => (
-                  <motion.a
-                    key={j}
-                    href={item.link || '#'}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: j * 0.1 }}
-                    className="bg-white rounded-xl border border-slate-200 p-6 hover:border-slate-900 transition-all group"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <item.icon className="w-8 h-8 text-slate-900" />
-                      <span className="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600">
-                        {item.type}
-                      </span>
-                    </div>
-                    <h4 className="text-lg font-semibold text-slate-900 mb-2 group-hover:text-slate-700">
-                      {item.title}
-                    </h4>
-                    <p className="text-slate-600 text-sm mb-4">{item.description}</p>
-                    <div className="flex items-center text-slate-900 text-sm font-medium group-hover:gap-2 transition-all">
-                      <span>Read more</span>
-                      <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </motion.a>
-                ))}
-              </div>
+        <div className="max-w-6xl mx-auto">
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin mx-auto"></div>
             </div>
-          ))}
+          ) : modules.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-slate-400" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">No modules yet</h3>
+              <p className="text-slate-600">Check back soon for interactive learning content</p>
+            </div>
+          ) : (
+            <div className="space-y-12">
+              {/* Getting Started */}
+              {categorizedModules.getting_started.length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-6">Getting Started</h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {categorizedModules.getting_started.map((module) => {
+                      const progress = userProgress.find(p => p.module_id === module.id);
+                      return (
+                        <ModuleCard
+                          key={module.id}
+                          module={module}
+                          progress={progress}
+                          isLocked={false}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Advanced */}
+              {categorizedModules.advanced.length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-6">Advanced Topics</h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {categorizedModules.advanced.map((module) => {
+                      const progress = userProgress.find(p => p.module_id === module.id);
+                      const completedBasics = userProgress.filter(p => 
+                        p.status === 'completed' && 
+                        modules.find(m => m.id === p.module_id && m.category === 'getting_started')
+                      ).length;
+                      const isLocked = completedBasics === 0;
+                      
+                      return (
+                        <ModuleCard
+                          key={module.id}
+                          module={module}
+                          progress={progress}
+                          isLocked={isLocked}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Developer */}
+              {categorizedModules.developer.length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-6">For Developers</h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {categorizedModules.developer.map((module) => {
+                      const progress = userProgress.find(p => p.module_id === module.id);
+                      return (
+                        <ModuleCard
+                          key={module.id}
+                          module={module}
+                          progress={progress}
+                          isLocked={false}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
