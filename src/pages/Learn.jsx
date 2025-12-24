@@ -1,10 +1,28 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, ArrowLeft, BookOpen, Video, FileText, ExternalLink } from 'lucide-react';
+import { Shield, ArrowLeft, BookOpen, Video, FileText, ExternalLink, Edit, BarChart3 } from 'lucide-react';
 import { createPageUrl } from '@/utils';
+import { Link } from 'react-router-dom';
 import BottomNav from '@/components/mobile/BottomNav';
 
 export default function Learn() {
+  const dashboards = [
+    {
+      title: 'Blog Dashboard',
+      description: 'Manage articles and educational content',
+      icon: Edit,
+      link: createPageUrl('BlogDashboard'),
+      color: 'from-indigo-600 to-purple-600'
+    },
+    {
+      title: 'Analytics Dashboard',
+      description: 'View content performance and insights',
+      icon: BarChart3,
+      link: createPageUrl('AnalysisDashboard'),
+      color: 'from-blue-600 to-cyan-600'
+    }
+  ];
+
   const resources = [
     {
       category: 'Getting Started',
@@ -116,6 +134,34 @@ export default function Learn() {
               Guides, tutorials, and resources to help you verify digital content
             </p>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Dashboards */}
+      <section className="py-8 px-6">
+        <div className="max-w-5xl mx-auto">
+          <h3 className="text-2xl font-bold text-slate-900 mb-6">Content Dashboards</h3>
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            {dashboards.map((dashboard, i) => (
+              <Link
+                key={i}
+                to={dashboard.link}
+                className="bg-white rounded-2xl border-2 border-slate-200 p-8 hover:border-slate-900 transition-all group"
+              >
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${dashboard.color} flex items-center justify-center mb-4`}>
+                  <dashboard.icon className="w-7 h-7 text-white" />
+                </div>
+                <h4 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-slate-700">
+                  {dashboard.title}
+                </h4>
+                <p className="text-slate-600 mb-4">{dashboard.description}</p>
+                <div className="flex items-center text-slate-900 font-medium group-hover:gap-2 transition-all">
+                  <span>Open Dashboard</span>
+                  <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
