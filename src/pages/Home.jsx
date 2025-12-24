@@ -49,6 +49,52 @@ export default function Home() {
   const isAdmin = currentUser?.role === 'admin';
   const isTrainer = currentUser?.role === 'trainer';
 
+  // Fetch user's subscription
+  const { data: userSubscription } = useQuery({
+    queryKey: ['userSubscription'],
+    queryFn: async () => {
+      if (!currentUser) return null;
+      const subs = await base44.entities.Subscription.filter({ created_by: currentUser.email });
+      return subs[0] || null;
+    },
+    enabled: !!currentUser
+  });
+
+  // Fetch usage count for current month
+  const { data: usageCount = 0 } = useQuery({
+    queryKey: ['usageCount'],
+    queryFn: async () => {
+      if (!currentUser) return 0;
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+      
+      const analyses = await base44.entities.AnalysisRecord.filter({
+        created_by: currentUser.email
+      });
+      
+      const thisMonth = analyses.filter(a => new Date(a.created_date) >= startOfMonth);
+      return thisMonth.length;
+    },
+    enabled: !!currentUser
+  });
+
+  // Determine user tier and limits
+  const getUserTier = () => {
+    if (!userSubscription || userSubscription.plan === 'free') {
+      return { name: 'Free', limit: 5, period: 'month' };
+    }
+    if (userSubscription.plan === 'annual' && userSubscription.status === 'active') {
+      return { name: 'Premium', limit: null, period: 'year' };
+    }
+    if (userSubscription.plan === 'lifetime' && userSubscription.status === 'active') {
+      return { name: 'Lifetime', limit: null, period: null };
+    }
+    return { name: 'Free', limit: 5, period: 'month' };
+  };
+
+  const tier = getUserTier();
+
   // Fetch lifetime offer settings
   const { data: lifetimeSettings } = useQuery({
     queryKey: ['lifetimeSettings'],
@@ -185,6 +231,12 @@ export default function Home() {
   const handleAnalyze = async () => {
       if (!uploadedFile && !urlInput) {
         toast.error('Please upload an image or video or paste a URL');
+        return;
+      }
+
+      // Check usage limits for free tier
+      if (tier.limit && usageCount >= tier.limit) {
+        toast.error(`You've reached your ${tier.limit} verifications for this ${tier.period}. Upgrade to continue.`);
         return;
       }
 
@@ -1587,7 +1639,26 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               </div>
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              {/* Usage Counter */}
+              {currentUser && (
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white/80 rounded-lg border border-slate-200 shadow-sm">
+                  {tier.limit ? (
+                    <>
+                      <span className={`text-sm font-bold ${usageCount >= tier.limit ? 'text-red-600' : 'text-slate-900'}`}>
+                        {usageCount}/{tier.limit}
+                      </span>
+                      <span className="text-xs text-slate-500">this {tier.period}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-4 h-4 text-emerald-600" />
+                      <span className="text-sm font-bold text-emerald-600">Unlimited</span>
+                    </>
+                  )}
+                </div>
+              )}
+
               <div className="p-1.5 rounded-lg hover:bg-white/60 transition-colors">
                 <HelpButton />
               </div>
