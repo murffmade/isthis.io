@@ -1694,48 +1694,47 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-6"
           >
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border-2 border-indigo-200 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-white" />
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-lg">
+                  <h3 className="font-bold text-slate-900 text-sm">
                     {isAdmin ? 'Admin Dashboard' : 'Trainer Dashboard'}
                   </h3>
-                  <p className="text-sm text-slate-600">Quick access to your tools</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
                 {isAdmin && (
                   <>
                     <Link
                       to={createPageUrl('Admin')}
-                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                      className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-2xl mb-2">⚙️</div>
-                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
-                        Admin Panel
+                      <div className="text-lg mb-1">⚙️</div>
+                      <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
+                        Admin
                       </div>
                     </Link>
                     <Link
                       to={createPageUrl('TrainerDashboard')}
-                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                      className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-2xl mb-2">🎓</div>
-                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
-                        Training Dashboard
+                      <div className="text-lg mb-1">🎓</div>
+                      <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
+                        Training
                       </div>
                     </Link>
                     <Link
                       to={createPageUrl('FeedbackQueue')}
-                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                      className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-2xl mb-2">📋</div>
-                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
-                        Feedback Queue
+                      <div className="text-lg mb-1">📋</div>
+                      <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
+                        Feedback
                       </div>
                     </Link>
                   </>
@@ -1744,20 +1743,20 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   <>
                     <Link
                       to={createPageUrl('TrainerDashboard')}
-                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                      className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-2xl mb-2">🎓</div>
-                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
-                        Training Dashboard
+                      <div className="text-lg mb-1">🎓</div>
+                      <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
+                        Training
                       </div>
                     </Link>
                     <Link
                       to={createPageUrl('FeedbackQueue')}
-                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                      className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-2xl mb-2">📋</div>
-                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
-                        My Assignments
+                      <div className="text-lg mb-1">📋</div>
+                      <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
+                        Assignments
                       </div>
                     </Link>
                   </>
