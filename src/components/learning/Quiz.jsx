@@ -1,125 +1,98 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, Award, RotateCcw } from 'lucide-react';
+import { CheckCircle2, XCircle, Trophy, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import confetti from 'canvas-confetti';
 
-export default function Quiz({ quiz, onComplete }) {
+export default function Quiz({ questions, onComplete, moduleId }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [showFeedback, setShowFeedback] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
   const [answers, setAnswers] = useState([]);
-  const [showResults, setShowResults] = useState(false);
+  const [score, setScore] = useState(0);
+  const [completed, setCompleted] = useState(false);
 
-  const questions = quiz.questions || [];
   const question = questions[currentQuestion];
-  const isCorrect = selectedAnswer === question?.correct_answer;
-  const score = (answers.filter(a => a.correct).length / questions.length) * 100;
-  const passed = score >= (quiz.passing_score || 70);
+  const isCorrect = selectedAnswer === question.correct_answer;
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
 
-  const handleAnswerSelect = (index) => {
-    if (showFeedback) return;
+  const handleAnswer = (index) => {
+    if (showExplanation) return;
     setSelectedAnswer(index);
-  };
-
-  const handleSubmitAnswer = () => {
-    setShowFeedback(true);
-    const correct = selectedAnswer === question.correct_answer;
-    setAnswers([...answers, { questionIndex: currentQuestion, selected: selectedAnswer, correct }]);
+    setShowExplanation(true);
+    
+    const correct = index === question.correct_answer;
+    setAnswers([...answers, { question: currentQuestion, correct }]);
+    if (correct) {
+      setScore(score + 1);
+    }
   };
 
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
-      setShowFeedback(false);
+      setShowExplanation(false);
     } else {
-      setShowResults(true);
-      if (passed) {
+      const finalScore = Math.round((score / questions.length) * 100);
+      setCompleted(true);
+      onComplete({ score: finalScore, attempts: 1 });
+      
+      if (finalScore >= 80) {
         confetti({
           particleCount: 100,
           spread: 70,
           origin: { y: 0.6 }
         });
-        onComplete?.(score);
       }
     }
   };
 
-  const handleRetry = () => {
-    setCurrentQuestion(0);
-    setSelectedAnswer(null);
-    setShowFeedback(false);
-    setAnswers([]);
-    setShowResults(false);
-  };
-
-  if (!questions.length) {
-    return <div className="text-center text-slate-600">No quiz available</div>;
-  }
-
-  if (showResults) {
+  if (completed) {
+    const finalScore = Math.round((score / questions.length) * 100);
+    const isPerfect = finalScore === 100;
+    
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-2xl border-2 border-slate-200 p-8 text-center"
+        className="text-center py-12"
       >
-        <div className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center ${
-          passed ? 'bg-emerald-100' : 'bg-red-100'
+        <div className={`w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center ${
+          isPerfect ? 'bg-gradient-to-br from-yellow-400 to-orange-500' : 
+          finalScore >= 80 ? 'bg-gradient-to-br from-green-400 to-emerald-500' :
+          'bg-gradient-to-br from-blue-400 to-indigo-500'
         }`}>
-          {passed ? (
-            <Award className="w-10 h-10 text-emerald-600" />
-          ) : (
-            <XCircle className="w-10 h-10 text-red-600" />
-          )}
+          <Trophy className="w-10 h-10 text-white" />
         </div>
-        
-        <h3 className="text-2xl font-bold text-slate-900 mb-2">
-          {passed ? 'Congratulations!' : 'Keep Practicing'}
+        <h3 className="text-3xl font-bold text-slate-900 mb-2">
+          {isPerfect ? '🎉 Perfect Score!' : finalScore >= 80 ? '✨ Great Job!' : '👍 Quiz Complete'}
         </h3>
-        
-        <p className="text-lg text-slate-600 mb-6">
-          You scored <span className="font-bold text-[#3498DB]">{Math.round(score)}%</span>
+        <p className="text-xl text-slate-600 mb-6">
+          You scored {finalScore}% ({score}/{questions.length} correct)
         </p>
-        
-        {passed ? (
-          <p className="text-slate-600 mb-6">
-            Great job! You've mastered this module.
-          </p>
-        ) : (
-          <p className="text-slate-600 mb-6">
-            You need {quiz.passing_score}% to pass. Review the material and try again!
-          </p>
+        {isPerfect && (
+          <div className="inline-block px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-bold mb-6">
+            🏆 Achievement Unlocked: Perfect Score!
+          </div>
         )}
-        
-        <div className="flex gap-4 justify-center">
-          {!passed && (
-            <Button onClick={handleRetry} variant="outline" className="gap-2">
-              <RotateCcw className="w-4 h-4" />
-              Retry Quiz
-            </Button>
-          )}
-          <Button onClick={() => onComplete?.(score)} className="bg-[#3498DB] hover:bg-[#2980b9]">
-            Continue
-          </Button>
-        </div>
       </motion.div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 md:p-8">
-      {/* Progress */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between text-sm text-slate-600 mb-2">
+    <div className="max-w-2xl mx-auto">
+      {/* Progress Bar */}
+      <div className="mb-8">
+        <div className="flex justify-between text-sm text-slate-600 mb-2">
           <span>Question {currentQuestion + 1} of {questions.length}</span>
-          <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
+          <span>{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-[#3498DB] transition-all"
-            style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+        <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
           />
         </div>
       </div>
@@ -131,89 +104,93 @@ export default function Quiz({ quiz, onComplete }) {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
+          className="bg-white rounded-2xl border-2 border-slate-200 p-8 mb-6"
         >
-          <h3 className="text-xl font-bold text-slate-900 mb-6">{question.question}</h3>
-          
-          {/* Options */}
-          <div className="space-y-3 mb-6">
+          <h3 className="text-2xl font-bold text-slate-900 mb-6">
+            {question.question}
+          </h3>
+
+          <div className="space-y-3">
             {question.options.map((option, index) => {
               const isSelected = selectedAnswer === index;
               const isCorrectAnswer = index === question.correct_answer;
-              const showCorrect = showFeedback && isCorrectAnswer;
-              const showIncorrect = showFeedback && isSelected && !isCorrect;
-              
+              const showResult = showExplanation;
+
               return (
-                <button
+                <motion.button
                   key={index}
-                  onClick={() => handleAnswerSelect(index)}
-                  disabled={showFeedback}
-                  className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
-                    showCorrect 
-                      ? 'border-emerald-500 bg-emerald-50'
-                      : showIncorrect
-                      ? 'border-red-500 bg-red-50'
+                  onClick={() => handleAnswer(index)}
+                  disabled={showExplanation}
+                  whileHover={!showExplanation ? { scale: 1.02 } : {}}
+                  whileTap={!showExplanation ? { scale: 0.98 } : {}}
+                  className={`w-full p-4 rounded-xl text-left font-medium transition-all ${
+                    showResult
+                      ? isCorrectAnswer
+                        ? 'bg-green-100 border-2 border-green-500 text-green-900'
+                        : isSelected
+                        ? 'bg-red-100 border-2 border-red-500 text-red-900'
+                        : 'bg-slate-50 border-2 border-slate-200 text-slate-400'
                       : isSelected
-                      ? 'border-[#3498DB] bg-blue-50'
-                      : 'border-slate-200 hover:border-slate-300'
-                  } ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                      ? 'bg-indigo-50 border-2 border-indigo-500 text-indigo-900'
+                      : 'bg-slate-50 border-2 border-slate-200 text-slate-700 hover:border-slate-300'
+                  }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className={`${
-                      showCorrect || showIncorrect ? 'font-semibold' : ''
-                    }`}>
-                      {option}
-                    </span>
-                    {showCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-600" />}
-                    {showIncorrect && <XCircle className="w-5 h-5 text-red-600" />}
+                    <span>{option}</span>
+                    {showResult && isCorrectAnswer && (
+                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    )}
+                    {showResult && isSelected && !isCorrectAnswer && (
+                      <XCircle className="w-5 h-5 text-red-600" />
+                    )}
                   </div>
-                </button>
+                </motion.button>
               );
             })}
           </div>
 
-          {/* Feedback */}
-          {showFeedback && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`p-4 rounded-xl mb-6 ${
-                isCorrect ? 'bg-emerald-50 border border-emerald-200' : 'bg-red-50 border border-red-200'
-              }`}
-            >
-              <div className="flex gap-2 mb-2">
-                {isCorrect ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                ) : (
-                  <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                )}
-                <div>
-                  <p className={`font-semibold mb-1 ${isCorrect ? 'text-emerald-900' : 'text-red-900'}`}>
-                    {isCorrect ? 'Correct!' : 'Not quite right'}
-                  </p>
-                  <p className="text-sm text-slate-700">{question.explanation}</p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Actions */}
-          <div className="flex justify-end">
-            {!showFeedback ? (
-              <Button
-                onClick={handleSubmitAnswer}
-                disabled={selectedAnswer === null}
-                className="bg-[#3498DB] hover:bg-[#2980b9]"
+          {/* Explanation */}
+          <AnimatePresence>
+            {showExplanation && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className={`mt-6 p-4 rounded-xl ${
+                  isCorrect ? 'bg-green-50 border-2 border-green-200' : 'bg-red-50 border-2 border-red-200'
+                }`}
               >
-                Submit Answer
-              </Button>
-            ) : (
-              <Button onClick={handleNext} className="bg-[#3498DB] hover:bg-[#2980b9]">
-                {currentQuestion < questions.length - 1 ? 'Next Question' : 'See Results'}
-              </Button>
+                <p className={`font-semibold mb-2 ${isCorrect ? 'text-green-900' : 'text-red-900'}`}>
+                  {isCorrect ? '✓ Correct!' : '✗ Not quite'}
+                </p>
+                <p className="text-slate-700">{question.explanation}</p>
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence>
         </motion.div>
       </AnimatePresence>
+
+      {/* Next Button */}
+      {showExplanation && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <Button
+            onClick={handleNext}
+            className="w-full py-6 text-lg bg-indigo-600 hover:bg-indigo-700"
+          >
+            {currentQuestion < questions.length - 1 ? (
+              <>
+                Next Question
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </>
+            ) : (
+              'Finish Quiz'
+            )}
+          </Button>
+        </motion.div>
+      )}
     </div>
   );
 }
