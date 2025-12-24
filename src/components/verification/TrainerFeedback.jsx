@@ -102,7 +102,7 @@ export default function TrainerFeedback({ result, user }) {
     });
   };
 
-  if (!user?.is_trainer) {
+  if (!user?.is_trainer && user?.role !== 'admin') {
     return null;
   }
 
