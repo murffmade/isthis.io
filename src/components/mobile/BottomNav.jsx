@@ -43,11 +43,11 @@ export default function BottomNav({ currentPage = 'home' }) {
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', page: 'Home' },
     { id: 'learn', icon: BookOpen, label: 'Learn', page: 'Learn' },
-    { id: 'history', icon: History, label: 'History', page: 'History', premium: true },
     { id: 'account', icon: User, label: 'Account', page: 'Account' }
   ];
 
   const moreItems = [
+    { icon: History, label: 'History', page: 'History', premium: true },
     { icon: Gift, label: 'Gifts', page: 'MyGifts' },
     { icon: BookText, label: 'Blog', page: 'Blog' },
     { icon: UsersIcon, label: 'Referrals', page: 'AffiliateMarketing' },
@@ -68,7 +68,7 @@ export default function BottomNav({ currentPage = 'home' }) {
   return (
     <>
         <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200/50 safe-bottom md:hidden z-50 shadow-lg">
-          <div className="grid grid-cols-5 h-16">
+          <div className="grid grid-cols-4 h-16">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentPage === item.id;
@@ -78,7 +78,7 @@ export default function BottomNav({ currentPage = 'home' }) {
                 <Link
                   key={item.id}
                   to={createPageUrl(item.page)}
-                  className={`relative flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 ${
+                  className={`flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 ${
                     isActive 
                       ? 'text-[#3498DB]' 
                       : 'text-slate-400 active:text-slate-600'
@@ -86,11 +86,6 @@ export default function BottomNav({ currentPage = 'home' }) {
                 >
                   <Icon className={`w-6 h-6`} />
                   <span className="text-xs font-medium">{item.label}</span>
-                  {isLocked && (
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-[8px] font-bold">★</span>
-                    </div>
-                  )}
                 </Link>
               );
             })}
@@ -131,16 +126,22 @@ export default function BottomNav({ currentPage = 'home' }) {
                 <div className="space-y-2">
                   {moreItems.map((item, i) => {
                     const Icon = item.icon;
+                    const isLocked = item.premium && !isPremium;
                     if (item.page) {
                       return (
                         <Link
                           key={i}
                           to={createPageUrl(item.page)}
                           onClick={() => handleMoreItemClick(item)}
-                          className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-95 transition-all"
+                          className="relative flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-95 transition-all"
                         >
                           <Icon className="w-5 h-5 text-[#2C3E50]" />
                           <span className="font-medium text-slate-900">{item.label}</span>
+                          {isLocked && (
+                            <span className="ml-auto px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">
+                              Premium
+                            </span>
+                          )}
                         </Link>
                       );
                     } else {
