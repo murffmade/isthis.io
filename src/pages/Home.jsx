@@ -121,7 +121,7 @@ export default function Home() {
         setUploadedFile(file_url);
         setUploading(false);
 
-        // Pre-classify image type (photo vs drawing/illustration)
+        // Pre-classify image type (photo vs drawing/illustration vs screenshot)
         if (file.type.startsWith('image/')) {
           setClassifying(true);
           try {
@@ -147,22 +147,23 @@ export default function Home() {
               // No EXIF - use visual analysis
               const classification = await base44.integrations.Core.InvokeLLM({
                 prompt: `Analyze this image and determine if it is:
-        1. PHOTO: A photograph taken with a camera (could be edited, but originated as a photo)
-        2. DRAWING/ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
+        1. PHOTO: A photograph taken with a camera (real-world scene captured by a camera)
+        2. SCREENSHOT: A screen capture from a device (computer, phone, tablet) showing UI elements, apps, websites, or digital content
+        3. DRAWING/ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
 
         Consider:
-        - Visual style: photorealistic vs artistic/stylized
-        - Content: Real-world scenes vs creative/stylized artwork
-        - Technique: Camera capture vs hand-drawn/painted
+        - SCREENSHOT indicators: UI elements (buttons, menus, status bars), browser chrome, app interfaces, text on digital backgrounds, pixel-perfect alignment, system fonts
+        - PHOTO indicators: Real-world scenes, natural lighting, organic textures, camera perspective
+        - ILLUSTRATION indicators: Artistic style, hand-drawn elements, stylized rendering, creative composition
 
-        CRITICAL: If this looks like a photograph but has no EXIF, it may be a screenshot, edited photo, or AI-generated realistic image.
+        CRITICAL: No EXIF metadata is present, which rules out direct camera capture.
 
-        Respond with just "photo" or "drawing".`,
+        Respond with "photo", "screenshot", or "drawing".`,
                 file_urls: [file_url],
                 response_json_schema: {
                   type: "object",
                   properties: {
-                    type: { type: "string", enum: ["photo", "drawing"] },
+                    type: { type: "string", enum: ["photo", "screenshot", "drawing"] },
                     confidence: { type: "number" },
                     reasoning: { type: "string" }
                   }
@@ -638,19 +639,20 @@ Provide a thorough but accessible analysis.`,
       const classificationResult = imageClassification || await base44.integrations.Core.InvokeLLM({
         prompt: `You are an image classifier. Determine if this image is:
       1. PHOTO: A photograph taken with a camera (could be edited, but originated as a photo)
-      2. ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
+      2. SCREENSHOT: A screen capture from a device showing UI elements, apps, or digital content
+      3. ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
 
       Consider:
-      - EXIF metadata: ${exifData ? 'EXIF present - likely photo' : 'NO EXIF - check visual style'}
-      - Visual style: photorealistic lighting/textures vs artistic/stylized rendering
-      - Content: Real-world scenes/objects vs creative/stylized artwork
+      - EXIF metadata: ${exifData ? 'EXIF present - definitely photo' : 'NO EXIF - could be screenshot or illustration'}
+      - SCREENSHOT indicators: UI elements, menus, status bars, browser chrome, app interfaces
+      - Visual style: photorealistic vs digital UI vs artistic/stylized
 
-      Return ONLY "photo" or "illustration"`,
+      Return "photo", "screenshot", or "illustration"`,
         file_urls: [uploadedFile],
         response_json_schema: {
           type: "object",
           properties: {
-            image_type: { type: "string", enum: ["photo", "illustration"] },
+            image_type: { type: "string", enum: ["photo", "screenshot", "illustration"] },
             confidence: { type: "number" },
             reasoning: { type: "string" }
           },
@@ -662,6 +664,43 @@ Provide a thorough but accessible analysis.`,
 
       // Step 5: Apply specialized analysis model based on image type
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
+
+      const screenshotAnalysisPrompt = `SPECIALIZED SCREENSHOT ANALYSIS - DIGITAL CONTENT DETECTION
+
+      You are analyzing a SCREENSHOT (screen capture of digital content). Your focus is detecting:
+      1. AI-generated UI mockups or digital content
+      2. Screenshots of AI-generated images/art displayed on screen
+      3. Fake/manipulated screenshots (edited chat messages, fake tweets, etc.)
+      4. Authentic screenshots of real apps/websites
+
+      CRITICAL: SCREENSHOT METADATA EVALUATION
+
+      EXIF STATUS: ${exifData ? 'PRESENT (UNUSUAL for screenshots)' : 'MISSING (EXPECTED for screenshots)'}
+      ${exifData ? `⚠️ EXIF DATA FOUND - This is suspicious for a screenshot. Real screenshots don't have camera EXIF.` : `✓ NO EXIF DATA - Normal for screenshots.`}
+
+      SCREENSHOT-SPECIFIC DETECTION:
+
+      A) AUTHENTIC SCREENSHOT MARKERS:
+      - Real UI elements: Genuine OS chrome, status bars, actual app interfaces
+      - Screen artifacts: Pixel-perfect alignment, system fonts, anti-aliasing patterns
+      - Authentic context: Real timestamps, believable content layout
+      - Natural inconsistencies: Minor UI glitches, realistic app behavior
+
+      B) AI-GENERATED SCREENSHOT DETECTION:
+      - Fake UI elements: Made-up buttons, impossible layouts, nonsense text
+      - AI artifacts visible in the displayed content
+      - Perfect UI that doesn't match any real OS or app
+      - Suspicious content shown in the screenshot (AI-generated images within the screenshot)
+
+      C) MANIPULATED SCREENSHOT DETECTION:
+      - Edited text: Photoshopped messages, fake tweets
+      - Composited elements: Pasted content that doesn't match lighting/perspective
+      - Clone patterns: Repeated UI elements
+      - Inconsistent rendering: Mixed quality levels
+
+      IMPORTANT: Screenshots of AI-generated content should be flagged if the CONTENT shown is AI-generated, even if the screenshot itself is real.
+
+      Analyze all patches and provide detailed assessment of both the screenshot authenticity AND the content shown within it.`;
 
       const photoAnalysisPrompt = `SPECIALIZED PHOTO ANALYSIS - CAMERA-NATIVE DETECTION
 
@@ -840,8 +879,11 @@ Provide a thorough but accessible analysis.`,
 
       Analyze all patches for human imperfection markers vs AI perfection patterns.`;
 
+      const isScreenshot = classificationResult.type === "screenshot" || classificationResult.image_type === "screenshot";
+      const selectedPrompt = isPhoto ? photoAnalysisPrompt : isScreenshot ? screenshotAnalysisPrompt : illustrationAnalysisPrompt;
+
       const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: isPhoto ? photoAnalysisPrompt : illustrationAnalysisPrompt + `
+        prompt: selectedPrompt + `
 
       STATE-OF-THE-ART AI DETECTION WITH FINE-GRAINED MODEL CLASSIFICATION
 
@@ -1741,7 +1783,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                           <p className="font-semibold text-slate-900 mb-1">We detected this as:</p>
                           <div className="flex items-center gap-2 mb-2">
                             <span className="px-3 py-1 bg-blue-600 text-white font-bold rounded-full text-sm">
-                              {imageClassification.type === 'photo' ? '📷 Photo' : '🎨 Drawing/Illustration'}
+                              {imageClassification.type === 'photo' ? '📷 Photo' : imageClassification.type === 'screenshot' ? '🖥️ Screenshot' : '🎨 Drawing/Illustration'}
                             </span>
                             <span className="text-xs text-slate-600">
                               {imageClassification.confidence}% confident
@@ -1762,9 +1804,11 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                           </button>
                           <button
                             onClick={() => {
+                              const currentType = imageClassification.type;
+                              const nextType = currentType === 'photo' ? 'screenshot' : currentType === 'screenshot' ? 'drawing' : 'photo';
                               setImageClassification({
                                 ...imageClassification,
-                                type: imageClassification.type === 'photo' ? 'drawing' : 'photo',
+                                type: nextType,
                                 confidence: 100,
                                 reasoning: 'User corrected the classification'
                               });
@@ -1772,7 +1816,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                             }}
                             className="flex-1 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors text-sm"
                           >
-                            ✗ No, it's a {imageClassification.type === 'photo' ? 'Drawing' : 'Photo'}
+                            ✗ Change Type
                           </button>
                         </div>
                       </div>
