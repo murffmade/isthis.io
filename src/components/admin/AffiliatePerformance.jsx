@@ -6,13 +6,13 @@ import { motion } from 'framer-motion';
 
 export default function AffiliatePerformance() {
   const { data: partners = [] } = useQuery({
-    queryKey: ['allAffiliates'],
-    queryFn: () => base44.entities.AffiliatePartner.list()
+    queryKey: ['allInfluencers'],
+    queryFn: () => base44.entities.InfluencerPartner.list()
   });
 
   const { data: clicks = [] } = useQuery({
-    queryKey: ['allClicks'],
-    queryFn: () => base44.entities.AffiliateClick.list()
+    queryKey: ['allInfluencerClicks'],
+    queryFn: () => base44.entities.InfluencerClick.list()
   });
 
   const totalPartners = partners.length;
@@ -85,7 +85,7 @@ export default function AffiliatePerformance() {
 
       {/* Top Partners */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 className="font-semibold text-slate-900 mb-4">Top Performing Partners</h3>
+        <h3 className="font-semibold text-slate-900 mb-4">Top Performing Influencers</h3>
         <div className="space-y-3">
           {partners
             .sort((a, b) => b.total_earnings - a.total_earnings)
@@ -110,7 +110,7 @@ export default function AffiliatePerformance() {
               </div>
             ))}
           {partners.length === 0 && (
-            <div className="text-center py-8 text-slate-500">No affiliate partners yet</div>
+            <div className="text-center py-8 text-slate-500">No influencers yet</div>
           )}
         </div>
       </div>

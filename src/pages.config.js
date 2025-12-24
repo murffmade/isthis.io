@@ -32,6 +32,7 @@ import TermsOfService from './pages/TermsOfService';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
 import Settings from './pages/Settings';
+import InfluencerDashboard from './pages/InfluencerDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -70,6 +71,7 @@ export const PAGES = {
     "TrainerDashboard": TrainerDashboard,
     "True": True,
     "Settings": Settings,
+    "InfluencerDashboard": InfluencerDashboard,
 }
 
 export const pagesConfig = {

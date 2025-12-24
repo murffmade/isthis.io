@@ -289,7 +289,7 @@ export default function Admin() {
           <div className="flex gap-1 overflow-x-auto">
             {[
               { id: 'overview', label: 'Overview', icon: BarChart3 },
-              { id: 'affiliates', label: 'Affiliates', icon: DollarSign },
+              { id: 'influencers', label: 'Influencers', icon: DollarSign },
               { id: 'activity', label: 'User Activity', icon: Activity },
               { id: 'system', label: 'System Metrics', icon: TrendingUp },
               { id: 'analyses', label: 'Analyses', icon: Shield },
@@ -344,7 +344,7 @@ export default function Admin() {
                 <div className="space-y-3">
                   {[
                     { label: 'View All Analyses', tab: 'analyses', icon: Shield },
-                    { label: 'Check Affiliate Performance', tab: 'affiliates', icon: DollarSign },
+                    { label: 'Check Influencer Performance', tab: 'influencers', icon: DollarSign },
                     { label: 'Review User Activity', tab: 'activity', icon: Activity }
                   ].map((action) => {
                     const Icon = action.icon;
@@ -368,7 +368,7 @@ export default function Admin() {
           </div>
         )}
 
-        {activeTab === 'affiliates' && <AffiliatePerformance />}
+        {activeTab === 'influencers' && <AffiliatePerformance />}
         {activeTab === 'activity' && <UserActivityLogs />}
         {activeTab === 'system' && <SystemMetrics />}
         {activeTab === 'analyses' && <AnalysisOverview />}
