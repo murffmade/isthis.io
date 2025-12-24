@@ -2,18 +2,24 @@ import APIDocs from './pages/APIDocs';
 import About from './pages/About';
 import Account from './pages/Account';
 import Admin from './pages/Admin';
+import AnalysisDashboard from './pages/AnalysisDashboard';
 import BatchAnalysis from './pages/BatchAnalysis';
 import Blog from './pages/Blog';
+import BlogDashboard from './pages/BlogDashboard';
+import BlogEditor from './pages/BlogEditor';
 import Bookmarklet from './pages/Bookmarklet';
 import Careers from './pages/Careers';
 import Contact from './pages/Contact';
+import ContentGenerator from './pages/ContentGenerator';
 import Enterprise from './pages/Enterprise';
 import EnterpriseMarketing from './pages/EnterpriseMarketing';
+import FeedbackQueue from './pages/FeedbackQueue';
 import GiftRedemption from './pages/GiftRedemption';
 import History from './pages/History';
 import HolidayGift from './pages/HolidayGift';
 import Home from './pages/Home';
 import Learn from './pages/Learn';
+import ModelPerformance from './pages/ModelPerformance';
 import MyGifts from './pages/MyGifts';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -23,12 +29,6 @@ import Support from './pages/Support';
 import TermsOfService from './pages/TermsOfService';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import ModelPerformance from './pages/ModelPerformance';
-import AnalysisDashboard from './pages/AnalysisDashboard';
-import FeedbackQueue from './pages/FeedbackQueue';
-import ContentGenerator from './pages/ContentGenerator';
-import BlogEditor from './pages/BlogEditor';
-import BlogDashboard from './pages/BlogDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -37,18 +37,24 @@ export const PAGES = {
     "About": About,
     "Account": Account,
     "Admin": Admin,
+    "AnalysisDashboard": AnalysisDashboard,
     "BatchAnalysis": BatchAnalysis,
     "Blog": Blog,
+    "BlogDashboard": BlogDashboard,
+    "BlogEditor": BlogEditor,
     "Bookmarklet": Bookmarklet,
     "Careers": Careers,
     "Contact": Contact,
+    "ContentGenerator": ContentGenerator,
     "Enterprise": Enterprise,
     "EnterpriseMarketing": EnterpriseMarketing,
+    "FeedbackQueue": FeedbackQueue,
     "GiftRedemption": GiftRedemption,
     "History": History,
     "HolidayGift": HolidayGift,
     "Home": Home,
     "Learn": Learn,
+    "ModelPerformance": ModelPerformance,
     "MyGifts": MyGifts,
     "PaymentSuccess": PaymentSuccess,
     "PrivacyPolicy": PrivacyPolicy,
@@ -58,12 +64,6 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "ModelPerformance": ModelPerformance,
-    "AnalysisDashboard": AnalysisDashboard,
-    "FeedbackQueue": FeedbackQueue,
-    "ContentGenerator": ContentGenerator,
-    "BlogEditor": BlogEditor,
-    "BlogDashboard": BlogDashboard,
 }
 
 export const pagesConfig = {

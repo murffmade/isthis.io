@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { createPageUrl } from '@/utils';
 import RichTextEditor from '@/components/blog/RichTextEditor';
 import AIAssistant from '@/components/blog/AIAssistant';
+import SEOScorer from '@/components/blog/SEOScorer';
 import OutlineEditor from '@/components/blog/OutlineEditor';
 import ArticleMetadata from '@/components/blog/ArticleMetadata';
 
@@ -27,6 +28,7 @@ export default function BlogEditor() {
     learning_mode: false
   });
   const [showAI, setShowAI] = useState(true);
+  const [activeTab, setActiveTab] = useState('ai'); // 'ai' or 'seo'
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(null);
@@ -237,20 +239,55 @@ export default function BlogEditor() {
           </div>
         </div>
 
-        {/* Right Panel - AI Assistant */}
+        {/* Right Panel - AI Assistant / SEO */}
         {showAI && (
-          <div className="w-96 border-l border-slate-200 flex-shrink-0 overflow-y-auto bg-slate-50">
-            <AIAssistant
-              title={title}
-              outline={outline}
-              body={body}
-              metadata={metadata}
-              cursorPosition={cursorPosition}
-              onTitleGenerated={handleTitleGenerated}
-              onOutlineGenerated={handleOutlineGenerated}
-              onBodyGenerated={handleBodyGenerated}
-              onInsertAtCursor={handleInsertAtCursor}
-            />
+          <div className="w-96 border-l border-slate-200 flex-shrink-0 flex flex-col bg-slate-50">
+            {/* Tabs */}
+            <div className="border-b border-slate-200 bg-white flex">
+              <button
+                onClick={() => setActiveTab('ai')}
+                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                  activeTab === 'ai'
+                    ? 'text-indigo-600 border-b-2 border-indigo-600'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                AI Assistant
+              </button>
+              <button
+                onClick={() => setActiveTab('seo')}
+                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                  activeTab === 'seo'
+                    ? 'text-emerald-600 border-b-2 border-emerald-600'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                SEO Score
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto">
+              {activeTab === 'ai' ? (
+                <AIAssistant
+                  title={title}
+                  outline={outline}
+                  body={body}
+                  metadata={metadata}
+                  cursorPosition={cursorPosition}
+                  onTitleGenerated={handleTitleGenerated}
+                  onOutlineGenerated={handleOutlineGenerated}
+                  onBodyGenerated={handleBodyGenerated}
+                  onInsertAtCursor={handleInsertAtCursor}
+                />
+              ) : (
+                <SEOScorer
+                  title={title}
+                  body={body}
+                  metadata={metadata}
+                />
+              )}
+            </div>
           </div>
         )}
 
