@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown, ToggleLeft, ToggleRight, BarChart3, FileText, TrendingUp, MessageSquare, Zap, BookOpen, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 function FeatureToggles() {
   const queryClient = useQueryClient();
@@ -204,6 +205,112 @@ export default function Admin() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid lg:grid-cols-3 gap-8">
+          {/* Quick Access Dashboards */}
+          <div className="lg:col-span-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-xl border border-slate-200 p-8"
+            >
+              <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <Zap className="w-6 h-6 text-indigo-600" />
+                Quick Access
+              </h2>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Link
+                  to={createPageUrl('AnalysisDashboard')}
+                  className="p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 transition-all group"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center group-hover:bg-indigo-600 transition-colors">
+                      <BarChart3 className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-slate-900">Analysis Dashboard</div>
+                      <div className="text-xs text-slate-500">View all verifications</div>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  to={createPageUrl('TrainerDashboard')}
+                  className="p-4 rounded-xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 transition-all group"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
+                      <Shield className="w-5 h-5 text-emerald-600 group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-slate-900">Trainer Dashboard</div>
+                      <div className="text-xs text-slate-500">Model training</div>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  to={createPageUrl('FeedbackQueue')}
+                  className="p-4 rounded-xl border-2 border-slate-200 hover:border-amber-500 hover:bg-amber-50 transition-all group"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center group-hover:bg-amber-600 transition-colors">
+                      <MessageSquare className="w-5 h-5 text-amber-600 group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-slate-900">Feedback Queue</div>
+                      <div className="text-xs text-slate-500">Review feedback</div>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  to={createPageUrl('ModelPerformance')}
+                  className="p-4 rounded-xl border-2 border-slate-200 hover:border-purple-500 hover:bg-purple-50 transition-all group"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center group-hover:bg-purple-600 transition-colors">
+                      <TrendingUp className="w-5 h-5 text-purple-600 group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-slate-900">Model Performance</div>
+                      <div className="text-xs text-slate-500">AI metrics</div>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  to={createPageUrl('BlogDashboard')}
+                  className="p-4 rounded-xl border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                      <FileText className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-slate-900">Blog Dashboard</div>
+                      <div className="text-xs text-slate-500">Manage articles</div>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  to={createPageUrl('Support')}
+                  className="p-4 rounded-xl border-2 border-slate-200 hover:border-slate-500 hover:bg-slate-50 transition-all group"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-600 transition-colors">
+                      <MessageSquare className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-slate-900">Support Tickets</div>
+                      <div className="text-xs text-slate-500">Customer support</div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+
           {/* Feature Toggles */}
           <div className="lg:col-span-3">
             <FeatureToggles />
