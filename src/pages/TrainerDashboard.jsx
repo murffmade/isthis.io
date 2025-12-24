@@ -29,6 +29,15 @@ export default function TrainerDashboard() {
     enabled: !!user?.email
   });
 
+  const { data: assignedFeedback } = useQuery({
+    queryKey: ['assignedFeedback', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      return await base44.entities.TrainingFeedback.filter({ assigned_to: user.email });
+    },
+    enabled: !!user?.email
+  });
+
   const { data: allFeedback } = useQuery({
     queryKey: ['allTrainingFeedback'],
     queryFn: () => base44.entities.TrainingFeedback.list(),
@@ -141,20 +150,18 @@ export default function TrainerDashboard() {
             <div className="text-sm text-slate-600">Agreement with AI</div>
           </motion.div>
 
-          {user?.role === 'admin' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white rounded-2xl border border-slate-200 p-6"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <BarChart3 className="w-8 h-8 text-purple-500" />
-                <div className="text-3xl font-bold text-slate-900">{totalFeedback}</div>
-              </div>
-              <div className="text-sm text-slate-600">Total Community Labels</div>
-            </motion.div>
-          )}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white rounded-2xl border-2 border-blue-200 p-6"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <BarChart3 className="w-8 h-8 text-blue-600" />
+              <div className="text-3xl font-bold text-slate-900">{assignedFeedback?.length || 0}</div>
+            </div>
+            <div className="text-sm text-slate-600">Assigned to Me</div>
+          </motion.div>
         </div>
 
         {/* Recent Feedback */}
