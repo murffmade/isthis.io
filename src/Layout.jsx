@@ -61,9 +61,9 @@ export default function Layout({ children, currentPageName }) {
         /* Modern gradients and effects */
         .gradient-mesh {
           background: 
-            radial-gradient(at 40% 20%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-            radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.06) 0px, transparent 50%),
-            radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
+            radial-gradient(at 40% 20%, rgba(52, 152, 219, 0.06) 0px, transparent 50%),
+            radial-gradient(at 80% 0%, rgba(127, 140, 141, 0.04) 0px, transparent 50%),
+            radial-gradient(at 0% 50%, rgba(52, 152, 219, 0.05) 0px, transparent 50%),
             linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
         }
 
