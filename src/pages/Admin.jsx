@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown, ToggleLeft, ToggleRight, BarChart3, FileText, TrendingUp, MessageSquare, Zap, BookOpen, ExternalLink, DollarSign, Activity, ChevronRight } from 'lucide-react';
+import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown, ToggleLeft, ToggleRight, BarChart3, FileText, TrendingUp, MessageSquare, Zap, BookOpen, ExternalLink, DollarSign, Activity, ChevronRight, Megaphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -121,6 +121,14 @@ function FeatureToggles() {
     { key: 'feature_is_this_safe', label: 'Is This Safe?', icon: Shield, color: 'text-emerald-600' }
   ];
 
+  const lifetimeOfferFields = [
+    { key: 'lifetime_offer_enabled', label: 'Lifetime Offer Enabled', type: 'boolean' },
+    { key: 'lifetime_show_countdown', label: 'Show Countdown Timer', type: 'boolean' },
+    { key: 'lifetime_sold_count', label: 'Lifetime Sold Count', type: 'number' },
+    { key: 'lifetime_max_count', label: 'Max Lifetime Licenses', type: 'number' },
+    { key: 'lifetime_expiry_date', label: 'Offer Expiry Date', type: 'date' }
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -164,6 +172,85 @@ function FeatureToggles() {
             </button>
           );
         })}
+      </div>
+
+      {/* Lifetime Offer Management */}
+      <div className="mt-8 p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl">
+        <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Crown className="w-5 h-5 text-indigo-600" />
+          Lifetime Offer Management
+        </h3>
+        
+        <div className="grid md:grid-cols-2 gap-4">
+          {lifetimeOfferFields.map((field) => {
+            const value = settings?.[field.key];
+            
+            if (field.type === 'boolean') {
+              return (
+                <button
+                  key={field.key}
+                  onClick={() => updateSettingMutation.mutate({ field: field.key, value: !value })}
+                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                    value
+                      ? 'border-emerald-200 bg-emerald-50'
+                      : 'border-slate-200 bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-slate-900">{field.label}</span>
+                    {value ? (
+                      <ToggleRight className="w-6 h-6 text-emerald-600" />
+                    ) : (
+                      <ToggleLeft className="w-6 h-6 text-slate-400" />
+                    )}
+                  </div>
+                  <div className={`text-sm ${value ? 'text-emerald-700' : 'text-slate-500'}`}>
+                    {value ? 'Enabled' : 'Disabled'}
+                  </div>
+                </button>
+              );
+            }
+            
+            if (field.type === 'number' || field.type === 'date') {
+              return (
+                <div key={field.key} className="p-4 rounded-xl border-2 border-slate-200 bg-white">
+                  <label className="font-semibold text-slate-900 block mb-2">{field.label}</label>
+                  <Input
+                    type={field.type === 'date' ? 'date' : 'number'}
+                    value={value || ''}
+                    onChange={(e) => {
+                      const newValue = field.type === 'number' ? parseInt(e.target.value) : e.target.value;
+                      updateSettingMutation.mutate({ field: field.key, value: newValue });
+                    }}
+                    className="w-full"
+                  />
+                </div>
+              );
+            }
+          })}
+        </div>
+
+        <div className="mt-4 p-4 bg-white rounded-lg border border-indigo-200">
+          <div className="text-sm text-slate-600 mb-2">Current Status:</div>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-bold text-slate-900">
+                {settings?.lifetime_sold_count || 0} / {settings?.lifetime_max_count || 500} sold
+              </div>
+              <div className="text-xs text-slate-500">
+                {settings?.lifetime_max_count - (settings?.lifetime_sold_count || 0)} licenses remaining
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="font-bold text-slate-900">
+                Expires: {new Date(settings?.lifetime_expiry_date || '2026-01-03').toLocaleDateString()}
+              </div>
+              <div className={`text-xs font-semibold ${settings?.lifetime_offer_enabled ? 'text-emerald-600' : 'text-red-600'}`}>
+                {settings?.lifetime_offer_enabled ? 'Offer Active' : 'Offer Disabled'}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </motion.div>
   );

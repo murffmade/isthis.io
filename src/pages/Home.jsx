@@ -36,6 +36,30 @@ export default function Home() {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  // Fetch lifetime offer settings
+  const { data: lifetimeSettings } = useQuery({
+    queryKey: ['lifetimeSettings'],
+    queryFn: async () => {
+      const settings = await base44.entities.AppSettings.list();
+      if (settings.length > 0) {
+        return {
+          enabled: settings[0].lifetime_offer_enabled ?? true,
+          sold_count: settings[0].lifetime_sold_count ?? 0,
+          max_count: settings[0].lifetime_max_count ?? 500,
+          expiry_date: settings[0].lifetime_expiry_date ?? '2026-01-03',
+          show_countdown: settings[0].lifetime_show_countdown ?? true
+        };
+      }
+      return {
+        enabled: true,
+        sold_count: 0,
+        max_count: 500,
+        expiry_date: '2026-01-03',
+        show_countdown: true
+      };
+    }
+  });
+
   React.useEffect(() => {
     // Detect mobile device
     const checkMobile = () => {
@@ -1150,7 +1174,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   <p className="text-lg sm:text-xl text-slate-600 font-light">Get unlimited verifications and advanced features</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6 max-w-6xl mx-auto">
                   {/* Free */}
                   <div className="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-soft hover:shadow-medium transition-shadow duration-300">
                     <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Free</h3>
@@ -1158,7 +1182,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>5 verifications per day</span>
+                        <span>5 verifications/month</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -1174,15 +1198,47 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     </button>
                   </div>
 
-                  {/* Annual */}
+                  {/* Basic */}
                   <div className="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-soft hover:shadow-medium transition-shadow duration-300">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Basic</h3>
+                    <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-1 tracking-tight">$9.99</div>
+                    <div className="text-sm text-slate-500 mb-5 font-medium">per month</div>
+                    <ul className="space-y-2 sm:space-y-3 mb-6">
+                      <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
+                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <span>25 verifications/month</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
+                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <span>Advanced AI detection</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
+                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <span>Priority support</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
+                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <span>Cancel anytime</span>
+                      </li>
+                    </ul>
+                    <StripeCheckout
+                      plan={{ name: 'Basic Monthly', price: 9.99, buttonText: 'Get Basic' }}
+                      onSuccess={handlePaymentSuccess}
+                    />
+                  </div>
+
+                  {/* Premium */}
+                  <div className="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-soft hover:shadow-medium transition-shadow duration-300 border-2 border-indigo-200">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-indigo-600 rounded-full text-xs font-bold text-white shadow-md">
+                      POPULAR
+                    </div>
                     <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Premium</h3>
                     <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-1 tracking-tight">$29</div>
                     <div className="text-sm text-slate-500 mb-5 font-medium">per year</div>
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Unlimited verifications</span>
+                        <span><strong>Unlimited</strong> verifications</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -1198,42 +1254,69 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       </li>
                     </ul>
                     <StripeCheckout
-                      plan={{ name: '1 Year Premium', price: 29, buttonText: 'Get Premium' }}
+                      plan={{ name: 'Premium Annual', price: 29, buttonText: 'Get Premium' }}
                       onSuccess={handlePaymentSuccess}
                     />
                   </div>
 
                   {/* Lifetime */}
-                  <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white relative shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-shadow duration-300 transform hover:scale-105 transition-all">
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-white rounded-full text-xs font-bold text-indigo-600 shadow-lg">
-                      BEST VALUE
+                  {lifetimeSettings?.enabled && (
+                    <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white relative shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-shadow duration-300 transform hover:scale-105 transition-all">
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-white rounded-full text-xs font-bold text-indigo-600 shadow-lg">
+                        LIMITED OFFER
+                      </div>
+                      <h3 className="text-xl sm:text-2xl font-bold mb-2">Lifetime</h3>
+                      <div className="text-3xl sm:text-4xl font-extrabold mb-1 tracking-tight">$99</div>
+                      <div className="text-sm text-indigo-100 mb-3 font-medium">one-time payment</div>
+
+                      {lifetimeSettings?.show_countdown && lifetimeSettings?.expiry_date && (
+                        <div className="mb-4 p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                          <div className="text-xs font-semibold mb-1">Offer ends in:</div>
+                          <div className="text-lg font-bold">
+                            {(() => {
+                              const now = new Date();
+                              const expiry = new Date(lifetimeSettings.expiry_date);
+                              const diff = expiry - now;
+                              const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                              const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                              return `${days}d ${hours}h`;
+                            })()}
+                          </div>
+                        </div>
+                      )}
+
+                      <ul className="space-y-2 sm:space-y-3 mb-4">
+                        <li className="flex items-start gap-2 text-xs sm:text-sm">
+                          <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span>Everything in Premium</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-xs sm:text-sm">
+                          <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span>Lifetime access forever</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-xs sm:text-sm">
+                          <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span>Early feature access</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-xs sm:text-sm">
+                          <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span>Premium support</span>
+                        </li>
+                      </ul>
+
+                      <div className="mb-4 text-xs bg-white/20 rounded-lg p-2 backdrop-blur-sm">
+                        <div className="font-bold mb-1">⚡ Limited to 500 users</div>
+                        <div className="opacity-90">
+                          {lifetimeSettings?.sold_count || 0} / 500 sold
+                        </div>
+                      </div>
+
+                      <StripeCheckout
+                        plan={{ name: 'Lifetime Premium', price: 99, buttonText: 'Get Lifetime Access' }}
+                        onSuccess={handlePaymentSuccess}
+                      />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2">Lifetime</h3>
-                    <div className="text-3xl sm:text-4xl font-extrabold mb-1 tracking-tight">$99</div>
-                    <div className="text-sm text-indigo-100 mb-5 font-medium">one-time payment</div>
-                    <ul className="space-y-2 sm:space-y-3 mb-6">
-                      <li className="flex items-start gap-2 text-xs sm:text-sm">
-                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                        <span>Everything in Premium</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-xs sm:text-sm">
-                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                        <span>Lifetime access forever</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-xs sm:text-sm">
-                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                        <span>Early feature access</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-xs sm:text-sm">
-                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                        <span>Premium support</span>
-                      </li>
-                    </ul>
-                    <StripeCheckout
-                      plan={{ name: 'Lifetime Premium', price: 99, buttonText: 'Get Lifetime Access' }}
-                      onSuccess={handlePaymentSuccess}
-                    />
-                  </div>
+                  )}
                 </div>
               </section>
             </motion.div>
