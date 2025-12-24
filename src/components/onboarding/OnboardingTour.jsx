@@ -7,56 +7,56 @@ const steps = [
   {
     id: 'welcome',
     target: null,
-    title: '👋 Welcome to IsThis.io!',
+    title: 'Welcome to IsThis.io',
     content: "Let's take a quick tour to help you verify if content is real or AI-generated. This will only take 30 seconds!",
     position: 'center'
   },
   {
     id: 'upload',
     target: '[data-tour="upload-zone"]',
-    title: '📤 Upload Your Content',
+    title: 'Upload Your Content',
     content: 'Start by uploading an image or video, or paste a URL. We support all major formats and social media links.',
     position: 'bottom'
   },
   {
     id: 'verify',
     target: '[data-tour="verify-button"]',
-    title: '⚡ Instant Verification',
+    title: 'Instant Verification',
     content: 'Click "Verify Now" to analyze your content. Our AI will examine multiple regions, metadata, and visual patterns in seconds.',
     position: 'top'
   },
   {
     id: 'features',
     target: '[data-tour="how-it-works"]',
-    title: '🔍 How We Detect AI',
+    title: 'How We Detect AI',
     content: 'We analyze visual artifacts, metadata, compression patterns, and more. Each signal is weighted by confidence to give you an accurate result.',
     position: 'top'
   },
   {
     id: 'results-tip',
     target: null,
-    title: '📊 Understanding Results',
+    title: 'Understanding Results',
     content: 'After analysis, you\'ll see: <strong>Likely Real</strong> (authentic), <strong>Likely AI</strong> (generated), or <strong>Uncertain</strong>. Each comes with a confidence score and detailed explanations.',
     position: 'center'
   },
   {
     id: 'confidence-tip',
     target: null,
-    title: '🎯 Confidence Scores',
+    title: 'Confidence Scores',
     content: 'Scores range 0-100. <strong>Lower scores (0-42)</strong> suggest real content, <strong>higher scores (58-100)</strong> suggest AI generation. The middle range (43-57) means we\'re uncertain.',
     position: 'center'
   },
   {
     id: 'share-tip',
     target: null,
-    title: '🎨 Share Your Findings',
+    title: 'Share Your Findings',
     content: 'After verification, you can create beautiful shareable cards to spread awareness about AI content detection on social media!',
     position: 'center'
   },
   {
     id: 'complete',
     target: null,
-    title: '🎉 You\'re All Set!',
+    title: 'You\'re All Set!',
     content: 'Now you\'re ready to verify content. Remember: our analysis is a tool to help you, but always check multiple sources for important decisions.',
     position: 'center'
   }
@@ -164,7 +164,7 @@ export default function OnboardingTour({ onComplete }) {
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className={`fixed z-50 ${
               step.position === 'center' 
-                ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' 
+                ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-lg' 
                 : ''
             }`}
             style={step.position !== 'center' ? {
@@ -173,7 +173,7 @@ export default function OnboardingTour({ onComplete }) {
               transform: step.position === 'bottom' ? 'translateX(-50%)' : 'translate(-50%, -100%)'
             } : {}}
           >
-            <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md border-2 border-[#3498DB]">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 border-2 border-[#3498DB]">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-2">
