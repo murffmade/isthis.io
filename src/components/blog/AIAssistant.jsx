@@ -23,21 +23,32 @@ export default function AIAssistant({
   const generateTitleMutation = useMutation({
     mutationFn: async () => {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Generate 5 casual, approachable article titles about: ${metadata.topic || 'the given topic'}.
+        prompt: `Generate 5 SEO-optimized article titles about: ${metadata.topic || 'AI detection'}.
 
 Audience level: ${metadata.audience_level}
 Tone: ${metadata.tone}
 
-Requirements:
-- Use everyday language that anyone can understand
-- Make it relatable and practical
-- Focus on real-world problems and solutions
-- Avoid jargon, academic terms, or overly technical language
-- Sound like a conversation with a friend, not a textbook
-- 50-70 characters ideal
-- Address what regular people actually care about
+SEO FOCUS - Include high-value keywords:
+- "detect AI", "AI detection", "AI generated", "fake AI"
+- "deepfake", "AI content", "verify AI", "spot AI"
+- "real or AI", "check if AI", "AI checker"
+- Geographic terms when relevant: "how to", "best way", "free"
 
-Return 5 diverse title options that feel casual and accessible.`,
+Requirements:
+- Use casual, everyday language people actually search for
+- Include primary keyword near the beginning
+- Focus on user intent and real problems
+- Question format or "How to" works great for SEO
+- 50-70 characters (Google preview length)
+- Natural and conversational, not keyword stuffing
+- Address what people type into Google
+
+Examples of good SEO titles:
+- "How to Detect AI Images: Simple Guide for 2024"
+- "Is This AI Generated? 5 Ways to Tell"
+- "Spot Fake AI Photos: Easy Detection Tips"
+
+Return 5 diverse, SEO-optimized title options.`,
         response_json_schema: {
           type: "object",
           properties: {
