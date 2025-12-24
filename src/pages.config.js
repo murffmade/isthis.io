@@ -26,6 +26,7 @@ import True from './pages/True';
 import ModelPerformance from './pages/ModelPerformance';
 import AnalysisDashboard from './pages/AnalysisDashboard';
 import FeedbackQueue from './pages/FeedbackQueue';
+import ContentGenerator from './pages/ContentGenerator';
 import __Layout from './Layout.jsx';
 
 
@@ -58,6 +59,7 @@ export const PAGES = {
     "ModelPerformance": ModelPerformance,
     "AnalysisDashboard": AnalysisDashboard,
     "FeedbackQueue": FeedbackQueue,
+    "ContentGenerator": ContentGenerator,
 }
 
 export const pagesConfig = {
