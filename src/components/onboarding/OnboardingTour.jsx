@@ -162,18 +162,20 @@ export default function OnboardingTour({ onComplete }) {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className={`fixed z-50 ${
-              step.position === 'center' 
-                ? 'top-[15vh] left-1/2 -translate-x-1/2 w-[90vw] max-w-lg' 
-                : ''
-            }`}
-            style={step.position !== 'center' ? {
+            className="fixed z-50"
+            style={step.position === 'center' ? {
+              top: '15vh',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '90vw',
+              maxWidth: '28rem'
+            } : {
               top: `${position.top}px`,
               left: `${position.left}px`,
               transform: step.position === 'bottom' ? 'translateX(-50%)' : 'translate(-50%, -100%)'
-            } : {}}
+            }}
           >
-            <div className="bg-white rounded-2xl shadow-2xl p-6 border-2 border-[#3498DB]">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 border-2 border-[#3498DB] w-full">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-2">
