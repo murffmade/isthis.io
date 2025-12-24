@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Crown, Infinity, Calendar, CreditCard, ArrowLeft, Check, Loader2 } from 'lucide-react';
+import { Shield, Crown, Infinity, Calendar, CreditCard, ArrowLeft, Check, Loader2, User, Mail, MapPin, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -9,6 +9,8 @@ import { toast } from 'sonner';
 import moment from 'moment';
 import StripeCheckout from '@/components/payment/StripeCheckout';
 import BottomNav from '@/components/mobile/BottomNav';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const planConfig = {
   free: {
@@ -51,11 +53,40 @@ const planConfig = {
 
 export default function AccountPage() {
   const queryClient = useQueryClient();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUser, setEditedUser] = useState({});
+
+  const { data: currentUser, isLoading: userLoading } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
 
   const { data: subscriptionData, isLoading } = useQuery({
     queryKey: ['currentSubscription'],
     queryFn: () => base44.functions.getCurrentSubscription({})
   });
+
+  const updateUserMutation = useMutation({
+    mutationFn: (userData) => base44.auth.updateMe(userData),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['currentUser']);
+      setIsEditing(false);
+      toast.success('Profile updated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to update profile');
+    }
+  });
+
+  React.useEffect(() => {
+    if (currentUser && !isEditing) {
+      setEditedUser({
+        full_name: currentUser.full_name || '',
+        location: currentUser.location || '',
+        bio: currentUser.bio || ''
+      });
+    }
+  }, [currentUser, isEditing]);
 
   const portalMutation = useMutation({
     mutationFn: () => base44.functions.getCustomerPortalUrl({}),
@@ -75,7 +106,7 @@ export default function AccountPage() {
     queryClient.invalidateQueries(['currentSubscription']);
   };
 
-  if (isLoading) {
+  if (isLoading || userLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
@@ -116,6 +147,134 @@ export default function AccountPage() {
 
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-6 py-12">
+        {/* Account Information */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl border-2 border-slate-200 p-8 mb-8"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-slate-900">Account Information</h2>
+            {!isEditing ? (
+              <Button
+                onClick={() => setIsEditing(true)}
+                variant="outline"
+                size="sm"
+              >
+                Edit Profile
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setIsEditing(false)}
+                  variant="outline"
+                  size="sm"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => updateUserMutation.mutate(editedUser)}
+                  disabled={updateUserMutation.isPending}
+                  size="sm"
+                >
+                  {updateUserMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'Save'
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Name */}
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                <User className="w-4 h-4" />
+                Full Name
+              </label>
+              {isEditing ? (
+                <Input
+                  value={editedUser.full_name || ''}
+                  onChange={(e) => setEditedUser({ ...editedUser, full_name: e.target.value })}
+                  placeholder="Enter your name"
+                />
+              ) : (
+                <div className="text-slate-900 font-medium">
+                  {currentUser?.full_name || 'Not set'}
+                </div>
+              )}
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                <Mail className="w-4 h-4" />
+                Email Address
+              </label>
+              <div className="text-slate-900 font-medium">
+                {currentUser?.email}
+              </div>
+              <p className="text-xs text-slate-500 mt-1">Email cannot be changed</p>
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                <MapPin className="w-4 h-4" />
+                Location
+              </label>
+              {isEditing ? (
+                <Input
+                  value={editedUser.location || ''}
+                  onChange={(e) => setEditedUser({ ...editedUser, location: e.target.value })}
+                  placeholder="City, Country"
+                />
+              ) : (
+                <div className="text-slate-900 font-medium">
+                  {currentUser?.location || 'Not set'}
+                </div>
+              )}
+            </div>
+
+            {/* Member Since */}
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                <Clock className="w-4 h-4" />
+                Member Since
+              </label>
+              <div className="text-slate-900 font-medium">
+                {moment(currentUser?.created_date).format('MMMM YYYY')}
+              </div>
+            </div>
+
+            {/* Bio */}
+            {isEditing && (
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                  Bio
+                </label>
+                <Input
+                  value={editedUser.bio || ''}
+                  onChange={(e) => setEditedUser({ ...editedUser, bio: e.target.value })}
+                  placeholder="Tell us about yourself (optional)"
+                />
+              </div>
+            )}
+            {!isEditing && currentUser?.bio && (
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                  Bio
+                </label>
+                <div className="text-slate-900">
+                  {currentUser.bio}
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
         {/* Current Plan Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
