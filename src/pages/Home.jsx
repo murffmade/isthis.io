@@ -1791,7 +1791,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     <div className="mb-4 p-5 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
                       <div className="mb-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <div className="text-xl">🤖</div>
                           <p className="font-bold text-slate-900">AI Classification</p>
                         </div>
                         <p className="text-sm text-slate-600 mb-1">{imageClassification.reasoning}</p>
@@ -1802,15 +1801,15 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         <p className="text-sm font-semibold text-slate-700">Select the correct type:</p>
                         <div className="grid grid-cols-2 gap-2">
                           {[
-                            { value: 'photo', icon: '📷', label: 'Photo' },
-                            { value: 'screenshot', icon: '🖥️', label: 'Screenshot' },
-                            { value: 'digital_art', icon: '🎨', label: 'Digital Art' },
-                            { value: 'illustration', icon: '✏️', label: 'Illustration' }
+                            { value: 'photo', label: 'Photo' },
+                            { value: 'screenshot', label: 'Screenshot' },
+                            { value: 'digital_art', label: 'Digital Art' },
+                            { value: 'illustration', label: 'Illustration' }
                           ].map((option) => (
                             <button
                               key={option.value}
                               onClick={() => {
-                                const aiPrediction = imageClassification.type;
+                                const aiPrediction = imageClassification.originalPrediction || imageClassification.type;
                                 setImageClassification({
                                   ...imageClassification,
                                   type: option.value,
@@ -1824,7 +1823,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                                   : 'border-slate-300 bg-white text-slate-700 hover:border-blue-300'
                               }`}
                             >
-                              <div className="text-xl mb-1">{option.icon}</div>
                               {option.label}
                             </button>
                           ))}
