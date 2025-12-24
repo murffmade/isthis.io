@@ -74,23 +74,27 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
 }
 
 export function ensembleDecision({ llm, forensics, provenance, editingIndicators }) {
-  // Adaptive weighting based on signal availability and strength
+  // Enhanced adaptive weighting with editing detection
   let weights = {
-    llm: 0.7,        // Primary signal
+    llm: 0.6,        // Primary signal
     forensics: 0.2,
-    provenance: 0.1
+    provenance: 0.1,
+    editing: 0.1     // New: editing software detection
   };
   
   // Boost LLM weight if it's the only strong signal
   const hasForensics = forensics && typeof forensics.score === 'number' && forensics.reliability > 0.3;
   const hasProvenance = provenance && typeof provenance.score === 'number';
+  const hasEditing = editingIndicators && (editingIndicators.hasPhotoshopSignature || editingIndicators.hasGimpSignature || editingIndicators.hasEditingSoftware);
   
-  if (!hasForensics && !hasProvenance) {
+  if (!hasForensics && !hasProvenance && !hasEditing) {
     weights.llm = 1.0; // LLM is sole signal
-  } else if (hasForensics && !hasProvenance) {
-    weights = { llm: 0.75, forensics: 0.25, provenance: 0 };
-  } else if (!hasForensics && hasProvenance) {
-    weights = { llm: 0.8, forensics: 0, provenance: 0.2 };
+  } else if (hasForensics && !hasProvenance && !hasEditing) {
+    weights = { llm: 0.75, forensics: 0.25, provenance: 0, editing: 0 };
+  } else if (!hasForensics && hasProvenance && !hasEditing) {
+    weights = { llm: 0.8, forensics: 0, provenance: 0.2, editing: 0 };
+  } else if (!hasForensics && !hasProvenance && hasEditing) {
+    weights = { llm: 0.8, forensics: 0, provenance: 0, editing: 0.2 };
   }
   
   let weightedScore = llm.score * weights.llm;
@@ -119,6 +123,25 @@ export function ensembleDecision({ llm, forensics, provenance, editingIndicators
     if (llm.score < 50 && provenance.score < 50) {
       confidenceBoost *= 1.1;
     }
+  }
+  
+  // NEW: Integrate editing software detection
+  if (hasEditing) {
+    let editingScore = 35; // Default: suggests traditional editing (lower = more real)
+    
+    if (editingIndicators.hasPhotoshopSignature || editingIndicators.hasGimpSignature) {
+      // Strong signal of traditional editing software
+      editingScore = 25; // Lower score = suggests edited real photo, not AI
+      confidenceBoost *= 1.15; // Boost confidence - we have metadata proof
+    }
+    
+    if (editingIndicators.hasDateDiscrepancy) {
+      // Date mismatch suggests editing but doesn't distinguish AI from Photoshop
+      editingScore += 5;
+    }
+    
+    weightedScore += editingScore * weights.editing;
+    totalWeight += weights.editing;
   }
   
   const finalScore = Math.round(weightedScore / totalWeight);
@@ -159,6 +182,7 @@ export function ensembleDecision({ llm, forensics, provenance, editingIndicators
       llmConfidence: llm.confidence,
       forensicsScore: hasForensics ? forensics.score : null,
       provenanceScore: hasProvenance ? provenance.score : null,
+      editingDetected: hasEditing,
       weights,
       confidenceBoost
     }
