@@ -24,6 +24,7 @@ import TermsOfService from './pages/TermsOfService';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
 import ModelPerformance from './pages/ModelPerformance';
+import AnalysisDashboard from './pages/AnalysisDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -54,6 +55,7 @@ export const PAGES = {
     "TrainerDashboard": TrainerDashboard,
     "True": True,
     "ModelPerformance": ModelPerformance,
+    "AnalysisDashboard": AnalysisDashboard,
 }
 
 export const pagesConfig = {
