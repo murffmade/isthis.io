@@ -152,6 +152,11 @@ export default function Layout({ children, currentPageName }) {
                         Enterprise
                       </a>
                     </li>
+                    <li>
+                      <a href={createPageUrl('AffiliateMarketing')} className="text-sm text-slate-400 hover:text-white transition-colors">
+                        Affiliate Program
+                      </a>
+                    </li>
                   </ul>
                 </div>
 

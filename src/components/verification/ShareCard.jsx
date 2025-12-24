@@ -34,7 +34,7 @@ const resultConfig = {
   }
 };
 
-export default function ShareCard({ result, cardRef }) {
+export default function ShareCard({ result, cardRef, affiliateCode }) {
   const config = resultConfig[result.result] || resultConfig.uncertain;
   const Icon = config.icon;
 
@@ -262,7 +262,7 @@ export default function ShareCard({ result, cardRef }) {
               lineHeight: 1.4,
               fontWeight: '500'
             }}>
-              Free A.I. Detection • isthis.io
+              Free A.I. Detection • isthis.io{affiliateCode ? `?ref=${affiliateCode}` : ''}
             </div>
           </div>
         </div>

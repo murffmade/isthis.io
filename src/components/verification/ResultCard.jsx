@@ -2,11 +2,13 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, AlertTriangle, HelpCircle, ChevronRight, Info, Download, Copy, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import html2canvas from 'html2canvas';
 import ShareCard from './ShareCard';
 import TrainerFeedback from './TrainerFeedback';
 import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '@/utils';
 
 const resultConfig = {
   likely_real: {
@@ -173,14 +175,23 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
   const [copied, setCopied] = useState(false);
   const [shareGenerated, setShareGenerated] = useState(false);
   const [user, setUser] = useState(null);
+  const [affiliateCode, setAffiliateCode] = useState('');
+  const [showAffiliatePrompt, setShowAffiliatePrompt] = useState(false);
   const config = resultConfig[result.result] || resultConfig.uncertain;
   const Icon = config.icon;
   const showActionButton = result.result === 'likely_ai' && result.claims_to_be_real;
 
   React.useEffect(() => {
-    // Check if user is a trainer
-    base44.auth.me().then(currentUser => {
+    // Check if user is a trainer and get affiliate code
+    base44.auth.me().then(async currentUser => {
       setUser(currentUser);
+      // Check if user has affiliate account
+      const affiliates = await base44.entities.AffiliatePartner.filter({ 
+        created_by: currentUser.email 
+      });
+      if (affiliates.length > 0) {
+        setAffiliateCode(affiliates[0].affiliate_code);
+      }
     }).catch(() => {
       setUser(null);
     });
@@ -987,6 +998,57 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
           <p className="text-slate-600 mb-6 max-w-md mx-auto">
             Create a beautiful shareable card to spread awareness about A.I. content
           </p>
+
+          {!affiliateCode && !showAffiliatePrompt && (
+            <div className="mb-4 p-4 bg-white rounded-xl border border-purple-200">
+              <p className="text-sm text-slate-600 mb-3">
+                💰 Want to earn 30% commission when people sign up through your shared content?
+              </p>
+              <Button
+                onClick={() => setShowAffiliatePrompt(true)}
+                variant="outline"
+                size="sm"
+                className="border-purple-300 text-purple-700 hover:bg-purple-50"
+              >
+                Add My Affiliate Link
+              </Button>
+            </div>
+          )}
+
+          {showAffiliatePrompt && !affiliateCode && (
+            <div className="mb-4 p-4 bg-white rounded-xl border border-purple-200 text-left">
+              <p className="text-sm text-slate-600 mb-3">
+                Enter your affiliate code to earn 30% commission on all referrals from this share:
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="your-affiliate-code"
+                  value={affiliateCode}
+                  onChange={(e) => setAffiliateCode(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  onClick={() => setShowAffiliatePrompt(false)}
+                  variant="outline"
+                  size="sm"
+                >
+                  Cancel
+                </Button>
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                Don't have one? <a href={createPageUrl('AffiliateMarketing')} className="text-purple-600 hover:underline">Join our affiliate program</a>
+              </p>
+            </div>
+          )}
+
+          {affiliateCode && (
+            <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+              <p className="text-sm text-emerald-800">
+                ✓ Your affiliate link will be included
+              </p>
+            </div>
+          )}
+
           <Button
             onClick={() => setShareGenerated(true)}
             className="h-14 px-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
@@ -1158,7 +1220,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
 
       {/* Hidden ShareCard for image generation */}
       <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
-        <ShareCard result={result} cardRef={shareCardRef} />
+        <ShareCard result={result} cardRef={shareCardRef} affiliateCode={affiliateCode} />
       </div>
 
       {/* Action Buttons */}

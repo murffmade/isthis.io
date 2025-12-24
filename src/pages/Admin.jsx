@@ -382,6 +382,38 @@ export default function Admin() {
                     </div>
                   </div>
                 </Link>
+
+                <a
+                  href={createPageUrl('AffiliateMarketing')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-4 rounded-xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 transition-all group"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
+                      <DollarSign className="w-5 h-5 text-emerald-600 group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-slate-900">Affiliate Program</div>
+                      <div className="text-xs text-slate-500">Manage affiliates</div>
+                    </div>
+                  </div>
+                </a>
+
+                <Link
+                  to={createPageUrl('Admin')}
+                  className="p-4 rounded-xl border-2 border-purple-200 bg-purple-50 hover:border-purple-500 hover:bg-purple-100 transition-all group"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-purple-600 flex items-center justify-center">
+                      <Crown className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-slate-900">Admin Panel</div>
+                      <div className="text-xs text-slate-500">You are here</div>
+                    </div>
+                  </div>
+                </Link>
               </div>
             </motion.div>
           </div>
