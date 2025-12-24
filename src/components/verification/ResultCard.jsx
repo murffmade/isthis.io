@@ -644,22 +644,37 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
         </div>
       )}
 
-      {!result.exif_summary && result.result === 'likely_ai' && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-          <h3 className="font-semibold text-slate-800 mb-3 text-lg">📷 Camera Information</h3>
-          <div className="p-4 rounded-xl bg-amber-50 border-2 border-amber-200">
-            <div className="flex items-start gap-3">
-              <div className="text-2xl">⚠️</div>
-              <div className="flex-1">
-                <p className="font-semibold text-amber-900 mb-2">No Camera Data Found</p>
-                <p className="text-sm text-amber-800">
-                  This image doesn't contain any camera information. Real photos taken with cameras or phones automatically save technical details like camera model, date, and settings. The absence of this data is common in A.I.-generated images, though it can also happen with screenshots or edited photos.
-                </p>
+      {!result.exif_summary && result.result === 'likely_ai' && (() => {
+        // Only show EXIF warning if this appears to be photorealistic content, not illustrations/art
+        const isArtistic = result.content_origin_confidence?.ai_generated > 70 && 
+                          result.signals?.some(s => 
+                            s.signal_type?.toLowerCase().includes('artistic') || 
+                            s.signal_type?.toLowerCase().includes('illustration') ||
+                            s.signal_type?.toLowerCase().includes('painted') ||
+                            s.description?.toLowerCase().includes('art style') ||
+                            s.description?.toLowerCase().includes('illustration')
+                          );
+        
+        // Don't show EXIF warning for clearly artistic/illustration content
+        if (isArtistic) return null;
+        
+        return (
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+            <h3 className="font-semibold text-slate-800 mb-3 text-lg">📷 Camera Information</h3>
+            <div className="p-4 rounded-xl bg-amber-50 border-2 border-amber-200">
+              <div className="flex items-start gap-3">
+                <div className="text-2xl">⚠️</div>
+                <div className="flex-1">
+                  <p className="font-semibold text-amber-900 mb-2">No Camera Data Found</p>
+                  <p className="text-sm text-amber-800">
+                    This image doesn't contain any camera information. Real photos taken with cameras or phones automatically save technical details like camera model, date, and settings. The absence of this data is common in A.I.-generated images, though it can also happen with screenshots or edited photos.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Signals Section */}
       {result.signals && result.signals.length > 0 && (
