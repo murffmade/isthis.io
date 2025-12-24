@@ -1,214 +1,431 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Shield, Users, MessageSquare, FileText, TrendingUp, DollarSign, Check } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Shield, Plus, Edit2, Trash2, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 
-const ROLES = {
-  admin: {
-    name: 'Admin',
-    icon: Shield,
-    color: 'from-purple-600 to-purple-800',
-    permissions: ['all']
+const PERMISSION_MODULES = {
+  users: {
+    label: 'User Management',
+    icon: '👥',
+    permissions: ['view', 'create', 'edit', 'delete']
   },
-  support_agent: {
-    name: 'Support Agent',
-    icon: MessageSquare,
-    color: 'from-blue-600 to-blue-800',
-    permissions: ['manage_tickets', 'view_users', 'send_notifications']
+  content_moderation: {
+    label: 'Content Moderation',
+    icon: '🛡️',
+    permissions: ['view', 'approve', 'reject', 'delete']
   },
-  content_manager: {
-    name: 'Content Manager',
-    icon: FileText,
-    color: 'from-emerald-600 to-emerald-800',
-    permissions: ['manage_blog', 'manage_announcements', 'view_analytics']
+  payouts: {
+    label: 'Payouts',
+    icon: '💰',
+    permissions: ['view', 'process', 'approve', 'reject']
   },
-  trainer: {
-    name: 'Trainer',
-    icon: TrendingUp,
-    color: 'from-amber-600 to-amber-800',
-    permissions: ['manage_training', 'review_feedback', 'view_model_performance']
+  analytics: {
+    label: 'Analytics',
+    icon: '📊',
+    permissions: ['view', 'export']
   },
-  influencer_manager: {
-    name: 'Influencer Manager',
-    icon: DollarSign,
-    color: 'from-pink-600 to-pink-800',
-    permissions: ['manage_influencers', 'view_performance', 'manage_payouts']
+  influencers: {
+    label: 'Influencer Management',
+    icon: '🌟',
+    permissions: ['view', 'edit', 'manage_tiers']
   },
-  user: {
-    name: 'User',
-    icon: Users,
-    color: 'from-slate-600 to-slate-800',
-    permissions: ['use_app']
+  blog: {
+    label: 'Blog Management',
+    icon: '📝',
+    permissions: ['view', 'create', 'edit', 'publish', 'delete']
+  },
+  settings: {
+    label: 'System Settings',
+    icon: '⚙️',
+    permissions: ['view', 'edit']
+  },
+  roles: {
+    label: 'Role Management',
+    icon: '🔐',
+    permissions: ['view', 'create', 'edit', 'delete', 'assign']
   }
 };
 
-export default function RoleManagement() {
-  const [searchEmail, setSearchEmail] = useState('');
-  const [selectedUser, setSelectedUser] = useState(null);
-  const queryClient = useQueryClient();
-
-  const { data: users = [] } = useQuery({
-    queryKey: ['users', searchEmail],
-    queryFn: async () => {
-      if (!searchEmail) return [];
-      return await base44.entities.User.filter({ email: searchEmail });
-    },
-    enabled: searchEmail.length > 0
-  });
-
-  const updateRoleMutation = useMutation({
-    mutationFn: async ({ userId, role }) => {
-      await base44.entities.User.update(userId, { role });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['users']);
-      toast.success('User role updated successfully');
-    },
-    onError: () => {
-      toast.error('Failed to update user role');
-    }
-  });
-
-  const handleUpdateRole = (role) => {
-    if (!selectedUser) return;
-    updateRoleMutation.mutate({ userId: selectedUser.id, role });
+function PermissionCheckbox({ module, permission, checked, onChange, disabled }) {
+  const permissionLabels = {
+    view: 'View',
+    create: 'Create',
+    edit: 'Edit',
+    delete: 'Delete',
+    approve: 'Approve',
+    reject: 'Reject',
+    process: 'Process',
+    export: 'Export',
+    manage_tiers: 'Manage Tiers',
+    publish: 'Publish',
+    assign: 'Assign'
   };
 
   return (
-    <div className="space-y-6">
-      {/* Role Overview */}
-      <div>
-        <h3 className="text-lg font-bold text-slate-900 mb-4">Available Roles</h3>
-        <div className="grid md:grid-cols-3 gap-4">
-          {Object.entries(ROLES).map(([key, role]) => {
-            const Icon = role.icon;
-            return (
-              <motion.div
-                key={key}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`bg-gradient-to-br ${role.color} rounded-xl p-4 text-white`}
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="font-bold">{role.name}</div>
-                </div>
-                <div className="text-xs opacity-90 space-y-1">
-                  {role.permissions.map((perm) => (
-                    <div key={perm} className="flex items-center gap-1">
-                      <Check className="w-3 h-3" />
-                      <span>{perm.replace(/_/g, ' ')}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
+    <label className="flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(module, permission, e.target.checked)}
+        disabled={disabled}
+        className="w-4 h-4 rounded border-slate-300"
+      />
+      <span className="text-sm text-slate-700">{permissionLabels[permission]}</span>
+    </label>
+  );
+}
 
-      {/* User Search & Assignment */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 className="text-lg font-bold text-slate-900 mb-4">Assign Role to User</h3>
-        
+function RoleEditor({ role, onSave, onCancel }) {
+  const [name, setName] = useState(role?.name || '');
+  const [description, setDescription] = useState(role?.description || '');
+  const [permissions, setPermissions] = useState(role?.permissions || {});
+  const [expandedModules, setExpandedModules] = useState({});
+
+  const togglePermission = (module, permission, value) => {
+    setPermissions(prev => ({
+      ...prev,
+      [module]: {
+        ...prev[module],
+        [permission]: value
+      }
+    }));
+  };
+
+  const toggleModuleExpanded = (module) => {
+    setExpandedModules(prev => ({
+      ...prev,
+      [module]: !prev[module]
+    }));
+  };
+
+  const selectAllInModule = (module, value) => {
+    const modulePerms = PERMISSION_MODULES[module].permissions;
+    const newPerms = {};
+    modulePerms.forEach(perm => {
+      newPerms[perm] = value;
+    });
+    setPermissions(prev => ({
+      ...prev,
+      [module]: newPerms
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      toast.error('Role name is required');
+      return;
+    }
+    onSave({ name, description, permissions });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-xl border border-slate-200 p-6"
+    >
+      <form onSubmit={handleSubmit}>
         <div className="mb-6">
-          <label className="text-sm font-medium text-slate-700 mb-2 block">
-            Search User by Email
-          </label>
+          <Label htmlFor="role-name">Role Name *</Label>
           <Input
-            type="email"
-            placeholder="user@example.com"
-            value={searchEmail}
-            onChange={(e) => setSearchEmail(e.target.value)}
+            id="role-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g., Content Moderator"
+            className="mt-2"
+            disabled={role?.is_system_role}
           />
         </div>
 
-        {/* User Results */}
-        {users.length > 0 && (
-          <div className="space-y-3 mb-6">
-            {users.map((user) => {
-              const userRole = ROLES[user.role] || ROLES.user;
-              const Icon = userRole.icon;
-              
+        <div className="mb-6">
+          <Label htmlFor="role-description">Description</Label>
+          <Textarea
+            id="role-description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe this role's responsibilities..."
+            className="mt-2"
+            rows={3}
+          />
+        </div>
+
+        <div className="mb-6">
+          <Label className="mb-3 block">Permissions</Label>
+          <div className="space-y-2">
+            {Object.entries(PERMISSION_MODULES).map(([moduleKey, module]) => {
+              const modulePerms = permissions[moduleKey] || {};
+              const hasAnyPermission = Object.values(modulePerms).some(v => v);
+              const isExpanded = expandedModules[moduleKey];
+
               return (
-                <div
-                  key={user.id}
-                  onClick={() => setSelectedUser(user)}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                    selectedUser?.id === user.id
-                      ? 'border-indigo-500 bg-indigo-50'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
+                <div key={moduleKey} className="border border-slate-200 rounded-lg overflow-hidden">
+                  <div
+                    onClick={() => toggleModuleExpanded(moduleKey)}
+                    className="flex items-center justify-between p-4 bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${userRole.color} flex items-center justify-center`}>
-                        <Icon className="w-5 h-5 text-white" />
-                      </div>
+                      <span className="text-2xl">{module.icon}</span>
                       <div>
-                        <div className="font-semibold text-slate-900">{user.full_name || 'No name'}</div>
-                        <div className="text-sm text-slate-600">{user.email}</div>
+                        <div className="font-semibold text-slate-900">{module.label}</div>
+                        {hasAnyPermission && (
+                          <div className="text-xs text-emerald-600 font-medium">
+                            {Object.values(modulePerms).filter(v => v).length} permission(s) granted
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-slate-900">{userRole.name}</div>
-                      <div className="text-xs text-slate-500">Current Role</div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          selectAllInModule(moduleKey, !hasAnyPermission);
+                        }}
+                        className="text-xs px-3 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50"
+                      >
+                        {hasAnyPermission ? 'Deselect All' : 'Select All'}
+                      </button>
+                      {isExpanded ? (
+                        <ChevronUp className="w-5 h-5 text-slate-400" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-slate-400" />
+                      )}
                     </div>
                   </div>
+
+                  {isExpanded && (
+                    <div className="p-4 bg-white grid grid-cols-2 gap-2">
+                      {module.permissions.map(permission => (
+                        <PermissionCheckbox
+                          key={permission}
+                          module={moduleKey}
+                          permission={permission}
+                          checked={modulePerms[permission] || false}
+                          onChange={togglePermission}
+                          disabled={role?.is_system_role}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
-        )}
+        </div>
 
-        {/* Role Assignment */}
-        {selectedUser && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-slate-50 rounded-lg"
-          >
-            <label className="text-sm font-medium text-slate-700 mb-2 block">
-              Assign New Role to {selectedUser.email}
-            </label>
-            <div className="flex gap-3">
-              <Select onValueChange={handleUpdateRole} defaultValue={selectedUser.role}>
-                <SelectTrigger className="flex-1">
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(ROLES).map(([key, role]) => (
-                    <SelectItem key={key} value={key}>
-                      {role.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </motion.div>
-        )}
-
-        {searchEmail && users.length === 0 && (
-          <div className="text-center py-8 text-slate-500">
-            No users found with that email
-          </div>
-        )}
-      </div>
-    </div>
+        <div className="flex gap-3">
+          <Button type="submit" className="flex-1" disabled={role?.is_system_role}>
+            <Check className="w-4 h-4 mr-2" />
+            {role ? 'Update Role' : 'Create Role'}
+          </Button>
+          <Button type="button" variant="outline" onClick={onCancel}>
+            <X className="w-4 h-4 mr-2" />
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </motion.div>
   );
 }
 
-export { ROLES };
+export default function RoleManagement() {
+  const [editingRole, setEditingRole] = useState(null);
+  const [showEditor, setShowEditor] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data: roles = [], isLoading } = useQuery({
+    queryKey: ['roles'],
+    queryFn: () => base44.entities.Role.list()
+  });
+
+  const createRoleMutation = useMutation({
+    mutationFn: (roleData) => base44.entities.Role.create(roleData),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['roles']);
+      toast.success('Role created successfully');
+      setShowEditor(false);
+      setEditingRole(null);
+    },
+    onError: () => toast.error('Failed to create role')
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Role.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['roles']);
+      toast.success('Role updated successfully');
+      setShowEditor(false);
+      setEditingRole(null);
+    },
+    onError: () => toast.error('Failed to update role')
+  });
+
+  const deleteRoleMutation = useMutation({
+    mutationFn: (id) => base44.entities.Role.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['roles']);
+      toast.success('Role deleted successfully');
+    },
+    onError: () => toast.error('Failed to delete role')
+  });
+
+  const handleSaveRole = (roleData) => {
+    if (editingRole) {
+      updateRoleMutation.mutate({ id: editingRole.id, data: roleData });
+    } else {
+      createRoleMutation.mutate(roleData);
+    }
+  };
+
+  const handleEditRole = (role) => {
+    setEditingRole(role);
+    setShowEditor(true);
+  };
+
+  const handleDeleteRole = (role) => {
+    if (role.is_system_role) {
+      toast.error('Cannot delete system roles');
+      return;
+    }
+    if (window.confirm(`Are you sure you want to delete the "${role.name}" role?`)) {
+      deleteRoleMutation.mutate(role.id);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <Shield className="w-6 h-6" />
+            Role Management
+          </h2>
+          <p className="text-slate-600 mt-1">Create custom roles with granular permissions</p>
+        </div>
+        {!showEditor && (
+          <Button onClick={() => setShowEditor(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Create Role
+          </Button>
+        )}
+      </div>
+
+      <AnimatePresence>
+        {showEditor && (
+          <div className="mb-6">
+            <RoleEditor
+              role={editingRole}
+              onSave={handleSaveRole}
+              onCancel={() => {
+                setShowEditor(false);
+                setEditingRole(null);
+              }}
+            />
+          </div>
+        )}
+      </AnimatePresence>
+
+      {isLoading ? (
+        <div className="text-center py-12 text-slate-500">Loading roles...</div>
+      ) : roles.length === 0 ? (
+        <div className="text-center py-12 bg-slate-50 rounded-xl border border-slate-200">
+          <Shield className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+          <p className="text-slate-600 mb-4">No custom roles yet</p>
+          <Button onClick={() => setShowEditor(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Create Your First Role
+          </Button>
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {roles.map((role) => (
+            <motion.div
+              key={role.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-xl border border-slate-200 p-6"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-bold text-slate-900 text-lg">{role.name}</h3>
+                    {role.is_system_role && (
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                        System
+                      </span>
+                    )}
+                    {!role.is_active && (
+                      <span className="px-2 py-0.5 bg-slate-200 text-slate-600 text-xs font-semibold rounded">
+                        Inactive
+                      </span>
+                    )}
+                  </div>
+                  {role.description && (
+                    <p className="text-sm text-slate-600">{role.description}</p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleEditRole(role)}
+                  >
+                    <Edit2 className="w-4 h-4 mr-1" />
+                    Edit
+                  </Button>
+                  {!role.is_system_role && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeleteRole(role)}
+                      className="text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Delete
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {Object.entries(role.permissions || {}).map(([moduleKey, modulePerms]) => {
+                  const module = PERMISSION_MODULES[moduleKey];
+                  if (!module) return null;
+                  
+                  const grantedPerms = Object.entries(modulePerms)
+                    .filter(([_, value]) => value)
+                    .map(([key]) => key);
+                  
+                  if (grantedPerms.length === 0) return null;
+
+                  return (
+                    <div key={moduleKey} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xl">{module.icon}</span>
+                        <span className="text-sm font-semibold text-slate-900">{module.label}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {grantedPerms.map(perm => (
+                          <span key={perm} className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded">
+                            {perm}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

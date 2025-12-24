@@ -15,6 +15,7 @@ import SystemMetrics from '@/components/admin/SystemMetrics';
 import AnalysisOverview from '@/components/admin/AnalysisOverview';
 import RoleManagement from '@/components/admin/RoleManagement';
 import TierManagement from '@/components/admin/TierManagement';
+import UserRoleAssignment from '@/components/admin/UserRoleAssignment';
 import PayoutManagement from '@/components/admin/PayoutManagement';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 import ContentModeration from '@/components/admin/ContentModeration';
@@ -468,8 +469,9 @@ export default function Admin() {
         {activeTab === 'analytics' && <AnalyticsDashboard />}
         {activeTab === 'moderation' && <ContentModeration />}
         {activeTab === 'roles' && (
-          <div>
+          <div className="space-y-8">
             <RoleManagement />
+            <UserRoleAssignment />
           </div>
         )}
         {activeTab === 'influencers' && (
