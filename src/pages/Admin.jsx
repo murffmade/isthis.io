@@ -294,6 +294,7 @@ export default function Admin() {
               { id: 'activity', label: 'User Activity', icon: Activity },
               { id: 'system', label: 'System Metrics', icon: TrendingUp },
               { id: 'analyses', label: 'Analyses', icon: Shield },
+              { id: 'announcements', label: 'Announcements', icon: Megaphone },
               { id: 'users', label: 'User Management', icon: Users }
             ].map((tab) => {
               const Icon = tab.icon;
