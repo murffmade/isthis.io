@@ -34,6 +34,7 @@ import Support from './pages/Support';
 import TermsOfService from './pages/TermsOfService';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
+import BusinessMarketing from './pages/BusinessMarketing';
 import __Layout from './Layout.jsx';
 
 
@@ -74,6 +75,7 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
+    "BusinessMarketing": BusinessMarketing,
 }
 
 export const pagesConfig = {
