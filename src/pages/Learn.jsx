@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, ArrowLeft, Trophy, Edit, BarChart3 } from 'lucide-react';
+import { Shield, ArrowLeft, Trophy, Edit, BarChart3, ExternalLink } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import BottomNav from '@/components/mobile/BottomNav';
