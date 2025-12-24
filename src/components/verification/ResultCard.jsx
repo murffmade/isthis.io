@@ -207,6 +207,23 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       {/* Trainer Feedback */}
       <TrainerFeedback result={result} user={user} />
 
+      {/* Main Result Card - MOVED TO TOP */}
+      <div className={`rounded-3xl border-2 ${config.borderColor} ${config.bgColor} p-8 mb-6 shadow-soft`}>
+        <div className="flex items-start gap-5">
+          <div className={`w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-medium`}>
+            <Icon className={`w-10 h-10 ${config.color}`} />
+          </div>
+          <div className="flex-1">
+            <h2 className={`text-3xl font-extrabold ${config.color} mb-2 tracking-tight`}>
+              {config.title}
+            </h2>
+            <p className="text-slate-600 text-lg leading-relaxed">
+              {config.description}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Analyzed Media */}
       {(result.file_url || result.thumbnail_url) && (
         <div className="mb-6 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm">
@@ -692,24 +709,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
         </div>
       )}
 
-      {/* Main Result Card */}
-      <div className={`rounded-3xl border-2 ${config.borderColor} ${config.bgColor} p-8 mb-6 shadow-soft`}>
-        <div className="flex items-start gap-5">
-          <div className={`w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-medium`}>
-            <Icon className={`w-10 h-10 ${config.color}`} />
-          </div>
-          <div className="flex-1">
-            <h2 className={`text-3xl font-extrabold ${config.color} mb-2 tracking-tight`}>
-              {config.title}
-            </h2>
-            <p className="text-slate-600 text-lg leading-relaxed">
-              {config.description}
-            </p>
-          </div>
-        </div>
 
-
-      </div>
 
       {/* Camera & EXIF Metadata Section - ALWAYS SHOW FOR PHOTOS */}
       {(() => {
