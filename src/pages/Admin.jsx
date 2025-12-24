@@ -9,6 +9,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import AffiliatePerformance from '@/components/admin/AffiliatePerformance';
 import UserActivityLogs from '@/components/admin/UserActivityLogs';
 import SystemMetrics from '@/components/admin/SystemMetrics';
@@ -372,6 +373,18 @@ export default function Admin() {
         {activeTab === 'activity' && <UserActivityLogs />}
         {activeTab === 'system' && <SystemMetrics />}
         {activeTab === 'analyses' && <AnalysisOverview />}
+
+        {activeTab === 'announcements' && (
+          <div className="p-8">
+            <p className="text-slate-600 mb-4">Send announcements from the dedicated page:</p>
+            <Link to={createPageUrl('Announcements')}>
+              <Button className="bg-gradient-to-r from-purple-600 to-pink-600">
+                <Megaphone className="w-4 h-4 mr-2" />
+                Go to Announcements
+              </Button>
+            </Link>
+          </div>
+        )}
 
         {activeTab === 'users' && (
           <div className="grid lg:grid-cols-3 gap-8">
