@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown, ToggleLeft, ToggleRight, BarChart3, FileText, TrendingUp, MessageSquare, Zap, BookOpen, ExternalLink } from 'lucide-react';
+import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown, ToggleLeft, ToggleRight, BarChart3, FileText, TrendingUp, MessageSquare, Zap, BookOpen, ExternalLink, DollarSign, Activity, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +9,10 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import AffiliatePerformance from '@/components/admin/AffiliatePerformance';
+import UserActivityLogs from '@/components/admin/UserActivityLogs';
+import SystemMetrics from '@/components/admin/SystemMetrics';
+import AnalysisOverview from '@/components/admin/AnalysisOverview';
 
 function AdminStats() {
   const { data: allUsers = [] } = useQuery({
@@ -168,6 +172,7 @@ function FeatureToggles() {
 export default function Admin() {
   const [searchEmail, setSearchEmail] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
   const queryClient = useQueryClient();
 
   // Check if current user is admin
@@ -279,7 +284,97 @@ export default function Admin() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid lg:grid-cols-3 gap-8">
+        {/* Tabs */}
+        <div className="mb-8 border-b border-slate-200">
+          <div className="flex gap-1 overflow-x-auto">
+            {[
+              { id: 'overview', label: 'Overview', icon: BarChart3 },
+              { id: 'affiliates', label: 'Affiliates', icon: DollarSign },
+              { id: 'activity', label: 'User Activity', icon: Activity },
+              { id: 'system', label: 'System Metrics', icon: TrendingUp },
+              { id: 'analyses', label: 'Analyses', icon: Shield },
+              { id: 'users', label: 'User Management', icon: Users }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'border-indigo-600 text-indigo-600'
+                      : 'border-transparent text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {activeTab === 'overview' && (
+          <div className="space-y-8">
+            <AdminStats />
+            
+            <div className="grid lg:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Quick Stats</h3>
+                <div className="bg-white rounded-xl border border-slate-200 p-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600">Total Revenue</span>
+                      <span className="text-lg font-bold text-slate-900">$0.00</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600">Active Sessions</span>
+                      <span className="text-lg font-bold text-slate-900">-</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600">Support Tickets</span>
+                      <span className="text-lg font-bold text-slate-900">-</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Quick Actions</h3>
+                <div className="space-y-3">
+                  {[
+                    { label: 'View All Analyses', tab: 'analyses', icon: Shield },
+                    { label: 'Check Affiliate Performance', tab: 'affiliates', icon: DollarSign },
+                    { label: 'Review User Activity', tab: 'activity', icon: Activity }
+                  ].map((action) => {
+                    const Icon = action.icon;
+                    return (
+                      <button
+                        key={action.tab}
+                        onClick={() => setActiveTab(action.tab)}
+                        className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon className="w-5 h-5 text-indigo-600" />
+                          <span className="font-medium text-slate-900">{action.label}</span>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-slate-400" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'affiliates' && <AffiliatePerformance />}
+        {activeTab === 'activity' && <UserActivityLogs />}
+        {activeTab === 'system' && <SystemMetrics />}
+        {activeTab === 'analyses' && <AnalysisOverview />}
+
+        {activeTab === 'users' && (
+          <div className="grid lg:grid-cols-3 gap-8">
           {/* Quick Access Dashboards */}
           <div className="lg:col-span-3">
             <motion.div
@@ -576,7 +671,8 @@ export default function Admin() {
               </div>
             </motion.div>
           )}
-        </div>
+          </div>
+        )}
       </main>
     </div>
   );
