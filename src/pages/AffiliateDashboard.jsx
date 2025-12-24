@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { DollarSign, Link as LinkIcon, Copy, Users, TrendingUp, CheckCircle2, ExternalLink, BarChart3 } from 'lucide-react';
+import { DollarSign, Link as LinkIcon, Copy, Users, TrendingUp, CheckCircle2, ExternalLink, BarChart3, Calendar, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function AffiliateDashboard() {
   const [companyName, setCompanyName] = useState('');
@@ -67,6 +68,34 @@ export default function AffiliateDashboard() {
 
   const conversions = clicks.filter(c => c.converted);
   const totalEarnings = conversions.reduce((sum, c) => sum + (c.conversion_value * 0.3), 0);
+
+  // Chart data - last 7 days
+  const chartData = React.useMemo(() => {
+    const days = 7;
+    const data = [];
+    const now = new Date();
+    
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      const dayClicks = clicks.filter(c => 
+        new Date(c.created_date).toISOString().split('T')[0] === dateStr
+      );
+      const dayConversions = dayClicks.filter(c => c.converted);
+      const dayEarnings = dayConversions.reduce((sum, c) => sum + (c.conversion_value * 0.3), 0);
+      
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        clicks: dayClicks.length,
+        conversions: dayConversions.length,
+        earnings: parseFloat(dayEarnings.toFixed(2))
+      });
+    }
+    
+    return data;
+  }, [clicks]);
 
   if (!user) {
     return (
@@ -260,15 +289,124 @@ export default function AffiliateDashboard() {
           </div>
         </motion.div>
 
+        {/* Performance Charts */}
+        {clicks.length > 0 && (
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            {/* Clicks & Conversions Chart */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-white rounded-xl border border-slate-200 p-6"
+            >
+              <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-blue-600" />
+                Clicks & Conversions (Last 7 Days)
+              </h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '12px'
+                    }}
+                  />
+                  <Bar dataKey="clicks" fill="#3b82f6" name="Clicks" />
+                  <Bar dataKey="conversions" fill="#10b981" name="Conversions" />
+                </BarChart>
+              </ResponsiveContainer>
+            </motion.div>
+
+            {/* Earnings Chart */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="bg-white rounded-xl border border-slate-200 p-6"
+            >
+              <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+                Earnings Trend (Last 7 Days)
+              </h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '12px'
+                    }}
+                    formatter={(value) => `$${value}`}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="earnings" 
+                    stroke="#10b981" 
+                    strokeWidth={2}
+                    dot={{ fill: '#10b981' }}
+                    name="Earnings"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Email Notification Info */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border-2 border-purple-200 p-6 mb-8"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-purple-600 flex items-center justify-center flex-shrink-0">
+              <Mail className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-slate-900 mb-2">Email Notifications Enabled</h3>
+              <p className="text-sm text-slate-600 mb-3">
+                We'll send you an email notification whenever:
+              </p>
+              <ul className="space-y-1 text-sm text-slate-700">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  Someone clicks your affiliate link
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  A referral converts to a paid customer
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  Your payout is processed
+                </li>
+              </ul>
+              <p className="text-xs text-slate-500 mt-3">
+                Notifications are sent to <strong>{affiliate.payment_email}</strong>
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Recent Activity */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.8 }}
           className="bg-white rounded-xl border border-slate-200 p-8"
         >
           <div className="flex items-center gap-3 mb-6">
-            <BarChart3 className="w-6 h-6 text-slate-600" />
+            <Calendar className="w-6 h-6 text-slate-600" />
             <h2 className="text-xl font-bold text-slate-900">Recent Activity</h2>
           </div>
 
