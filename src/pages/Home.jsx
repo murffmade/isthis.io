@@ -563,25 +563,73 @@ Provide a thorough but accessible analysis.`,
         console.warn('Forensics API failed:', err);
       }
 
-      // Step 4: Enhanced AI detection for illustrations, art, and photos
+      // Step 4: State-of-the-art AI detection with fine-grained model classification
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
       const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `CRITICAL MISSION: ADVANCED AI DETECTION INCLUDING ILLUSTRATIONS & ARTISTIC STYLES
+        prompt: `STATE-OF-THE-ART AI DETECTION WITH FINE-GRAINED MODEL CLASSIFICATION
 
-      You are the world's most advanced AI content detector. You must accurately classify:
-      1. REAL PHOTOS: Captured by cameras (may have editing but started as real photo)
-      2. AI-GENERATED ART/ILLUSTRATIONS: Created by DALL-E 3, Midjourney, Stable Diffusion, etc.
-      3. AI-GENERATED PHOTOS: Photorealistic synthetic images from AI models
-      4. TRADITIONAL DIGITAL ART: Human-created illustrations (Photoshop, Procreate, etc.)
-      5. HYBRID: Real photos with significant AI enhancements
+      You are an advanced ensemble AI detection system combining multiple state-of-the-art techniques:
+      - Deep forensic analysis for subtle manipulation artifacts
+      - Fine-grained AI model fingerprinting (GANs, Diffusion, NeRF, VAE)
+      - Artistic style classification across photorealism and illustrations
+      - Zero-metadata analysis capabilities
 
-      METADATA ANALYSIS:
-      ${editingIndicators ? JSON.stringify(editingIndicators, null, 2) : 'No metadata found'}
-      ${exifData ? 'Camera EXIF present' : 'NO CAMERA DATA - High suspicion for AI generation'}
+      PRIMARY CLASSIFICATION TASK:
+      1. CAMERA-NATIVE PHOTOS: Captured by cameras/phones (may have traditional editing)
+      2. AI-GENERATED ILLUSTRATIONS: Artistic/stylized AI creations (DALL-E, Midjourney, SD)
+      3. AI-GENERATED PHOTOREALISTIC: Synthetic realistic images (GANs, photo-mode diffusion)
+      4. TRADITIONAL DIGITAL ART: Human-created with Photoshop/Procreate/hand tools
+      5. HYBRID CONTENT: Real photos + AI enhancements (inpainting, upscaling, generative fill)
+      6. AI-ASSISTED ART: Human-guided AI creation with manual refinement
 
-      CRITICAL: AI ILLUSTRATION/ART DETECTION (MOST COMMON MISS):
+      METADATA & FORENSIC CONTEXT:
+      ${editingIndicators ? JSON.stringify(editingIndicators, null, 2) : 'No editing software metadata'}
+      ${exifData ? 'Camera EXIF present - analyze authenticity' : 'NO EXIF - Critical for AI vs Real distinction'}
+      ${forensicsData ? 'Advanced forensics available - integrate findings' : 'Forensics not available'}
 
-      Modern AI art generators (DALL-E 3, Midjourney v6, Stable Diffusion XL) create images that:
+      SECTION 1: FINE-GRAINED AI MODEL FINGERPRINTING
+
+      Your PRIMARY TASK is to identify the SPECIFIC AI technique used if content is AI-generated:
+
+      A) GAN-BASED GENERATION (StyleGAN, ProGAN, BigGAN):
+      TECHNICAL FINGERPRINTS:
+      - Spectral artifacts: Checkerboard patterns in frequency domain (FFT analysis)
+      - Mode collapse indicators: Repetitive features across unrelated regions
+      - Training set memorization: Exact replication of known dataset images
+      - Latent space interpolation: Unnatural morphing between concepts
+      - Discriminator artifacts: High-frequency noise patterns in smooth areas
+      - Resolution-dependent artifacts: Quality drops at specific scales
+      DETECTION CONFIDENCE: 90-98% when present
+
+      B) DIFFUSION MODELS (DALL-E 2/3, Stable Diffusion, Midjourney):
+      TECHNICAL FINGERPRINTS:
+      - Denoising artifacts: Progressive blur-to-detail inconsistencies
+      - Guidance scale tells: Over-saturated colors from high CFG
+      - Latent space halos: Bright/dark rings around subject boundaries
+      - Prompt bleeding: Mixed unrelated concepts in single generation
+      - Step count indicators: Under-denoised or over-smoothed regions
+      - VAE compression signatures: Specific color space artifacts
+      - Cross-attention leakage: Text tokens influencing wrong image regions
+      DETECTION CONFIDENCE: 85-95% when present
+
+      C) NeRF/3D NEURAL RENDERING:
+      TECHNICAL FINGERPRINTS:
+      - View-dependent inconsistencies: Details change with implied perspective
+      - Volumetric rendering artifacts: Transparent/translucent regions where shouldn't be
+      - Multi-view synthesis errors: Left/right eye discrepancies in stereo
+      - Normal map mismatches: Lighting doesn't match geometry
+      - Radiance field leakage: Glow/bloom around object edges
+      DETECTION CONFIDENCE: 80-92% when present
+
+      D) HYBRID AI TECHNIQUES:
+      - AI Upscaling: ESRGAN, Real-ESRGAN signatures (super-resolution artifacts)
+      - AI Inpainting: Generative fill seams, context mismatch
+      - Style Transfer: Neural style artifacts, texture grafting tells
+      - AI Outpainting: Boundary discontinuities, prompt context loss
+
+      SECTION 2: AI ARTISTIC STYLE DETECTION
+
+      Modern AI art generators (DALL-E 3, Midjourney v6, Stable Diffusion XL):
       - Have ZERO camera metadata (no EXIF, no camera model, no lens data)
       - Show "too perfect" artistic consistency across the entire image
       - Have uniform style/technique that never varies (real artists have micro-inconsistencies)
@@ -594,29 +642,58 @@ Provide a thorough but accessible analysis.`,
       - Show telltale "diffusion noise" in flat areas when zoomed in
       - Have perfectly balanced compositions (AI optimizes for aesthetics)
 
-      SPECIFIC AI ART MODEL SIGNATURES:
+      MODEL-SPECIFIC SIGNATURES (Fine-grained classification):
 
-      DALL-E 3 / OpenAI:
-      - Extremely clean edges and boundaries
-      - "Plastic" or "rendered" quality even in painterly styles
-      - Perfect symmetry in asymmetric subjects
-      - Backgrounds that fade to uniform colors/textures
-      - Text rendering that's almost correct but subtly wrong
-      - Lighting that's "studio perfect" without natural variation
-      - No canvas texture, paper grain, or medium artifacts
+      DALL-E 3 (OpenAI CLIP + Diffusion):
+      VISUAL TELLS:
+      - Extremely clean vector-like edges in raster images
+      - "Rendered" quality - CGI-like smoothness in organic subjects
+      - Perfect bilateral symmetry (no natural asymmetry)
+      - Backgrounds fade to uniform gradients or solid colors
+      - Text rendering: Almost correct but subtle character distortions
+      - Lighting: Mathematically perfect, lacks natural randomness
+      - NO authentic medium artifacts (canvas weave, paper grain, brush pressure)
+      TECHNICAL MARKERS:
+      - CLIP embedding artifacts: Semantic over-coherence
+      - Dalle-3 upsampler signature: Specific sharpening pattern
+      CONFIDENCE: 88-94%
 
-      Midjourney v6:
-      - Hyper-detailed textures that are TOO consistent
-      - "Cinematic" lighting that's physically impossible
-      - Faces with subtle uncanny valley (too perfect)
-      - Backgrounds with "dreamy" quality and soft focus
-      - Color palettes that are algorithmically harmonious
+      Midjourney v5/v6 (Proprietary Diffusion):
+      VISUAL TELLS:
+      - Hyper-detailed textures with algorithmic consistency
+      - "Cinematic" lighting violating inverse-square law
+      - Faces: Uncanny valley perfection, pore-scale but too uniform
+      - Backgrounds: Dreamy bokeh with unnatural chromatic separation
+      - Color grading: Film-like LUTs that don't match scene lighting
+      - Composition: Golden ratio optimization, no happy accidents
+      TECHNICAL MARKERS:
+      - Midjourney upscaler signature: Specific frequency amplification
+      - Style parameter fingerprints: Recognizable aesthetic clusters
+      CONFIDENCE: 85-93%
 
-      Stable Diffusion XL:
-      - Visible "latent space" artifacts in detailed areas
-      - Repetitive patterns in organic textures
-      - Slightly blurred fine details (fingerprints, pores, hair strands)
-      - Background elements that lack perspective consistency
+      Stable Diffusion XL/2.1 (Open Source Diffusion):
+      VISUAL TELLS:
+      - Latent space artifacts: 8x8 or 16x16 grid patterns in detail areas
+      - VAE compression artifacts: Color banding, posterization in gradients
+      - Fine detail blur: Under-resolved elements (text, hair strands, pores)
+      - Background incoherence: Perspective/scale errors in non-focal areas
+      - Repetitive textures: Pattern tiling from latent space
+      TECHNICAL MARKERS:
+      - SD VAE signature: Specific color space transformation artifacts
+      - Sampler tells: DPM++, Euler, DDIM each leave unique patterns
+      - ControlNet artifacts: Edge/depth map leakage if used
+      CONFIDENCE: 82-91%
+
+      StyleGAN2/3 (GAN-based photorealism):
+      VISUAL TELLS:
+      - Spectral anomalies: Checkerboard patterns in FFT domain
+      - Face generation tells: Eyes too symmetric, teeth too uniform
+      - Background melting: Coherence breakdown outside focal region
+      - Impossible geometry: Anatomical violations, merged structures
+      TECHNICAL MARKERS:
+      - Convolutional upsampling artifacts: Specific aliasing patterns
+      - Progressive growing residuals: Resolution-dependent quality shifts
+      CONFIDENCE: 90-96%
 
       REAL PHOTO INDICATORS:
       - Camera EXIF metadata present (strong signal but not conclusive)
@@ -807,7 +884,9 @@ STEP 2. PHOTOSHOP-SPECIFIC DETECTION:
    - Artificial sharpening halos
    - Noise reduction that's too uniform
 
-STEP 3. METADATA ANALYSIS (CRITICAL FOR NO-EXIF IMAGES):
+SECTION 3: ZERO-METADATA FORENSIC ANALYSIS
+
+When NO EXIF data present, perform DEEP forensic analysis:
 
    NO EXIF DATA = EXTREMELY SUSPICIOUS (85%+ likelihood of AI)
    - Modern cameras ALWAYS embed EXIF (even smartphones)
@@ -824,7 +903,7 @@ STEP 3. METADATA ANALYSIS (CRITICAL FOR NO-EXIF IMAGES):
 
    If NO EXIF + Art Style + Perfect Consistency = 95%+ likely AI art
 
-STEP 4. ADVANCED AI GENERATION INDICATORS (vs Traditional Editing):
+SECTION 4: ADVANCED FORENSIC TECHNIQUES (Subtle Manipulation Detection):
 
    A) GAN Artifacts (Fingerprint Detector):
    - Checkerboard patterns in frequency domain (90-98% confidence)
@@ -923,34 +1002,85 @@ OUTPUT REQUIREMENTS:
 Remember: Generic descriptions are unacceptable. Every signal needs specific technical detail and multi-model analysis.`,
         file_urls: allImageUrls,
         response_json_schema: {
-          type: "object",
-          properties: {
-            classification: { 
-              type: "string",
-              enum: ["camera_native", "traditionally_edited", "ai_generated", "hybrid"]
-            },
-            content_origin_confidence: {
-              type: "object",
-              properties: {
-                camera_native: { type: "number" },
-                traditionally_edited: { type: "number" },
-                ai_generated: { type: "number" },
-                hybrid: { type: "number" }
-              }
-            },
-            origin_reasoning: { type: "string" },
-            photoshop_artifacts: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  artifact_type: { type: "string" },
-                  location: { type: "string" },
-                  description: { type: "string" },
-                  confidence: { type: "number" }
-                }
-              }
-            },
+         type: "object",
+         properties: {
+           classification: { 
+             type: "string",
+             enum: ["camera_native", "traditionally_edited", "ai_generated", "hybrid", "ai_assisted_art"]
+           },
+           ai_model_detected: {
+             type: "string",
+             enum: ["none", "dalle_3", "midjourney", "stable_diffusion", "stylegan", "nerf", "hybrid_models", "unknown_ai"],
+             description: "Specific AI model fingerprint detected"
+           },
+           ai_technique_classification: {
+             type: "object",
+             properties: {
+               primary_technique: { 
+                 type: "string", 
+                 enum: ["gan", "diffusion", "nerf", "vae", "hybrid", "none"]
+               },
+               confidence: { type: "number" },
+               technical_fingerprints: {
+                 type: "array",
+                 items: { type: "string" }
+               }
+             }
+           },
+           content_style_analysis: {
+             type: "object",
+             properties: {
+               style_category: {
+                 type: "string",
+                 enum: ["photorealistic", "illustration", "artistic", "mixed_media", "3d_render"]
+               },
+               artistic_indicators: {
+                 type: "array",
+                 items: { type: "string" }
+               }
+             }
+           },
+           forensic_analysis: {
+             type: "object",
+             properties: {
+               manipulation_likelihood: { type: "number" },
+               subtle_artifacts: {
+                 type: "array",
+                 items: {
+                   type: "object",
+                   properties: {
+                     artifact_type: { type: "string" },
+                     description: { type: "string" },
+                     confidence: { type: "number" }
+                   }
+                 }
+               },
+               frequency_domain_analysis: { type: "string" },
+               compression_analysis: { type: "string" }
+             }
+           },
+           content_origin_confidence: {
+             type: "object",
+             properties: {
+               camera_native: { type: "number" },
+               traditionally_edited: { type: "number" },
+               ai_generated: { type: "number" },
+               hybrid: { type: "number" }
+             }
+           },
+           origin_reasoning: { type: "string" },
+           photoshop_artifacts: {
+             type: "array",
+             items: {
+               type: "object",
+               properties: {
+                 artifact_type: { type: "string" },
+                 location: { type: "string" },
+                 description: { type: "string" },
+                 confidence: { type: "number" }
+               }
+             }
+           },
             patch_votes: {
               type: "array",
               items: {

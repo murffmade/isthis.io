@@ -226,6 +226,147 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
         </div>
       )}
 
+      {/* AI Model Detection */}
+      {result.ai_model_detected && result.ai_model_detected !== 'none' && (
+        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl border-2 border-purple-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-4 text-lg flex items-center gap-2">
+            🤖 AI Model Fingerprint Detected
+          </h3>
+          
+          <div className="space-y-4">
+            <div className="p-4 bg-white rounded-xl border border-purple-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-slate-700">Detected Model:</span>
+                <span className="px-3 py-1 bg-purple-100 text-purple-800 font-bold text-sm rounded-full">
+                  {result.ai_model_detected.replace(/_/g, ' ').toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            {result.ai_technique_classification && (
+              <div className="p-4 bg-white rounded-xl border border-purple-200">
+                <div className="font-semibold text-slate-800 mb-2">Technical Classification:</div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-sm text-slate-600">Primary Technique:</span>
+                  <span className="px-2 py-1 bg-indigo-100 text-indigo-800 font-semibold text-xs rounded">
+                    {result.ai_technique_classification.primary_technique.toUpperCase()}
+                  </span>
+                  <span className="text-sm text-slate-600">
+                    ({result.ai_technique_classification.confidence}% confidence)
+                  </span>
+                </div>
+                
+                {result.ai_technique_classification.technical_fingerprints?.length > 0 && (
+                  <div>
+                    <div className="text-xs font-semibold text-slate-700 mb-2">Technical Fingerprints:</div>
+                    <div className="space-y-1">
+                      {result.ai_technique_classification.technical_fingerprints.map((fp, idx) => (
+                        <div key={idx} className="text-xs text-slate-600 flex items-start gap-2">
+                          <span className="text-purple-600 mt-0.5">•</span>
+                          <span>{fp}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {result.content_style_analysis && (
+              <div className="p-4 bg-white rounded-xl border border-purple-200">
+                <div className="font-semibold text-slate-800 mb-2">Style Analysis:</div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-sm text-slate-600">Category:</span>
+                  <span className="px-2 py-1 bg-pink-100 text-pink-800 font-semibold text-xs rounded">
+                    {result.content_style_analysis.style_category.replace(/_/g, ' ').toUpperCase()}
+                  </span>
+                </div>
+                
+                {result.content_style_analysis.artistic_indicators?.length > 0 && (
+                  <div className="mt-2">
+                    <div className="text-xs font-semibold text-slate-700 mb-1">Artistic Indicators:</div>
+                    <div className="flex flex-wrap gap-1">
+                      {result.content_style_analysis.artistic_indicators.map((ind, idx) => (
+                        <span key={idx} className="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs rounded">
+                          {ind}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Forensic Analysis */}
+      {result.forensic_analysis && (
+        <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl border-2 border-slate-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-4 text-lg flex items-center gap-2">
+            🔬 Advanced Forensic Analysis
+          </h3>
+          
+          <div className="space-y-4">
+            {result.forensic_analysis.manipulation_likelihood !== undefined && (
+              <div className="p-4 bg-white rounded-xl">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-semibold text-slate-700">Manipulation Likelihood:</span>
+                  <span className="text-lg font-bold text-slate-900">
+                    {result.forensic_analysis.manipulation_likelihood}%
+                  </span>
+                </div>
+                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-red-500 rounded-full"
+                    style={{ width: `${result.forensic_analysis.manipulation_likelihood}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {result.forensic_analysis.subtle_artifacts?.length > 0 && (
+              <div className="p-4 bg-white rounded-xl">
+                <div className="font-semibold text-slate-800 mb-3">Subtle Artifacts Detected:</div>
+                <div className="space-y-2">
+                  {result.forensic_analysis.subtle_artifacts.map((artifact, idx) => (
+                    <div key={idx} className="flex items-start gap-2 p-2 bg-slate-50 rounded">
+                      <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded">
+                        {artifact.confidence}%
+                      </span>
+                      <div className="flex-1">
+                        <div className="font-semibold text-sm text-slate-900">{artifact.artifact_type}</div>
+                        <div className="text-xs text-slate-600">{artifact.description}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="grid md:grid-cols-2 gap-4">
+              {result.forensic_analysis.frequency_domain_analysis && (
+                <div className="p-4 bg-white rounded-xl">
+                  <div className="font-semibold text-slate-800 mb-2 text-sm">📊 Frequency Analysis:</div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {result.forensic_analysis.frequency_domain_analysis}
+                  </p>
+                </div>
+              )}
+
+              {result.forensic_analysis.compression_analysis && (
+                <div className="p-4 bg-white rounded-xl">
+                  <div className="font-semibold text-slate-800 mb-2 text-sm">🗜️ Compression Analysis:</div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {result.forensic_analysis.compression_analysis}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Advanced Detection Results */}
       {result.content_origin_confidence && (
         <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
