@@ -205,7 +205,7 @@ export default function Layout({ children, currentPageName }) {
                     </li>
                     <li>
                       <a href={createPageUrl('AffiliateMarketing')} className="text-sm text-slate-400 hover:text-white transition-colors">
-                        Influencer Program
+                        Referrals
                       </a>
                     </li>
                   </ul>
