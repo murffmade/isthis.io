@@ -74,12 +74,12 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
 }
 
 export function ensembleDecision({ llm, forensics, provenance, editingIndicators }) {
-  // Enhanced adaptive weighting with editing detection
+  // Enhanced adaptive weighting - LLM is now primary detector
   let weights = {
-    llm: 0.6,        // Primary signal
-    forensics: 0.2,
-    provenance: 0.1,
-    editing: 0.1     // New: editing software detection
+    llm: 0.75,       // Increased: LLM is most sophisticated
+    forensics: 0.15,
+    provenance: 0.05, // Reduced: absence is suspicious but presence doesn't guarantee real
+    editing: 0.05
   };
   
   // Boost LLM weight if it's the only strong signal
@@ -114,14 +114,24 @@ export function ensembleDecision({ llm, forensics, provenance, editingIndicators
     }
   }
   
-  // Integrate provenance (EXIF presence suggests real)
+  // Integrate provenance (CRITICAL: No EXIF is highly suspicious)
   if (hasProvenance) {
+    // EXIF present - slightly boosts "real" signal
     weightedScore += provenance.score * weights.provenance;
     totalWeight += weights.provenance;
-    
-    // Slight confidence boost for EXIF presence on real images
+
     if (llm.score < 50 && provenance.score < 50) {
-      confidenceBoost *= 1.1;
+      confidenceBoost *= 1.05;
+    }
+  } else {
+    // NO EXIF - this is a MAJOR red flag for AI, boost AI score
+    const noExifPenalty = 15; // Add 15 points toward AI (increases score)
+    weightedScore += noExifPenalty * weights.provenance;
+    totalWeight += weights.provenance;
+
+    // If LLM also suspects AI, boost confidence significantly
+    if (llm.score > 50) {
+      confidenceBoost *= 1.25;
     }
   }
   
@@ -145,26 +155,25 @@ export function ensembleDecision({ llm, forensics, provenance, editingIndicators
   }
   
   const finalScore = Math.round(weightedScore / totalWeight);
-  
-  // More aggressive thresholds with adaptive confidence
+
+  // Stricter thresholds - be more decisive
   let result;
   let confidence;
-  
-  if (finalScore >= 58) {
-    // Likely AI
+
+  if (finalScore >= 55) {
+    // Likely AI (lowered from 58)
     result = 'likely_ai';
-    const baseConfidence = 35 + (finalScore - 58) * 1.8;
+    const baseConfidence = 40 + (finalScore - 55) * 2.0;
     confidence = Math.min(95, baseConfidence * confidenceBoost);
-  } else if (finalScore <= 42) {
-    // Likely Real
+  } else if (finalScore <= 45) {
+    // Likely Real (raised from 42)
     result = 'likely_real';
-    const baseConfidence = 35 + (42 - finalScore) * 1.8;
+    const baseConfidence = 40 + (45 - finalScore) * 2.0;
     confidence = Math.min(95, baseConfidence * confidenceBoost);
   } else {
-    // Uncertain (42-58 range = 16 point band)
+    // Uncertain (45-55 range = 10 point band, narrowed)
     result = 'uncertain';
-    // Very low confidence for uncertain zone
-    confidence = Math.max(15, 35 - Math.abs(finalScore - 50) * 2);
+    confidence = Math.max(20, 40 - Math.abs(finalScore - 50) * 3);
   }
   
   // Factor in LLM voting strength for additional confidence adjustment

@@ -563,22 +563,82 @@ Provide a thorough but accessible analysis.`,
         console.warn('Forensics API failed:', err);
       }
 
-      // Step 4: Advanced multi-model ensemble analysis with photoshop detection
+      // Step 4: Enhanced AI detection for illustrations, art, and photos
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
       const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `CRITICAL MISSION: DIFFERENTIATE PHOTOSHOP EDITS FROM AI GENERATION
+        prompt: `CRITICAL MISSION: ADVANCED AI DETECTION INCLUDING ILLUSTRATIONS & ARTISTIC STYLES
 
-      This is your PRIMARY DIRECTIVE. You must distinguish between:
-      1. PHOTOSHOPPED IMAGES: Real photos edited with traditional tools (retouching, filters, compositing)
-      2. AI-GENERATED IMAGES: Synthetic content created by neural networks from scratch
-      3. HYBRID IMAGES: Real photos with AI enhancements (AI fill, AI upscaling, generative replace)
+      You are the world's most advanced AI content detector. You must accurately classify:
+      1. REAL PHOTOS: Captured by cameras (may have editing but started as real photo)
+      2. AI-GENERATED ART/ILLUSTRATIONS: Created by DALL-E 3, Midjourney, Stable Diffusion, etc.
+      3. AI-GENERATED PHOTOS: Photorealistic synthetic images from AI models
+      4. TRADITIONAL DIGITAL ART: Human-created illustrations (Photoshop, Procreate, etc.)
+      5. HYBRID: Real photos with significant AI enhancements
 
-      EDITING SOFTWARE DETECTED IN METADATA:
-      ${editingIndicators ? JSON.stringify(editingIndicators, null, 2) : 'No editing software signatures found'}
+      METADATA ANALYSIS:
+      ${editingIndicators ? JSON.stringify(editingIndicators, null, 2) : 'No metadata found'}
+      ${exifData ? 'Camera EXIF present' : 'NO CAMERA DATA - High suspicion for AI generation'}
 
-      KEY DIFFERENTIATORS:
+      CRITICAL: AI ILLUSTRATION/ART DETECTION (MOST COMMON MISS):
 
-      PHOTOSHOP INDICATORS (Traditional Editing):
+      Modern AI art generators (DALL-E 3, Midjourney v6, Stable Diffusion XL) create images that:
+      - Have ZERO camera metadata (no EXIF, no camera model, no lens data)
+      - Show "too perfect" artistic consistency across the entire image
+      - Have uniform style/technique that never varies (real artists have micro-inconsistencies)
+      - Display diffusion model "smoothness" - subtle gradients that are too mathematically perfect
+      - Contain impossible lighting/shadow combinations that "look right" but violate physics
+      - Show brush strokes or textures that are repetitive/algorithmic rather than organic
+      - Have backgrounds that are less detailed than subjects (common in AI art)
+      - Display "AI coherence" - everything fits together TOO well without happy accidents
+      - May mimic famous art styles (Van Gogh, Vermeer, etc.) but lack authentic imperfections
+      - Show telltale "diffusion noise" in flat areas when zoomed in
+      - Have perfectly balanced compositions (AI optimizes for aesthetics)
+
+      SPECIFIC AI ART MODEL SIGNATURES:
+
+      DALL-E 3 / OpenAI:
+      - Extremely clean edges and boundaries
+      - "Plastic" or "rendered" quality even in painterly styles
+      - Perfect symmetry in asymmetric subjects
+      - Backgrounds that fade to uniform colors/textures
+      - Text rendering that's almost correct but subtly wrong
+      - Lighting that's "studio perfect" without natural variation
+      - No canvas texture, paper grain, or medium artifacts
+
+      Midjourney v6:
+      - Hyper-detailed textures that are TOO consistent
+      - "Cinematic" lighting that's physically impossible
+      - Faces with subtle uncanny valley (too perfect)
+      - Backgrounds with "dreamy" quality and soft focus
+      - Color palettes that are algorithmically harmonious
+
+      Stable Diffusion XL:
+      - Visible "latent space" artifacts in detailed areas
+      - Repetitive patterns in organic textures
+      - Slightly blurred fine details (fingerprints, pores, hair strands)
+      - Background elements that lack perspective consistency
+
+      REAL PHOTO INDICATORS:
+      - Camera EXIF metadata present (strong signal but not conclusive)
+      - Lens artifacts: chromatic aberration, vignetting, distortion
+      - Motion blur from shutter speed (not AI motion blur)
+      - Natural depth of field with bokeh circles from aperture blades
+      - Sensor noise patterns (especially in shadows/highlights)
+      - Real-world imperfections: dust, scratches, sensor spots
+      - Compression artifacts from actual JPEG encoding
+      - Natural lighting with full spectral information
+      - Environmental reflections and ambient occlusion
+
+      TRADITIONAL DIGITAL ART (HUMAN-CREATED):
+      - Visible layer construction if unflattened
+      - Brush pressure variation (Wacom tablet artifacts)
+      - Human error: crooked lines, color outside lines
+      - Style inconsistency across the piece (artist fatigue)
+      - Sketch layers or construction lines visible
+      - Canvas texture or paper grain from scanned traditional media
+      - Authentic artist signatures or watermarks
+
+      PHOTOSHOP EDITING (TRADITIONAL TOOLS):
       - Clone stamp patterns: Repeated pixel patterns from healing/cloning tools
       - Layer blending artifacts: Visible edges where layers merge
       - Mask edges: Sharp, unnatural boundaries between composited elements
@@ -590,18 +650,17 @@ Provide a thorough but accessible analysis.`,
       - Retouching smoothness: Overly smooth skin from frequency separation
       - Metadata presence: Often retains camera EXIF with editing software tags
 
-      AI GENERATION INDICATORS (Synthetic Creation):
-      - Generative noise patterns: Characteristic frequency signatures of GANs
-      - Latent space artifacts: Morphing between concepts, inconsistent details
-      - Training data fingerprints: Watermark-like patterns in frequency domain
-      - Impossible anatomy: Physically impossible structures (extra fingers, merged limbs)
-      - Coherence breakdown: Style/quality shifts within single object
-      - Physics violations: Incorrect reflections, shadows, material properties
-      - Semantic confusion: Objects that don't make logical sense
-      - Text generation failure: Garbled text/numbers
-      - Boundary halos: Bright/dark rings from diffusion models
-      - Perfect symmetry: Overly symmetric faces (no natural asymmetry)
-      - Metadata absence: Usually no camera EXIF data
+      ENHANCED AI PHOTO DETECTION (Photorealistic):
+      - GAN fingerprints: Checkerboard patterns in frequency domain
+      - Face swap artifacts: Identity bleeding, blend lines at face boundaries
+      - Synthetic skin: Too smooth, lacks pore variation and blood vessel networks
+      - Hair rendering: Individual strands lack natural randomness
+      - Eye reflections: Catchlights don't match scene lighting
+      - Teeth uniformity: Too white, too straight, no natural variation
+      - Background coherence: Melted or morphing background elements
+      - Shadow inconsistencies: Shadows don't align with light sources
+      - Material properties: Surfaces reflect light incorrectly
+      - Anatomical impossibilities: Extra fingers, merged limbs, wrong joint angles
 
       HYBRID INDICATORS (Real + AI Enhancement):
       - Partial EXIF data: Camera data present but incomplete
@@ -704,12 +763,18 @@ STEP 0: DETERMINE IMAGE ORIGIN (MOST CRITICAL)
 
    Provide reasoning for each classification based on specific artifacts observed.
 
-STEP 1. IMAGE TYPE CLASSIFICATION (crucial context):
-   - Personal/Phone Photo: Look for natural wear, realistic interactions, authentic moments
-   - Professional/Editorial: Assess lighting physics, material realism, compositional authenticity
-   - Product/Commercial: Check for physical consistency, material properties, realistic shadows
-   - Wildlife/Nature: Evaluate animal anatomy, natural behavior, environmental coherence
-   - Portrait/Studio: Analyze skin texture, hair detail, clothing physics, eye authenticity
+STEP 1. IMAGE CATEGORY CLASSIFICATION:
+   - Illustration/Art Style: Painted, drawn, artistic (check if AI-generated or human-created)
+   - Photorealistic: Looks like a photograph (check if real camera or AI-rendered)
+   - Mixed Media: Combination of photo and art elements
+
+   For ILLUSTRATIONS/ART:
+   - AI Art Red Flags: No metadata, perfect consistency, diffusion smoothness, impossible style fusion
+   - Human Art Indicators: Imperfections, layer artifacts, pressure variation, authentic medium texture
+
+   For PHOTOREALISTIC:
+   - Real Photo: Camera metadata, lens artifacts, sensor noise, natural lighting
+   - AI Photo: No metadata, synthetic perfection, GAN artifacts, physics violations
 
 STEP 2. PHOTOSHOP-SPECIFIC DETECTION:
    A) Clone Stamp & Healing Brush Detection:
@@ -742,16 +807,22 @@ STEP 2. PHOTOSHOP-SPECIFIC DETECTION:
    - Artificial sharpening halos
    - Noise reduction that's too uniform
 
-STEP 3. PRIMARY AUTHENTICITY MARKERS (for CAMERA-NATIVE images):
-   - EXIF metadata presence and consistency (usually 90-95% confidence if present)
-   - Natural image compression artifacts (JPEG blocking, sensor noise) (80-90% confidence)
-   - Realistic lens distortion and chromatic aberration (85-92% confidence)
-   - Authentic motion blur or focus patterns (80-88% confidence)
-   - Physical wear on objects (scuffs, wrinkles, asymmetry) (85-93% confidence)
-   - Genuine human microexpressions and imperfect symmetry (88-95% confidence)
-   - Environmental consistency (light source, shadows, reflections) (75-90% confidence)
-   - Material entropy (fabric texture, surface irregularities) (82-91% confidence)
-   - Natural color grading and tone mapping (70-85% confidence)
+STEP 3. METADATA ANALYSIS (CRITICAL FOR NO-EXIF IMAGES):
+
+   NO EXIF DATA = EXTREMELY SUSPICIOUS (85%+ likelihood of AI)
+   - Modern cameras ALWAYS embed EXIF (even smartphones)
+   - Legitimate photos only lose EXIF through specific stripping or editing
+   - AI generators NEVER produce EXIF data
+   - Screenshots lose EXIF but have screen-specific artifacts
+
+   If NO EXIF present, you MUST find strong evidence of authenticity to classify as real:
+   - Visible camera sensor noise patterns
+   - Lens-specific distortion or vignetting
+   - Motion blur with camera shake characteristics
+   - Natural lighting with full spectral range
+   - Physical imperfections in scene/subjects
+
+   If NO EXIF + Art Style + Perfect Consistency = 95%+ likely AI art
 
 STEP 4. ADVANCED AI GENERATION INDICATORS (vs Traditional Editing):
 
@@ -792,23 +863,47 @@ STEP 5. HYBRID CONTENT DETECTION:
    - Check for AI upscaling (neural network super-resolution)
    - Analyze noise patterns: camera sensor noise vs AI noise
 
-STEP 6. MULTI-REGION PATCH ANALYSIS:
-   The first image is the FULL image.
-   The remaining ${patchUrls.length} images are PATCHES from different regions.
-   
-   VOTING INSTRUCTIONS:
-   - Analyze EACH PATCH independently and decisively like the examples above
-   - Vote "likely_real" if the patch shows authentic characteristics
-   - Vote "likely_ai" if the patch shows AI generation artifacts
-   - Vote "uncertain" ONLY if the patch genuinely lacks distinguishing features
-   - Provide high confidence (70-95%) when evidence is clear
-   - Provide medium confidence (50-69%) when evidence is suggestive but not definitive
-   - Provide low confidence (<50%) only when genuinely ambiguous
-   - ASSIGN detection_confidence to EACH signal found in the patch
+STEP 6. CRITICAL DECISION FRAMEWORK:
 
-STEP 7. METADATA FORENSICS:
-   EXIF Data: ${exifData ? JSON.stringify(exifData, null, 2) : 'None (WARNING: absence suggests screenshot/AI, but not conclusive)'}
-   Forensics Data: ${forensicsData ? JSON.stringify(forensicsData, null, 2) : 'Not available'}
+   FOR ARTISTIC/ILLUSTRATED IMAGES:
+   - If NO EXIF + Artistic style + Uniform quality = VOTE "likely_ai" with 80-95% confidence
+   - If NO EXIF + Illustration + Perfect consistency = VOTE "likely_ai" with 85-95% confidence
+   - If NO EXIF + Mimics famous art style = VOTE "likely_ai" with 90-95% confidence
+   - Only vote "likely_real" for art if you see authentic human creation markers
+
+   FOR PHOTOREALISTIC IMAGES:
+   - If EXIF present + Real artifacts = VOTE "likely_real" with 80-95% confidence
+   - If NO EXIF + Synthetic indicators = VOTE "likely_ai" with 75-90% confidence
+   - If NO EXIF + Perfect lighting = VOTE "likely_ai" with 70-85% confidence
+
+   PATCH ANALYSIS (${patchUrls.length} patches):
+   - Analyze each patch for AI consistency vs natural variation
+   - AI patches show uniform quality across all regions
+   - Real photos have quality variation (sharp areas vs motion blur, etc.)
+   - Check if artistic style is TOO consistent across patches
+
+STEP 7. FINAL VERDICT RULES:
+
+   HIGH CONFIDENCE AI (85-95%):
+   - NO EXIF + Artistic style + Perfect consistency
+   - NO EXIF + Illustration + Uniform brush strokes
+   - NO EXIF + Mimics famous artist + No authentic imperfections
+   - NO EXIF + Photorealistic + Synthetic skin/hair
+   - Diffusion model artifacts detected
+
+   MEDIUM CONFIDENCE AI (65-84%):
+   - NO EXIF + Some consistency issues but not conclusive
+   - NO EXIF + Digital art but lacks clear AI signatures
+   - Suspicious patterns but could be heavily edited photo
+
+   LEAN TOWARD REAL (Only if strong evidence):
+   - EXIF present with camera info
+   - Clear lens/sensor artifacts
+   - Authentic medium texture (canvas, paper grain)
+   - Natural imperfections throughout
+
+   Metadata: ${exifData ? 'EXIF PRESENT - Camera data found' : 'NO EXIF DATA - Major red flag for AI'}
+   Forensics: ${forensicsData ? JSON.stringify(forensicsData, null, 2) : 'Not available'}
 
 DECISION GUIDELINES:
 - If 60%+ patches vote the same way with high confidence → COMMIT to that classification
