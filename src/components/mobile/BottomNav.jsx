@@ -29,7 +29,6 @@ export default function BottomNav({ currentPage = 'home' }) {
     { icon: User, label: 'Account', page: 'Account' },
     { icon: Gift, label: 'Gifts', page: 'MyGifts' },
     { icon: BookOpen, label: 'Learn', page: 'Learn' },
-    { icon: Briefcase, label: 'Enterprise', page: 'EnterpriseMarketing' },
     { icon: Mail, label: 'Support', page: 'Support' }
   ];
 
