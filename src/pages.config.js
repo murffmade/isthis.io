@@ -11,6 +11,7 @@ import Blog from './pages/Blog';
 import BlogDashboard from './pages/BlogDashboard';
 import BlogEditor from './pages/BlogEditor';
 import Bookmarklet from './pages/Bookmarklet';
+import BusinessMarketing from './pages/BusinessMarketing';
 import Careers from './pages/Careers';
 import Contact from './pages/Contact';
 import ContentGenerator from './pages/ContentGenerator';
@@ -34,7 +35,6 @@ import Support from './pages/Support';
 import TermsOfService from './pages/TermsOfService';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import BusinessMarketing from './pages/BusinessMarketing';
 import __Layout from './Layout.jsx';
 
 
@@ -52,6 +52,7 @@ export const PAGES = {
     "BlogDashboard": BlogDashboard,
     "BlogEditor": BlogEditor,
     "Bookmarklet": Bookmarklet,
+    "BusinessMarketing": BusinessMarketing,
     "Careers": Careers,
     "Contact": Contact,
     "ContentGenerator": ContentGenerator,
@@ -75,7 +76,6 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "BusinessMarketing": BusinessMarketing,
 }
 
 export const pagesConfig = {

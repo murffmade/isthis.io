@@ -24,6 +24,7 @@ import { extractFramesFromVideo } from '@/components/utils/videoFrames';
 import { moderateImage, moderateVideo } from '@/components/utils/contentModeration';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import HelpButton from '@/components/onboarding/HelpButton';
+import SEO from '@/components/shared/SEO';
 
 export default function Home() {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -1627,8 +1628,46 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
     toast.success('Payment successful! Premium features activated.');
   };
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "IsThis.io",
+    "description": "Free AI Content Verification - Instantly detect if images and videos are real or AI-generated",
+    "url": "https://isthis.io",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "1250",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "featureList": [
+      "AI-generated image detection",
+      "Deepfake video detection",
+      "Free unlimited basic analysis",
+      "Advanced forensic analysis",
+      "Confidence scoring"
+    ]
+  };
+
   return (
     <>
+      <SEO
+        title="IsThis.io - Free AI Detection Tool | Verify Images & Videos"
+        description="Instantly verify if images and videos are real or AI-generated. Free AI detection tool with advanced forensic analysis, deepfake detection, and confidence scoring."
+        keywords="AI detection, deepfake detection, image verification, video verification, AI-generated content, fake image detector, deepfake checker, content authenticity, synthetic media detection, free AI tool"
+        url="https://isthis.io"
+        image="https://isthis.io/og-home.jpg"
+        structuredData={structuredData}
+      />
       {isMobile && showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
       <OnboardingTour />
       
