@@ -1278,9 +1278,9 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 <motion.div 
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 text-indigo-700 text-xs sm:text-sm mb-6 shadow-soft font-medium"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-300 text-[#2C3E50] text-xs sm:text-sm mb-6 shadow-soft font-medium"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4 text-[#3498DB]" />
                   Free AI Detection Tool
                 </motion.div>
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-slate-900 mb-6 leading-[1.1] px-4 tracking-tight">
@@ -1305,8 +1305,8 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     />
                     <label 
                       htmlFor="file-upload"
-                      className={`block border-2 border-dashed border-indigo-200 rounded-2xl p-10 sm:p-14 text-center transition-all bg-gradient-to-br from-indigo-50/50 to-purple-50/50 ${
-                        uploading ? 'cursor-wait opacity-75' : 'cursor-pointer active:scale-[0.99] hover:border-indigo-300 hover:bg-indigo-50/70'
+                      className={`block border-2 border-dashed border-[#BDC3C7] rounded-2xl p-10 sm:p-14 text-center transition-all bg-slate-50 ${
+                        uploading ? 'cursor-wait opacity-75' : 'cursor-pointer active:scale-[0.99] hover:border-[#3498DB] hover:bg-slate-100'
                       }`}
                     >
                       {uploading ? (
@@ -1314,7 +1314,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                           <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 relative">
                             <div className="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
                             <div 
-                              className="absolute inset-0 border-4 border-slate-900 rounded-full border-t-transparent animate-spin"
+                              className="absolute inset-0 border-4 border-[#3498DB] rounded-full border-t-transparent animate-spin"
                             ></div>
                           </div>
                           <p className="text-sm sm:text-base text-slate-700 font-medium mb-1 sm:mb-2">
@@ -1326,7 +1326,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                                 initial={{ width: 0 }}
                                 animate={{ width: `${uploadProgress}%` }}
                                 transition={{ duration: 0.3 }}
-                                className="h-full bg-slate-900 rounded-full"
+                                className="h-full bg-[#3498DB] rounded-full"
                               />
                             </div>
                           </div>
@@ -1359,14 +1359,14 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       placeholder="https://example.com/image.jpg"
                       value={urlInput}
                       onChange={(e) => setUrlInput(e.target.value)}
-                      className="w-full pl-10 sm:pl-11 pr-4 py-3 sm:py-3.5 border-2 border-slate-200 rounded-xl focus:border-slate-900 focus:outline-none transition-colors text-sm sm:text-base"
+                      className="w-full pl-10 sm:pl-11 pr-4 py-3 sm:py-3.5 border-2 border-slate-200 rounded-xl focus:border-[#3498DB] focus:outline-none transition-colors text-sm sm:text-base"
                     />
                   </div>
 
                   <button
                     onClick={handleAnalyze}
                     disabled={analyzing || (!uploadedFile && !urlInput)}
-                    className="w-full py-4 sm:py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.98] text-white font-bold rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-base sm:text-lg touch-manipulation shadow-lg shadow-indigo-500/30 button-shine"
+                    className="w-full py-4 sm:py-5 bg-[#3498DB] hover:bg-[#2980b9] active:scale-[0.98] text-white font-bold rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-base sm:text-lg touch-manipulation shadow-lg shadow-[#3498DB]/30 button-shine"
                     data-tour="verify-button"
                   >
                     {analyzing ? (
@@ -1389,9 +1389,9 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-10 sm:mb-12 tracking-tight">How It Works</h2>
                 <div className="grid grid-cols-3 gap-6 sm:gap-10">
                   {[
-                    { icon: Upload, title: 'Upload', desc: 'Upload an image, video, or paste a URL from anywhere', color: 'from-blue-500 to-indigo-600' },
-                    { icon: Zap, title: 'Analyze', desc: 'Our AI analyzes visual artifacts, patterns, and inconsistencies', color: 'from-indigo-500 to-purple-600' },
-                    { icon: CheckCircle2, title: 'Get Results', desc: 'Receive a clear verdict with confidence score and detailed explanation', color: 'from-purple-500 to-pink-600' }
+                    { icon: Upload, title: 'Upload', desc: 'Upload an image, video, or paste a URL from anywhere', color: 'from-[#7F8C8D] to-[#2C3E50]' },
+                    { icon: Zap, title: 'Analyze', desc: 'Our AI analyzes visual artifacts, patterns, and inconsistencies', color: 'from-[#3498DB] to-[#2980b9]' },
+                    { icon: CheckCircle2, title: 'Get Results', desc: 'Receive a clear verdict with confidence score and detailed explanation', color: 'from-[#3498DB] to-[#2C3E50]' }
                   ].map((step, i) => (
                     <motion.div
                       key={i}
@@ -1471,8 +1471,8 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   </div>
 
                   {/* Premium */}
-                  <div className="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-soft hover:shadow-medium transition-shadow duration-300 border-2 border-indigo-200">
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-indigo-600 rounded-full text-xs font-bold text-white shadow-md">
+                  <div className="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-soft hover:shadow-medium transition-shadow duration-300 border-2 border-[#3498DB]">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#3498DB] rounded-full text-xs font-bold text-white shadow-md">
                       POPULAR
                     </div>
                     <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Premium</h3>
@@ -1504,13 +1504,13 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
 
                   {/* Lifetime */}
                   {lifetimeSettings?.enabled && (
-                    <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white relative shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-shadow duration-300 transform hover:scale-105 transition-all">
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-white rounded-full text-xs font-bold text-indigo-600 shadow-lg">
+                    <div className="bg-gradient-to-br from-[#2C3E50] via-[#3498DB] to-[#2C3E50] rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white relative shadow-2xl shadow-[#3498DB]/30 hover:shadow-[#3498DB]/40 transition-shadow duration-300 transform hover:scale-105 transition-all">
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-white rounded-full text-xs font-bold text-[#3498DB] shadow-lg">
                         LIMITED OFFER
                       </div>
                       <h3 className="text-xl sm:text-2xl font-bold mb-2">Lifetime</h3>
                       <div className="text-3xl sm:text-4xl font-extrabold mb-1 tracking-tight">$99</div>
-                      <div className="text-sm text-indigo-100 mb-3 font-medium">one-time payment</div>
+                      <div className="text-sm text-slate-200 mb-3 font-medium">one-time payment</div>
 
                       {lifetimeSettings?.show_countdown && lifetimeSettings?.expiry_date && (
                         <div className="mb-4 p-2 bg-white/20 rounded-lg backdrop-blur-sm">

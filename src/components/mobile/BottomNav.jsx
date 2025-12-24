@@ -61,11 +61,11 @@ export default function BottomNav({ currentPage = 'home' }) {
                   }}
                   className={`flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 ${
                     isActive 
-                      ? 'text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text' 
+                      ? 'text-[#3498DB]' 
                       : 'text-slate-400 active:text-slate-600'
                   }`}
                 >
-                  <Icon className={`w-6 h-6 ${isActive ? 'text-purple-600' : ''}`} />
+                  <Icon className={`w-6 h-6`} />
                   <span className="text-xs font-medium">{item.label}</span>
                 </button>
               );
@@ -77,11 +77,11 @@ export default function BottomNav({ currentPage = 'home' }) {
                 to={createPageUrl(item.page)}
                 className={`flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 ${
                   isActive 
-                    ? 'text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text' 
+                    ? 'text-[#3498DB]' 
                     : 'text-slate-400 active:text-slate-600'
                 }`}
               >
-                <Icon className={`w-6 h-6 ${isActive ? 'text-purple-600' : ''}`} />
+                <Icon className={`w-6 h-6`} />
                 <span className="text-xs font-medium">{item.label}</span>
               </Link>
             );
@@ -90,10 +90,10 @@ export default function BottomNav({ currentPage = 'home' }) {
           <button
             onClick={() => setShowMore(!showMore)}
             className={`flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 ${
-              showMore ? 'text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text' : 'text-slate-400'
+              showMore ? 'text-[#3498DB]' : 'text-slate-400'
             }`}
           >
-            <MoreHorizontal className={`w-6 h-6 ${showMore ? 'text-purple-600' : ''}`} />
+            <MoreHorizontal className={`w-6 h-6`} />
             <span className="text-xs font-medium">More</span>
           </button>
         </div>
@@ -129,9 +129,9 @@ export default function BottomNav({ currentPage = 'home' }) {
                           key={i}
                           to={createPageUrl(item.page)}
                           onClick={() => handleMoreItemClick(item)}
-                          className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-colors"
+                          className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-95 transition-all"
                         >
-                          <Icon className="w-5 h-5 text-slate-600" />
+                          <Icon className="w-5 h-5 text-[#2C3E50]" />
                           <span className="font-medium text-slate-900">{item.label}</span>
                         </Link>
                       );
@@ -140,9 +140,9 @@ export default function BottomNav({ currentPage = 'home' }) {
                         <button
                           key={i}
                           onClick={() => handleMoreItemClick(item)}
-                          className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-colors w-full text-left"
+                          className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-95 transition-all w-full text-left"
                         >
-                          <Icon className="w-5 h-5 text-slate-600" />
+                          <Icon className="w-5 h-5 text-[#2C3E50]" />
                           <span className="font-medium text-slate-900">{item.label}</span>
                         </button>
                       );
