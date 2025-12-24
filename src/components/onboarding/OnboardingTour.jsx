@@ -164,7 +164,7 @@ export default function OnboardingTour({ onComplete }) {
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className={`fixed z-50 ${
               step.position === 'center' 
-                ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-lg' 
+                ? 'top-[15vh] left-1/2 -translate-x-1/2 w-[90vw] max-w-lg' 
                 : ''
             }`}
             style={step.position !== 'center' ? {
