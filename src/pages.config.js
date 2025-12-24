@@ -2,6 +2,8 @@ import APIDocs from './pages/APIDocs';
 import About from './pages/About';
 import Account from './pages/Account';
 import Admin from './pages/Admin';
+import AffiliateDashboard from './pages/AffiliateDashboard';
+import AffiliateMarketing from './pages/AffiliateMarketing';
 import AnalysisDashboard from './pages/AnalysisDashboard';
 import BatchAnalysis from './pages/BatchAnalysis';
 import Blog from './pages/Blog';
@@ -29,8 +31,6 @@ import Support from './pages/Support';
 import TermsOfService from './pages/TermsOfService';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import AffiliateMarketing from './pages/AffiliateMarketing';
-import AffiliateDashboard from './pages/AffiliateDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -39,6 +39,8 @@ export const PAGES = {
     "About": About,
     "Account": Account,
     "Admin": Admin,
+    "AffiliateDashboard": AffiliateDashboard,
+    "AffiliateMarketing": AffiliateMarketing,
     "AnalysisDashboard": AnalysisDashboard,
     "BatchAnalysis": BatchAnalysis,
     "Blog": Blog,
@@ -66,8 +68,6 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "AffiliateMarketing": AffiliateMarketing,
-    "AffiliateDashboard": AffiliateDashboard,
 }
 
 export const pagesConfig = {

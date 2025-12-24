@@ -21,6 +21,8 @@ import { generatePatchesFromFile } from '@/components/utils/imagePatches';
 import { analyzeForensics } from '@/components/utils/forensicsApi';
 import { deriveLlmScoreFromPatchVotes, ensembleDecision } from '@/components/utils/ensembleScore';
 import { extractFramesFromVideo } from '@/components/utils/videoFrames';
+import OnboardingTour from '@/components/onboarding/OnboardingTour';
+import HelpButton from '@/components/onboarding/HelpButton';
 
 export default function Home() {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -957,6 +959,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
   return (
     <>
       {isMobile && showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      <OnboardingTour />
       
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-20 md:pb-0">
       {/* Header */}
@@ -975,6 +978,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
             </button>
 
             <div className="flex items-center gap-2">
+              <HelpButton />
               <div className="hidden md:block">
                 <ProfileDropdown onOpenSettings={() => setShowPreferences(true)} />
               </div>
@@ -1021,7 +1025,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               </div>
 
               {/* Upload Section */}
-              <div className="max-w-2xl mx-auto mb-8 sm:mb-16">
+              <div className="max-w-2xl mx-auto mb-8 sm:mb-16" data-tour="upload-zone">
                 <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-slate-200 p-4 sm:p-8 shadow-sm">
                   <div className="mb-4 sm:mb-6">
                     <input
@@ -1096,6 +1100,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     onClick={handleAnalyze}
                     disabled={analyzing || (!uploadedFile && !urlInput)}
                     className="w-full py-4 sm:py-4 bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base sm:text-lg touch-manipulation"
+                    data-tour="verify-button"
                   >
                     {analyzing ? (
                       <>
@@ -1113,7 +1118,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               </div>
 
               {/* How It Works */}
-              <div className="max-w-4xl mx-auto mb-8 sm:mb-16">
+              <div className="max-w-4xl mx-auto mb-8 sm:mb-16" data-tour="how-it-works">
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-6 sm:mb-8">How It Works</h2>
                 <div className="grid grid-cols-3 sm:grid-cols-3 gap-4 sm:gap-6">
                   {[
