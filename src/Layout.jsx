@@ -4,7 +4,6 @@ import { Toaster } from 'sonner';
 import { createPageUrl } from '@/utils';
 import ScrollToTop from '@/components/shared/ScrollToTop';
 import PushNotifications from '@/components/notifications/PushNotifications';
-import ThemeToggle from '@/components/shared/ThemeToggle';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -38,7 +37,6 @@ export default function Layout({ children, currentPageName }) {
       </Helmet>
       <ScrollToTop />
       <PushNotifications />
-      <ThemeToggle />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -58,75 +56,6 @@ export default function Layout({ children, currentPageName }) {
           -moz-osx-font-smoothing: grayscale;
           overscroll-behavior-y: none;
           background: #fafafa;
-        }
-
-        /* Dark mode styles */
-        .dark {
-          color-scheme: dark;
-        }
-
-        .dark body {
-          background: #0f172a;
-          color: #e2e8f0;
-        }
-
-        .dark .bg-white {
-          background: #1e293b;
-          border-color: #334155;
-        }
-
-        .dark .text-slate-900 {
-          color: #f1f5f9;
-        }
-
-        .dark .text-slate-800 {
-          color: #e2e8f0;
-        }
-
-        .dark .text-slate-700 {
-          color: #cbd5e1;
-        }
-
-        .dark .text-slate-600 {
-          color: #94a3b8;
-        }
-
-        .dark .text-slate-500 {
-          color: #64748b;
-        }
-
-        .dark .border-slate-200 {
-          border-color: #334155;
-        }
-
-        .dark .border-slate-300 {
-          border-color: #475569;
-        }
-
-        .dark .bg-slate-50 {
-          background: #1e293b;
-        }
-
-        .dark .bg-slate-100 {
-          background: #334155;
-        }
-
-        .dark .bg-slate-200 {
-          background: #475569;
-        }
-
-        .dark .gradient-mesh {
-          background: 
-            radial-gradient(at 40% 20%, rgba(52, 152, 219, 0.08) 0px, transparent 50%),
-            radial-gradient(at 80% 0%, rgba(127, 140, 141, 0.06) 0px, transparent 50%),
-            radial-gradient(at 0% 50%, rgba(52, 152, 219, 0.07) 0px, transparent 50%),
-            linear-gradient(to bottom, #0f172a 0%, #1e293b 100%);
-        }
-
-        .dark .glass-effect {
-          background: rgba(30, 41, 59, 0.85);
-          backdrop-filter: blur(20px) saturate(180%);
-          border: 1px solid rgba(51, 65, 85, 0.3);
         }
 
         /* Modern gradients and effects */

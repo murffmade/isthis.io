@@ -19,7 +19,6 @@ export default function ProfileDropdown({ onOpenSettings }) {
 
   return (
     <div className="flex items-center gap-2">
-      <ThemeToggle />
       <NotificationBell />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
