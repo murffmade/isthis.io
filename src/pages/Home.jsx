@@ -2041,9 +2041,11 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         </li>
                       </ul>
 
-                      <div className="mb-4 text-center bg-white/30 rounded-xl p-4 backdrop-blur-sm border border-white/40">
-                        <div className="text-2xl mb-2">⚡</div>
-                        <div className="font-bold text-base">Limited to 500 users</div>
+                      <div className="mb-4 mx-auto max-w-xs">
+                        <div className="text-center bg-gradient-to-br from-yellow-400/40 to-orange-400/40 rounded-2xl p-5 backdrop-blur-md border-2 border-yellow-300/60 shadow-lg">
+                          <div className="text-4xl mb-2 animate-pulse">⚡</div>
+                          <div className="font-extrabold text-lg text-white drop-shadow-lg">Limited to 500 Users</div>
+                        </div>
                       </div>
 
                       <StripeCheckout
