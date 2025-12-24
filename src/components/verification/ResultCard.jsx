@@ -1092,7 +1092,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
             <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
               <span className="text-2xl">✓</span>
               <div>
-                <div className="font-bold text-emerald-800 mb-1">Likely Real (0-46)</div>
+                <div className="font-bold text-emerald-800 mb-1">Likely Real (0-37)</div>
                 <p className="text-sm text-emerald-700">Strong evidence of authenticity: camera data present, natural imperfections, realistic physics, consistent compression patterns.</p>
               </div>
             </div>
@@ -1100,7 +1100,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
             <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
               <span className="text-2xl">❓</span>
               <div>
-                <div className="font-bold text-slate-700 mb-1">Uncertain (47-57)</div>
+                <div className="font-bold text-slate-700 mb-1">Uncertain (38-57)</div>
                 <p className="text-sm text-slate-600">Mixed or insufficient evidence. Could be heavily edited real content, artistic styling, or high-quality A.I. generation.</p>
               </div>
             </div>
@@ -1175,7 +1175,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                     </div>
                   </div>
                 )}
-                {result.score <= 46 && (
+                {result.score <= 37 && (
                   <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
                     <p className="font-semibold text-emerald-900 mb-3">✓ Why this score suggests authenticity:</p>
                     <div className="space-y-2 text-sm">
@@ -1204,7 +1204,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                     </div>
                   </div>
                 )}
-                {result.score > 46 && result.score < 58 && (
+                {result.score > 37 && result.score < 58 && (
                   <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                     <p className="font-semibold text-slate-900 mb-3">❓ Why this score is uncertain:</p>
                     <div className="space-y-2 text-sm">

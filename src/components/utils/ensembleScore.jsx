@@ -165,15 +165,15 @@ export function ensembleDecision({ llm, forensics, provenance, editingIndicators
     result = 'likely_ai';
     const baseConfidence = 40 + (finalScore - 58) * 2.0;
     confidence = Math.min(95, baseConfidence * confidenceBoost);
-  } else if (finalScore <= 46) {
+  } else if (finalScore <= 37) {
     // Likely Real
     result = 'likely_real';
-    const baseConfidence = 40 + (46 - finalScore) * 2.0;
+    const baseConfidence = 40 + (37 - finalScore) * 2.0;
     confidence = Math.min(95, baseConfidence * confidenceBoost);
   } else {
-    // Uncertain (47-57 range = 11 point band)
+    // Uncertain (38-57 range = 20 point band)
     result = 'uncertain';
-    confidence = Math.max(20, 40 - Math.abs(finalScore - 52) * 3);
+    confidence = Math.max(20, 40 - Math.abs(finalScore - 47.5) * 2);
   }
   
   // Factor in LLM voting strength for additional confidence adjustment
