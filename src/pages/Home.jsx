@@ -39,6 +39,23 @@ export default function Home() {
   const [classifying, setClassifying] = useState(false);
   const [imageClassification, setImageClassification] = useState(null);
   const [userConfirmedType, setUserConfirmedType] = useState(false);
+  const [isNativeApp, setIsNativeApp] = useState(false);
+
+  // Detect if running in native app WebView
+  React.useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isWebView = 
+      // iOS WebView
+      /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(userAgent) ||
+      // Android WebView
+      /wv/.test(userAgent) ||
+      // Check for native app indicator (can be set by native app)
+      window.ReactNativeWebView !== undefined ||
+      // Check for custom query parameter
+      window.location.search.includes('native=true');
+    
+    setIsNativeApp(isWebView);
+  }, []);
 
   // Fetch current user
   const { data: currentUser } = useQuery({
@@ -1976,6 +1993,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               </div>
 
               {/* Pricing */}
+              {!isNativeApp && (
               <section className="py-12 sm:py-20">
                 <div className="text-center mb-10 sm:mb-16 px-4">
                   <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Choose Your Plan</h2>
@@ -2125,9 +2143,10 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       />
                     </div>
                   )}
-                </div>
-              </section>
-            </motion.div>
+                  </div>
+                  </section>
+                  )}
+                  </motion.div>
           ) : (
             <motion.div
               key="result"
