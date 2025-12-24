@@ -961,9 +961,9 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
       {isMobile && showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
       <OnboardingTour />
       
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-20 md:pb-0">
+      <div className="min-h-screen gradient-mesh pb-20 md:pb-0">
       {/* Header */}
-      <header className="border-b border-slate-100 bg-white/95 backdrop-blur-sm sticky top-0 z-50 safe-top">
+      <header className="border-b border-slate-100/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50 safe-top shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <button 
@@ -1026,7 +1026,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
 
               {/* Upload Section */}
               <div className="max-w-2xl mx-auto mb-8 sm:mb-16" data-tour="upload-zone">
-                <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-slate-200 p-4 sm:p-8 shadow-sm">
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-slate-200/50 p-4 sm:p-8 shadow-xl shadow-slate-200/50">
                   <div className="mb-4 sm:mb-6">
                     <input
                       type="file"
