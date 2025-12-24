@@ -4,8 +4,17 @@ import { Toaster } from 'sonner';
 import { createPageUrl } from '@/utils';
 import ScrollToTop from '@/components/shared/ScrollToTop';
 import PushNotifications from '@/components/notifications/PushNotifications';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Layout({ children, currentPageName }) {
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me().catch(() => null)
+  });
+
+  const isAdmin = currentUser?.role === 'admin';
+
   const footerLinks = [
     { label: 'About', path: 'About' },
     { label: 'Careers', path: 'Careers' },
@@ -226,9 +235,22 @@ export default function Layout({ children, currentPageName }) {
                     </li>
                   </ul>
                 </div>
-              </div>
-            </div>
-          </div>
+
+                {isAdmin && (
+                  <div>
+                    <h4 className="font-semibold mb-3 text-sm">Admin</h4>
+                    <ul className="space-y-2">
+                      <li>
+                        <a href={createPageUrl('Admin')} className="text-sm text-slate-400 hover:text-white transition-colors">
+                          Admin Panel
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+                </div>
+                </div>
+                </div>
 
           {/* Bottom */}
           <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
