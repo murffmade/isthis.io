@@ -4,6 +4,7 @@ import { DollarSign, Link as LinkIcon, Copy, Users, TrendingUp, CheckCircle2, Ex
 import TierProgress from '@/components/influencer/TierProgress';
 import AnalyticsCharts from '@/components/influencer/AnalyticsCharts';
 import PayoutHistory from '@/components/influencer/PayoutHistory';
+import CouponManager from '@/components/influencer/CouponManager';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
@@ -373,6 +374,11 @@ export default function InfluencerDashboard() {
 
         {/* Tier Progress */}
         <TierProgress influencer={influencer} />
+
+        {/* Coupon Manager */}
+        <div className="mt-8">
+          <CouponManager influencer={influencer} />
+        </div>
 
         {/* Analytics Charts */}
         <div className="mt-8">
