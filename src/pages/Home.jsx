@@ -2041,11 +2041,9 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         </li>
                       </ul>
 
-                      <div className="mb-4 text-xs bg-white/20 rounded-lg p-2 backdrop-blur-sm">
-                        <div className="font-bold mb-1">⚡ Limited to 500 users</div>
-                        <div className="opacity-90">
-                          {lifetimeSettings?.sold_count || 0} / 500 sold
-                        </div>
+                      <div className="mb-4 text-center bg-white/30 rounded-xl p-4 backdrop-blur-sm border border-white/40">
+                        <div className="text-2xl mb-2">⚡</div>
+                        <div className="font-bold text-base">Limited to 500 users</div>
                       </div>
 
                       <StripeCheckout
