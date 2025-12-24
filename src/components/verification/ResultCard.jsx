@@ -1110,7 +1110,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
               <button
                 onClick={() => {
                   const appUrl = window.location.origin;
-                  const text = `I verified content using Is This Real? Result: ${config.title} (${result.confidence}% confidence)`;
+                  const text = `I verified content using Is This Real? Result: ${config.title}`;
                   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(appUrl)}`, '_blank', 'width=600,height=400');
                 }}
                 className="p-3 bg-slate-50 hover:bg-slate-100 active:scale-95 rounded-xl border border-slate-200 transition-all flex flex-col items-center gap-2"
@@ -1123,7 +1123,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
               <button
                 onClick={() => {
                   const appUrl = window.location.origin;
-                  const text = `I verified content using Is This Real? Result: ${config.title} (${result.confidence}% confidence)`;
+                  const text = `I verified content using Is This Real? Result: ${config.title}`;
                   window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(appUrl)}&quote=${encodeURIComponent(text)}`, '_blank', 'width=600,height=400');
                 }}
                 className="p-3 bg-slate-50 hover:bg-slate-100 active:scale-95 rounded-xl border border-slate-200 transition-all flex flex-col items-center gap-2"

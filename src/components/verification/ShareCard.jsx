@@ -42,8 +42,8 @@ export default function ShareCard({ result, cardRef }) {
     <div 
       ref={cardRef}
       style={{ 
-        width: '800px',
-        height: '800px',
+        width: '1200px',
+        height: '630px',
         background: `linear-gradient(135deg, #0f172a 0%, #1e293b 100%)`,
         padding: '0',
         position: 'relative',
@@ -92,190 +92,166 @@ export default function ShareCard({ result, cardRef }) {
         zIndex: 1,
         height: '100%',
         display: 'flex',
-        flexDirection: 'column',
-        padding: '60px'
+        flexDirection: 'row',
+        padding: '50px',
+        gap: '40px'
       }}>
-        {/* Header with Logo */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '60px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Left side - Analyzed Image */}
+        {(result.file_url || result.thumbnail_url) && (
+          <div style={{
+            flex: '0 0 45%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
             <div style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '12px',
+              width: '100%',
+              borderRadius: '24px',
+              overflow: 'hidden',
+              border: '4px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+              background: 'white'
+            }}>
+              <img 
+                src={result.file_url || result.thumbnail_url}
+                alt="Analyzed content"
+                style={{
+                  width: '100%',
+                  height: '530px',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Right side - Result Info */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: '0 20px'
+        }}>
+          {/* Logo */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px',
+            marginBottom: '40px'
+          }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '14px',
               background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 8px 20px rgba(99, 102, 241, 0.3)'
+              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)'
             }}>
-              <Shield style={{ width: '24px', height: '24px', color: 'white' }} />
+              <Shield style={{ width: '28px', height: '28px', color: 'white' }} />
             </div>
             <div>
               <div style={{ 
-                fontSize: '22px', 
-                fontWeight: '700',
+                fontSize: '26px', 
+                fontWeight: '800',
                 color: 'white',
-                lineHeight: 1
+                lineHeight: 1,
+                letterSpacing: '-0.02em'
               }}>
                 IsThis.io
               </div>
               <div style={{ 
-                fontSize: '13px',
+                fontSize: '14px',
                 color: '#94a3b8',
                 lineHeight: 1.4,
-                marginTop: '2px'
+                marginTop: '4px',
+                fontWeight: '500'
               }}>
-                A.I. Detection
+                A.I. Content Detection
               </div>
             </div>
           </div>
+
+          {/* Result Badge */}
           <div style={{
-            padding: '8px 16px',
-            background: 'rgba(255, 255, 255, 0.1)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '16px',
+            padding: '20px 28px',
+            background: config.bgGradient,
             borderRadius: '20px',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            marginBottom: '32px',
+            boxShadow: `0 12px 32px ${config.color}50`,
+            border: '2px solid rgba(255, 255, 255, 0.2)'
           }}>
-            <span style={{
-              fontSize: '13px',
-              color: 'white',
-              fontWeight: '600'
-            }}>
-              Verified Content
-            </span>
-          </div>
-        </div>
-
-        {/* Main Result Card */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.98)',
-          borderRadius: '28px',
-          padding: '50px',
-          flexGrow: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
-          border: '1px solid rgba(255, 255, 255, 0.2)'
-        }}>
-          {/* Result Icon and Title */}
-          <div>
-            {/* Analyzed Image */}
-            {(result.file_url || result.thumbnail_url) && (
-              <div style={{
-                marginBottom: '32px',
-                borderRadius: '20px',
-                overflow: 'hidden',
-                border: '3px solid #e2e8f0',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)'
+            <span style={{ fontSize: '48px', lineHeight: 1 }}>{config.emoji}</span>
+            <div>
+              <h2 style={{ 
+                fontSize: '48px', 
+                fontWeight: '900', 
+                color: 'white',
+                margin: 0,
+                lineHeight: 1,
+                letterSpacing: '-0.03em',
+                textShadow: '0 2px 8px rgba(0,0,0,0.15)'
               }}>
-                <img 
-                  src={result.file_url || result.thumbnail_url}
-                  alt="Analyzed content"
-                  style={{
-                    width: '100%',
-                    height: '280px',
-                    objectFit: 'cover',
-                    display: 'block'
-                  }}
-                />
-              </div>
-            )}
+                {config.title}
+              </h2>
+            </div>
+          </div>
 
+          {/* Summary */}
+          {result.summary && (
+            <div style={{
+              padding: '24px 28px',
+              background: 'rgba(255, 255, 255, 0.12)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              marginBottom: '28px',
+              backdropFilter: 'blur(10px)'
+            }}>
+              <p style={{ 
+                fontSize: '17px', 
+                color: 'white',
+                margin: 0,
+                lineHeight: 1.6,
+                fontWeight: '500'
+              }}>
+                {result.summary.length > 120 ? result.summary.substring(0, 120) + '...' : result.summary}
+              </p>
+            </div>
+          )}
+
+          {/* Signals Count */}
+          {result.signals && result.signals.length > 0 && (
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '20px',
+              gap: '12px',
+              padding: '16px 24px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
               marginBottom: '32px'
             }}>
-              <div style={{
-                width: '80px',
-                height: '80px',
-                borderRadius: '20px',
-                background: config.bgGradient,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: `0 8px 24px ${config.color}40`
+              <span style={{ fontSize: '24px' }}>🔍</span>
+              <span style={{
+                fontSize: '15px',
+                color: 'white',
+                fontWeight: '600'
               }}>
-                <span style={{ fontSize: '40px' }}>{config.emoji}</span>
-              </div>
-              <div style={{ flex: 1 }}>
-                <h2 style={{ 
-                  fontSize: '40px', 
-                  fontWeight: '800', 
-                  color: '#0f172a',
-                  margin: 0,
-                  lineHeight: 1.1,
-                  letterSpacing: '-0.02em'
-                }}>
-                  {config.title}
-                </h2>
-                <p style={{ 
-                  fontSize: '20px', 
-                  color: '#64748b',
-                  margin: '6px 0 0 0',
-                  fontWeight: '500'
-                }}>
-                  {result.confidence}% Confidence
-                </p>
-              </div>
+                {result.signals.length} detection signal{result.signals.length !== 1 ? 's' : ''} analyzed
+              </span>
             </div>
-
-            {/* Brief Summary */}
-            {result.summary && (
-              <div style={{
-                padding: '24px',
-                background: config.lightColor,
-                borderRadius: '16px',
-                border: `2px solid ${config.color}30`,
-                marginBottom: '24px'
-              }}>
-                <p style={{ 
-                  fontSize: '16px', 
-                  color: '#334155',
-                  margin: 0,
-                  lineHeight: 1.6,
-                  fontWeight: '500'
-                }}>
-                  {result.summary.length > 150 ? result.summary.substring(0, 150) + '...' : result.summary}
-                </p>
-              </div>
-            )}
-
-            {/* Key Signals Count */}
-            {result.signals && result.signals.length > 0 && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '16px 24px',
-                background: '#f8fafc',
-                borderRadius: '12px',
-                border: '2px solid #e2e8f0'
-              }}>
-                <span style={{ fontSize: '24px' }}>🔍</span>
-                <span style={{
-                  fontSize: '15px',
-                  color: '#475569',
-                  fontWeight: '600'
-                }}>
-                  {result.signals.length} detection signal{result.signals.length !== 1 ? 's' : ''} analyzed
-                </span>
-              </div>
-            )}
-          </div>
+          )}
 
           {/* Footer */}
           <div style={{
-            marginTop: '32px',
             paddingTop: '24px',
-            borderTop: '2px solid #e2e8f0',
+            borderTop: '1px solid rgba(255, 255, 255, 0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between'
@@ -283,31 +259,10 @@ export default function ShareCard({ result, cardRef }) {
             <div style={{ 
               fontSize: '13px', 
               color: '#94a3b8',
-              lineHeight: 1.5,
-              maxWidth: '55%'
+              lineHeight: 1.4,
+              fontWeight: '500'
             }}>
-              ⚡ Results may not be perfect. Always verify from multiple sources.
-            </div>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-end',
-              gap: '6px'
-            }}>
-              <div style={{
-                fontSize: '16px',
-                fontWeight: '700',
-                color: '#6366f1'
-              }}>
-                isthis.io
-              </div>
-              <div style={{
-                fontSize: '12px',
-                color: '#94a3b8',
-                fontWeight: '500'
-              }}>
-                Free A.I. Detection Tool
-              </div>
+              Free A.I. Detection • isthis.io
             </div>
           </div>
         </div>
