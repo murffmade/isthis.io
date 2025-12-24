@@ -231,7 +231,7 @@ Return the article in HTML format with proper heading tags (h1, h2, h3) matching
                     onTitleGenerated(option);
                     setTitleOptions([]);
                   }}
-                  className="w-full text-left p-3 text-sm border border-slate-200 rounded-lg hover:border-indigo-600 hover:bg-indigo-50 transition-colors"
+                  className="w-full text-left p-3 text-sm border border-slate-200 rounded-lg hover:border-indigo-600 hover:bg-indigo-50 transition-colors text-slate-900"
                 >
                   {option}
                 </button>
