@@ -563,10 +563,147 @@ Provide a thorough but accessible analysis.`,
         console.warn('Forensics API failed:', err);
       }
 
-      // Step 4: State-of-the-art AI detection with fine-grained model classification
+      // Step 4: Pre-classify image type (photo vs art/illustration)
+      const classificationResult = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are an image classifier. Determine if this image is:
+      1. PHOTO: A photograph taken with a camera (could be edited, but originated as a photo)
+      2. ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
+
+      Consider:
+      - EXIF metadata: ${exifData ? 'EXIF present - likely photo' : 'NO EXIF - check visual style'}
+      - Visual style: photorealistic lighting/textures vs artistic/stylized rendering
+      - Content: Real-world scenes/objects vs creative/stylized artwork
+
+      Return ONLY "photo" or "illustration"`,
+        file_urls: [uploadedFile],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            image_type: { type: "string", enum: ["photo", "illustration"] },
+            confidence: { type: "number" },
+            reasoning: { type: "string" }
+          },
+          required: ["image_type", "confidence", "reasoning"]
+        }
+      });
+
+      const isPhoto = classificationResult.image_type === "photo";
+
+      // Step 5: Apply specialized analysis model based on image type
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
+
+      const photoAnalysisPrompt = `SPECIALIZED PHOTO ANALYSIS - CAMERA-NATIVE DETECTION
+
+      You are analyzing a PHOTOGRAPH (camera-captured image). Your focus is detecting:
+      1. AI-generated photorealistic images (GANs, Diffusion models in photo mode)
+      2. Deepfakes and face swaps
+      3. AI enhancements on real photos (inpainting, upscaling, generative fill)
+      4. Traditional Photoshop editing
+
+      PHOTO-SPECIFIC DETECTION:
+
+      A) CAMERA AUTHENTICITY MARKERS:
+      - EXIF metadata: ${exifData ? 'Present - verify authenticity' : 'MISSING - major red flag'}
+      - Lens artifacts: chromatic aberration, vignetting, distortion
+      - Sensor noise patterns (especially shadows/highlights)
+      - Natural motion blur from shutter speed
+      - Depth of field with real aperture bokeh
+      - Real-world imperfections: dust, scratches, sensor spots
+
+      B) AI PHOTO GENERATION DETECTION (High Priority):
+      - GAN artifacts: Checkerboard patterns in FFT analysis, spectral anomalies
+      - Diffusion tells: Boundary halos, over-smoothed micro-details, latent space artifacts
+      - Synthetic textures: Skin too smooth, lacking pore variation
+      - Impossible anatomy: Extra fingers, merged limbs, wrong proportions
+      - Lighting violations: Shadows don't match light sources
+      - Material physics errors: Incorrect reflections, wrong surface properties
+
+      C) DEEPFAKE DETECTION:
+      - Face boundary mismatches: Color/texture discontinuity at edges
+      - Identity leakage: Mixed facial features
+      - Unnatural blinking patterns or lack thereof
+      - Lip-sync issues in video frames
+      - Eye gaze inconsistencies with scene context
+
+      D) PHOTOSHOP EDITING:
+      - Clone stamp repetitions: Identical pixel patterns
+      - Layer compositing: Lighting/perspective mismatches between elements
+      - Selection artifacts: Jagged edges, unnatural boundaries
+      - Frequency separation: Overly smooth skin
+
+      METADATA: ${exifData ? JSON.stringify(exifData) : 'NONE'}
+      FORENSICS: ${forensicsData ? JSON.stringify(forensicsData) : 'N/A'}
+
+      Analyze all patches and provide detailed technical assessment.`;
+
+      const illustrationAnalysisPrompt = `SPECIALIZED ILLUSTRATION/ART ANALYSIS - AI ART DETECTION
+
+      You are analyzing DIGITAL ART/ILLUSTRATION. Your focus is detecting:
+      1. AI-generated art (DALL-E, Midjourney, Stable Diffusion, etc.)
+      2. Traditional digital art (Photoshop, Procreate, hand-drawn)
+      3. Hybrid AI-assisted art
+
+      ART-SPECIFIC DETECTION:
+
+      A) AI ART GENERATION SIGNATURES:
+
+      DALL-E 3 Detection:
+      - Vector-like edges in raster images
+      - "Rendered" CGI-like smoothness
+      - Perfect bilateral symmetry (no natural asymmetry)
+      - Backgrounds fade to uniform gradients
+      - Text rendering with subtle character distortions
+      - Mathematically perfect lighting without randomness
+      - NO authentic medium artifacts (canvas, paper grain, brush pressure)
+
+      Midjourney Detection:
+      - Hyper-detailed textures with algorithmic consistency
+      - "Cinematic" lighting violating physics
+      - Uncanny valley perfection in faces
+      - Dreamy bokeh with unnatural chromatic separation
+      - Golden ratio composition optimization
+      - Recognizable aesthetic clusters
+
+      Stable Diffusion Detection:
+      - 8x8 or 16x16 grid patterns in detail areas
+      - VAE compression artifacts: color banding, posterization
+      - Fine detail blur vs sharp macro details
+      - Background incoherence: perspective/scale errors
+      - Repetitive textures from latent space
+
+      B) HUMAN ART INDICATORS:
+      - Visible layer construction if unflattened
+      - Brush pressure variation (Wacom artifacts)
+      - Human errors: crooked lines, color outside lines
+      - Style inconsistency (artist fatigue)
+      - Sketch layers or construction lines
+      - Canvas texture or paper grain
+      - Authentic artist signatures
+      - Tool-specific patterns (Procreate, Photoshop brushes)
+
+      C) CRITICAL AI ART TELLS:
+      - NO metadata (AI never generates EXIF)
+      - Too-perfect consistency across entire image
+      - Uniform style that never varies
+      - Diffusion model "smoothness" - mathematically perfect gradients
+      - Impossible style fusion (e.g., Van Gogh + photorealism)
+      - Backgrounds less detailed than subjects
+      - "AI coherence" - everything fits TOO well
+
+      D) HYBRID DETECTION:
+      - Partial quality inconsistency
+      - AI-filled areas with different noise
+      - Style shifts between regions
+
+      METADATA: ${exifData ? 'Present (unusual for art)' : 'NONE (expected for AI art)'}
+      NO EXIF + Art Style + Perfect Consistency = 85%+ likely AI
+
+      Analyze all patches focusing on artistic style consistency and AI generation patterns.`;
+
       const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `STATE-OF-THE-ART AI DETECTION WITH FINE-GRAINED MODEL CLASSIFICATION
+        prompt: isPhoto ? photoAnalysisPrompt : illustrationAnalysisPrompt + `
+
+      STATE-OF-THE-ART AI DETECTION WITH FINE-GRAINED MODEL CLASSIFICATION
 
       You are an advanced ensemble AI detection system combining multiple state-of-the-art techniques:
       - Deep forensic analysis for subtle manipulation artifacts
@@ -1173,8 +1310,11 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
         editing_indicators: editingIndicators
       };
 
-      // Step 6: Save to database
+      // Step 6: Save to database with classification info
       const record = await base44.entities.AnalysisRecord.create({
+        classification: classificationResult.image_type,
+        classification_confidence: classificationResult.confidence,
+        classification_reasoning: classificationResult.reasoning,
         content_type: 'image',
         source_url: urlInput || null,
         platform: 'direct_upload',
