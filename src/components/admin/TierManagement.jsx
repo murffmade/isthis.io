@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Award, TrendingUp, Users } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -37,7 +37,7 @@ export default function TierManagement() {
     }
   });
 
-  const influencersByTier = React.useMemo(() => {
+  const influencersByTier = useMemo(() => {
     return Object.keys(TIER_CONFIG).reduce((acc, tier) => {
       acc[tier] = influencers.filter(i => i.current_tier === tier);
       return acc;

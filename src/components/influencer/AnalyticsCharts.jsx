@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, Calendar, DollarSign } from 'lucide-react';
@@ -12,7 +12,7 @@ export default function AnalyticsCharts({ clicks }) {
   const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
   
   // Generate daily data
-  const dailyData = React.useMemo(() => {
+  const dailyData = useMemo(() => {
     const data = [];
     const now = new Date();
     
@@ -40,7 +40,7 @@ export default function AnalyticsCharts({ clicks }) {
   }, [clicks, days]);
 
   // Conversion by type
-  const conversionData = React.useMemo(() => {
+  const conversionData = useMemo(() => {
     const converted = clicks.filter(c => c.converted);
     
     // Group by conversion value ranges
@@ -65,7 +65,7 @@ export default function AnalyticsCharts({ clicks }) {
   }, [clicks]);
 
   // Top performing days
-  const topDays = React.useMemo(() => {
+  const topDays = useMemo(() => {
     return [...dailyData]
       .sort((a, b) => b.earnings - a.earnings)
       .slice(0, 5);
