@@ -966,26 +966,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 </div>
               </div>
 
-              {/* Social Proof */}
-              <div className="text-center mb-12 sm:mb-16">
-                <div className="inline-flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-slate-600">
-                  <div>
-                    <div className="text-xl sm:text-2xl font-bold text-slate-900">95%+</div>
-                    <div>Accuracy</div>
-                  </div>
-                  <div className="h-6 sm:h-8 w-px bg-slate-300"></div>
-                  <div>
-                    <div className="text-xl sm:text-2xl font-bold text-slate-900">10K+</div>
-                    <div>Verifications</div>
-                  </div>
-                  <div className="h-6 sm:h-8 w-px bg-slate-300"></div>
-                  <div>
-                    <div className="text-xl sm:text-2xl font-bold text-slate-900">Free</div>
-                    <div>Forever</div>
-                  </div>
-                </div>
-              </div>
-
               {/* Pricing */}
               <section className="py-8 sm:py-16 border-t border-slate-200">
                 <div className="text-center mb-8 sm:mb-12 px-4">
