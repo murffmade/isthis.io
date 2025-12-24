@@ -600,15 +600,36 @@ Provide a thorough but accessible analysis.`,
       3. AI enhancements on real photos (inpainting, upscaling, generative fill)
       4. Traditional Photoshop editing
 
+      CRITICAL: CAMERA METADATA EVALUATION (MANDATORY FOR PHOTOS)
+
+      EXIF STATUS: ${exifData ? 'PRESENT' : 'MISSING - CRITICAL RED FLAG'}
+      ${exifData ? `
+      Camera: ${exifData.Make || 'Unknown'} ${exifData.Model || 'Unknown'}
+      Lens: ${exifData.LensModel || 'Unknown'}
+      Settings: ISO ${exifData.ISO || 'N/A'}, f/${exifData.FNumber || 'N/A'}, ${exifData.ExposureTime || 'N/A'}s
+      Date: ${exifData.DateTime || 'Unknown'}
+      GPS: ${exifData.GPSLatitude ? 'Present' : 'None'}
+      Software: ${exifData.Software || 'None'}
+      ` : `
+      ⚠️ NO EXIF DATA DETECTED
+      For authentic camera photos, this is EXTREMELY SUSPICIOUS.
+      - Real cameras ALWAYS embed EXIF (even smartphones)
+      - AI generators NEVER produce EXIF data
+      - MISSING EXIF + Photo Style = 70-85% baseline likelihood of AI generation
+
+      You MUST find STRONG visual evidence of camera authenticity to override this.
+      Required evidence: sensor noise, lens artifacts, motion blur, real-world imperfections.
+      `}
+
       PHOTO-SPECIFIC DETECTION:
 
-      A) CAMERA AUTHENTICITY MARKERS:
-      - EXIF metadata: ${exifData ? 'Present - verify authenticity' : 'MISSING - major red flag'}
+      A) CAMERA AUTHENTICITY MARKERS (Critical for Photos):
       - Lens artifacts: chromatic aberration, vignetting, distortion
       - Sensor noise patterns (especially shadows/highlights)
       - Natural motion blur from shutter speed
       - Depth of field with real aperture bokeh
       - Real-world imperfections: dust, scratches, sensor spots
+      - Compression artifacts from JPEG encoding
 
       B) AI PHOTO GENERATION DETECTION (High Priority):
       - GAN artifacts: Checkerboard patterns in FFT analysis, spectral anomalies
@@ -631,10 +652,16 @@ Provide a thorough but accessible analysis.`,
       - Selection artifacts: Jagged edges, unnatural boundaries
       - Frequency separation: Overly smooth skin
 
-      METADATA: ${exifData ? JSON.stringify(exifData) : 'NONE'}
       FORENSICS: ${forensicsData ? JSON.stringify(forensicsData) : 'N/A'}
 
-      Analyze all patches and provide detailed technical assessment.`;
+      SCORING RULES FOR PHOTOS:
+      - NO EXIF = Automatically add 25-30 points to AI likelihood score
+      - EXIF Present but suspicious (editing software, no camera info) = Add 10-15 points
+      - EXIF Present with full camera data = Subtract 10-15 points from AI likelihood
+
+      Your analysis MUST include an "exif_impact" field explaining how EXIF presence/absence affected the score.
+
+      Analyze all patches and provide detailed technical assessment with mandatory EXIF evaluation.`;
 
       const illustrationAnalysisPrompt = `SPECIALIZED ILLUSTRATION/ART ANALYSIS - AI ART DETECTION
 
@@ -1141,6 +1168,15 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
         response_json_schema: {
          type: "object",
          properties: {
+           exif_impact: {
+             type: "object",
+             properties: {
+               exif_present: { type: "boolean" },
+               score_adjustment: { type: "number" },
+               reasoning: { type: "string" }
+             },
+             description: "How EXIF metadata affected the analysis score"
+           },
            classification: { 
              type: "string",
              enum: ["camera_native", "traditionally_edited", "ai_generated", "hybrid", "ai_assisted_art"]
