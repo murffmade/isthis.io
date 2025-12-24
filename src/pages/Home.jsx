@@ -36,6 +36,9 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [classifying, setClassifying] = useState(false);
+  const [imageClassification, setImageClassification] = useState(null);
+  const [userConfirmedType, setUserConfirmedType] = useState(false);
 
   // Fetch lifetime offer settings
   const { data: lifetimeSettings } = useQuery({
@@ -105,10 +108,46 @@ export default function Home() {
         moderateVideo(file_url).catch(console.error);
       }
 
-      setTimeout(() => {
+      setTimeout(async () => {
         setUploadedFile(file_url);
         setUploading(false);
-        toast.success('File uploaded! Click "Verify Now" to analyze.');
+
+        // Pre-classify image type (photo vs drawing/illustration)
+        if (file.type.startsWith('image/')) {
+          setClassifying(true);
+          try {
+            const classification = await base44.integrations.Core.InvokeLLM({
+              prompt: `Analyze this image and determine if it is:
+      1. PHOTO: A photograph taken with a camera (could be edited, but originated as a photo)
+      2. DRAWING/ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
+
+      Consider:
+      - Visual style: photorealistic vs artistic/stylized
+      - Content: Real-world scenes vs creative/stylized artwork
+      - Technique: Camera capture vs hand-drawn/painted
+
+      Respond with just "photo" or "drawing".`,
+              file_urls: [file_url],
+              response_json_schema: {
+                type: "object",
+                properties: {
+                  type: { type: "string", enum: ["photo", "drawing"] },
+                  confidence: { type: "number" },
+                  reasoning: { type: "string" }
+                }
+              }
+            });
+
+            setImageClassification(classification);
+            setUserConfirmedType(false);
+          } catch (error) {
+            console.error('Classification failed:', error);
+            setImageClassification({ type: 'photo', confidence: 50, reasoning: 'Could not classify' });
+          }
+          setClassifying(false);
+        } else {
+          toast.success('File uploaded! Click "Verify Now" to analyze.');
+        }
       }, 300);
     } catch (error) {
       setUploading(false);
@@ -563,8 +602,8 @@ Provide a thorough but accessible analysis.`,
         console.warn('Forensics API failed:', err);
       }
 
-      // Step 4: Pre-classify image type (photo vs art/illustration)
-      const classificationResult = await base44.integrations.Core.InvokeLLM({
+      // Step 4: Use pre-classification or re-classify
+      const classificationResult = imageClassification || await base44.integrations.Core.InvokeLLM({
         prompt: `You are an image classifier. Determine if this image is:
       1. PHOTO: A photograph taken with a camera (could be edited, but originated as a photo)
       2. ILLUSTRATION: Digital art, painting, drawing, or illustration (created digitally or traditionally)
@@ -587,7 +626,7 @@ Provide a thorough but accessible analysis.`,
         }
       });
 
-      const isPhoto = classificationResult.image_type === "photo";
+      const isPhoto = classificationResult.type === "photo" || classificationResult.image_type === "photo";
 
       // Step 5: Apply specialized analysis model based on image type
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
@@ -1425,6 +1464,8 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
     setUploadedFile(null);
     setUploadedFileObj(null);
     setUrlInput('');
+    setImageClassification(null);
+    setUserConfirmedType(false);
   };
 
   const handlePaymentSuccess = () => {
@@ -1581,9 +1622,63 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     />
                   </div>
 
+                  {/* Image Type Classification UI */}
+                  {imageClassification && !userConfirmedType && (
+                    <div className="mb-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="text-2xl">🤖</div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-900 mb-1">We detected this as:</p>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="px-3 py-1 bg-blue-600 text-white font-bold rounded-full text-sm">
+                              {imageClassification.type === 'photo' ? '📷 Photo' : '🎨 Drawing/Illustration'}
+                            </span>
+                            <span className="text-xs text-slate-600">
+                              {imageClassification.confidence}% confident
+                            </span>
+                          </div>
+                          <p className="text-sm text-slate-600">{imageClassification.reasoning}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold text-slate-700">Is this correct?</p>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setUserConfirmedType(true)}
+                            className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors text-sm"
+                          >
+                            ✓ Yes, Continue
+                          </button>
+                          <button
+                            onClick={() => {
+                              setImageClassification({
+                                ...imageClassification,
+                                type: imageClassification.type === 'photo' ? 'drawing' : 'photo',
+                                confidence: 100,
+                                reasoning: 'User corrected the classification'
+                              });
+                              setUserConfirmedType(true);
+                            }}
+                            className="flex-1 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors text-sm"
+                          >
+                            ✗ No, it's a {imageClassification.type === 'photo' ? 'Drawing' : 'Photo'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {classifying && (
+                    <div className="mb-4 p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+                      <div className="w-6 h-6 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin mx-auto mb-2" />
+                      <p className="text-sm text-slate-600">Detecting image type...</p>
+                    </div>
+                  )}
+
                   <button
                     onClick={handleAnalyze}
-                    disabled={analyzing || (!uploadedFile && !urlInput)}
+                    disabled={analyzing || (!uploadedFile && !urlInput) || (imageClassification && !userConfirmedType)}
                     className="w-full py-4 sm:py-5 bg-[#3498DB] hover:bg-[#2980b9] active:scale-[0.98] text-white font-bold rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-base sm:text-lg touch-manipulation shadow-lg shadow-[#3498DB]/30 button-shine"
                     data-tour="verify-button"
                   >
@@ -1595,7 +1690,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     ) : (
                       <>
                         <Zap className="w-5 h-5" />
-                        Verify Now - Free
+                        {imageClassification && !userConfirmedType ? 'Confirm Type First' : 'Verify Now - Free'}
                       </>
                     )}
                   </button>
