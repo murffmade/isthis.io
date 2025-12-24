@@ -1100,8 +1100,16 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
             <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
               <span className="text-2xl">❓</span>
               <div>
-                <div className="font-bold text-slate-700 mb-1">Uncertain (38-57)</div>
-                <p className="text-sm text-slate-600">Mixed or insufficient evidence. Could be heavily edited real content, artistic styling, or high-quality A.I. generation.</p>
+                <div className="font-bold text-slate-700 mb-1">Uncertain (38-42)</div>
+                <p className="text-sm text-slate-600">Insufficient evidence to make a confident determination. Requires additional context.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100">
+              <span className="text-2xl">🤔</span>
+              <div>
+                <div className="font-bold text-orange-800 mb-1">Possibly A.I. (43-57)</div>
+                <p className="text-sm text-orange-700">Some A.I. indicators present but not conclusive. Could be heavily edited real content or high-quality A.I. generation.</p>
               </div>
             </div>
 
@@ -1204,34 +1212,62 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                     </div>
                   </div>
                 )}
-                {result.score > 37 && result.score < 58 && (
+                {result.score >= 38 && result.score <= 42 && (
                   <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                     <p className="font-semibold text-slate-900 mb-3">❓ Why this score is uncertain:</p>
                     <div className="space-y-2 text-sm">
-                      <p>Our analysis found conflicting evidence - some indicators suggesting authenticity, others suggesting A.I. generation.</p>
+                      <p>Our analysis found insufficient evidence to make a confident determination in either direction.</p>
                       <div className="bg-white p-3 rounded mt-3">
-                        <p className="font-semibold text-slate-700 mb-2">This uncertainty could mean:</p>
+                        <p className="font-semibold text-slate-700 mb-2">This could indicate:</p>
                         <ul className="space-y-1 ml-4">
                           <li className="flex items-start gap-2">
                             <span className="text-slate-600 mt-1">•</span>
-                            <span>Real {result.content_type} with heavy editing or artistic filters applied</span>
+                            <span>Limited analyzable content or low resolution</span>
                           </li>
                           <li className="flex items-start gap-2">
                             <span className="text-slate-600 mt-1">•</span>
-                            <span>Professional photography with extensive post-processing</span>
+                            <span>Equal mix of authentic and suspicious indicators</span>
                           </li>
                           <li className="flex items-start gap-2">
                             <span className="text-slate-600 mt-1">•</span>
-                            <span>Very high-quality A.I. generation that's hard to detect</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-slate-600 mt-1">•</span>
-                            <span>Hybrid content (real {result.content_type} with A.I. enhancements)</span>
+                            <span>Content that doesn't fit typical patterns</span>
                           </li>
                         </ul>
                       </div>
                       <p className="mt-3 text-slate-700">
                         <strong>What this means:</strong> We cannot make a confident determination. Consider the source and context of this {result.content_type} when evaluating its authenticity.
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {result.score >= 43 && result.score <= 57 && (
+                  <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                    <p className="font-semibold text-orange-900 mb-3">🤔 Why this suggests possible A.I. generation:</p>
+                    <div className="space-y-2 text-sm">
+                      <p>Our analysis found some indicators suggesting A.I. generation, but they're not strong enough for a confident classification.</p>
+                      <div className="bg-white p-3 rounded mt-3">
+                        <p className="font-semibold text-slate-700 mb-2">This middle-ground score could mean:</p>
+                        <ul className="space-y-1 ml-4">
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-600 mt-1">•</span>
+                            <span>High-quality A.I. generation that closely mimics real content</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-600 mt-1">•</span>
+                            <span>Real {result.content_type} with heavy editing or artistic filters applied</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-600 mt-1">•</span>
+                            <span>Hybrid content (real {result.content_type} with A.I. enhancements)</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-600 mt-1">•</span>
+                            <span>Professional post-processing that creates A.I.-like patterns</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <p className="mt-3 text-orange-800">
+                        <strong>What this means:</strong> There's a reasonable chance this is A.I.-generated, but we recommend caution. Verify the source and look for additional context before drawing conclusions.
                       </p>
                     </div>
                   </div>
