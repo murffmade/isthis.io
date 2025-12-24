@@ -173,11 +173,11 @@ export default function OnboardingTour({ onComplete }) {
               transform: step.position === 'bottom' ? 'translateX(-50%)' : 'translate(-50%, -100%)'
             } : {}}
           >
-            <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md border-2 border-indigo-200">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md border-2 border-[#3498DB]">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-indigo-600" />
+                  <Sparkles className="w-5 h-5 text-[#3498DB]" />
                   <h3 className="text-lg font-bold text-slate-900">{step.title}</h3>
                 </div>
                 <button
@@ -202,7 +202,7 @@ export default function OnboardingTour({ onComplete }) {
                       key={i}
                       className={`h-1.5 rounded-full transition-all ${
                         i === currentStep 
-                          ? 'w-8 bg-indigo-600' 
+                          ? 'w-8 bg-[#3498DB]' 
                           : 'w-1.5 bg-slate-200'
                       }`}
                     />
@@ -224,7 +224,7 @@ export default function OnboardingTour({ onComplete }) {
                   <Button
                     onClick={handleNext}
                     size="sm"
-                    className="bg-indigo-600 hover:bg-indigo-700 gap-1"
+                    className="bg-[#3498DB] hover:bg-[#2980b9] gap-1"
                   >
                     {currentStep === steps.length - 1 ? 'Get Started' : 'Next'}
                     {currentStep < steps.length - 1 && <ChevronRight className="w-4 h-4" />}
