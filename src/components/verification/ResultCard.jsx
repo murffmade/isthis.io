@@ -711,100 +711,135 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
 
       </div>
 
-      {/* Camera & EXIF Metadata Section */}
-      {result.exif_summary && (() => {
-        try {
-          const exifData = JSON.parse(result.exif_summary);
-          const hasCameraInfo = exifData.Make || exifData.Model;
-          
-          if (!hasCameraInfo) return null;
-          
-          return (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-              <h3 className="font-semibold text-slate-800 mb-3 text-lg">📷 Camera Information</h3>
-              <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-emerald-50 border-2 border-emerald-200">
-                  <div className="flex items-start gap-3">
-                    <div className="text-2xl">✓</div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-emerald-900 mb-2">Camera Data Found</p>
-                      <p className="text-sm text-emerald-800 mb-3">
-                        This image contains technical information automatically saved by a camera or phone. This is a strong indicator of authenticity because A.I. generators typically don't include camera data.
-                      </p>
-                      <div className="space-y-2 text-sm">
-                        {exifData.Make && (
-                          <div className="flex gap-2">
-                            <span className="font-semibold text-emerald-900 min-w-24">Camera Brand:</span>
-                            <span className="text-emerald-800">{exifData.Make}</span>
+      {/* Camera & EXIF Metadata Section - ALWAYS SHOW FOR PHOTOS */}
+      {(() => {
+        // Check if this is a photo (not video, not illustration)
+        const isPhoto = result.content_type === 'image' && 
+                       result.classification !== 'illustration';
+        
+        // Only show camera section for photos
+        if (!isPhoto) return null;
+
+        // Check if we have EXIF data
+        if (result.exif_summary) {
+          try {
+            const exifData = JSON.parse(result.exif_summary);
+            const hasCameraInfo = exifData.Make || exifData.Model;
+            
+            return (
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+                <h3 className="font-semibold text-slate-800 mb-3 text-lg">📷 Camera Information</h3>
+                <div className="space-y-4">
+                  <div className={`p-4 rounded-xl ${hasCameraInfo ? 'bg-emerald-50 border-2 border-emerald-200' : 'bg-amber-50 border-2 border-amber-200'}`}>
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">{hasCameraInfo ? '✓' : '⚠️'}</div>
+                      <div className="flex-1">
+                        <p className={`font-semibold mb-2 ${hasCameraInfo ? 'text-emerald-900' : 'text-amber-900'}`}>
+                          {hasCameraInfo ? 'Camera Data Found' : 'Limited Camera Data'}
+                        </p>
+                        <p className={`text-sm mb-3 ${hasCameraInfo ? 'text-emerald-800' : 'text-amber-800'}`}>
+                          {hasCameraInfo 
+                            ? 'This image contains technical information automatically saved by a camera or phone. This is a strong indicator of authenticity because A.I. generators typically don\'t include camera data.'
+                            : 'Some metadata exists but no camera model information. This could indicate editing software or A.I. generation.'
+                          }
+                        </p>
+                        {hasCameraInfo && (
+                          <div className="space-y-2 text-sm">
+                            {exifData.Make && (
+                              <div className="flex gap-2">
+                                <span className="font-semibold text-emerald-900 min-w-24">Camera Brand:</span>
+                                <span className="text-emerald-800">{exifData.Make}</span>
+                              </div>
+                            )}
+                            {exifData.Model && (
+                              <div className="flex gap-2">
+                                <span className="font-semibold text-emerald-900 min-w-24">Camera Model:</span>
+                                <span className="text-emerald-800">{exifData.Model}</span>
+                              </div>
+                            )}
+                            {exifData.DateTime && (
+                              <div className="flex gap-2">
+                                <span className="font-semibold text-emerald-900 min-w-24">Date Taken:</span>
+                                <span className="text-emerald-800">{exifData.DateTime}</span>
+                              </div>
+                            )}
+                            {exifData.ISO && (
+                              <div className="flex gap-2">
+                                <span className="font-semibold text-emerald-900 min-w-24">ISO:</span>
+                                <span className="text-emerald-800">{exifData.ISO}</span>
+                              </div>
+                            )}
+                            {exifData.FNumber && (
+                              <div className="flex gap-2">
+                                <span className="font-semibold text-emerald-900 min-w-24">Aperture:</span>
+                                <span className="text-emerald-800">f/{exifData.FNumber}</span>
+                              </div>
+                            )}
+                            {exifData.ExposureTime && (
+                              <div className="flex gap-2">
+                                <span className="font-semibold text-emerald-900 min-w-24">Shutter Speed:</span>
+                                <span className="text-emerald-800">{exifData.ExposureTime}s</span>
+                              </div>
+                            )}
                           </div>
                         )}
-                        {exifData.Model && (
-                          <div className="flex gap-2">
-                            <span className="font-semibold text-emerald-900 min-w-24">Camera Model:</span>
-                            <span className="text-emerald-800">{exifData.Model}</span>
-                          </div>
-                        )}
-                        {exifData.DateTime && (
-                          <div className="flex gap-2">
-                            <span className="font-semibold text-emerald-900 min-w-24">Date Taken:</span>
-                            <span className="text-emerald-800">{exifData.DateTime}</span>
-                          </div>
-                        )}
-                        {exifData.ISO && (
-                          <div className="flex gap-2">
-                            <span className="font-semibold text-emerald-900 min-w-24">ISO:</span>
-                            <span className="text-emerald-800">{exifData.ISO}</span>
-                          </div>
-                        )}
-                        {exifData.FNumber && (
-                          <div className="flex gap-2">
-                            <span className="font-semibold text-emerald-900 min-w-24">Aperture:</span>
-                            <span className="text-emerald-800">f/{exifData.FNumber}</span>
-                          </div>
-                        )}
-                        {exifData.ExposureTime && (
-                          <div className="flex gap-2">
-                            <span className="font-semibold text-emerald-900 min-w-24">Shutter Speed:</span>
-                            <span className="text-emerald-800">{exifData.ExposureTime}s</span>
+                        {exifData.Software && (
+                          <div className="mt-3 pt-3 border-t border-slate-200">
+                            <div className="flex gap-2 text-sm">
+                              <span className="font-semibold text-slate-700">Editing Software:</span>
+                              <span className="text-slate-600">{exifData.Software}</span>
+                            </div>
                           </div>
                         )}
                       </div>
                     </div>
                   </div>
+
+                  {/* EXIF Impact Display */}
+                  {result.exif_impact && (
+                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                      <div className="text-xs font-semibold text-slate-700 mb-1">
+                        Score Impact: {result.exif_impact.score_adjustment > 0 ? '+' : ''}{result.exif_impact.score_adjustment} points
+                      </div>
+                      <p className="text-xs text-slate-600">{result.exif_impact.reasoning}</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          );
-        } catch (e) {
-          return null;
+            );
+          } catch (e) {
+            // Failed to parse EXIF, show as missing
+          }
         }
-      })()}
-
-      {!result.exif_summary && result.result === 'likely_ai' && (() => {
-        // Only show EXIF warning if this appears to be photorealistic content, not illustrations/art
-        const isArtistic = result.content_origin_confidence?.ai_generated > 70 && 
-                          result.signals?.some(s => 
-                            s.signal_type?.toLowerCase().includes('artistic') || 
-                            s.signal_type?.toLowerCase().includes('illustration') ||
-                            s.signal_type?.toLowerCase().includes('painted') ||
-                            s.description?.toLowerCase().includes('art style') ||
-                            s.description?.toLowerCase().includes('illustration')
-                          );
         
-        // Don't show EXIF warning for clearly artistic/illustration content
-        if (isArtistic) return null;
-        
+        // No EXIF data - CRITICAL for photos
         return (
           <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
             <h3 className="font-semibold text-slate-800 mb-3 text-lg">📷 Camera Information</h3>
-            <div className="p-4 rounded-xl bg-amber-50 border-2 border-amber-200">
+            <div className="p-4 rounded-xl bg-red-50 border-2 border-red-200">
               <div className="flex items-start gap-3">
-                <div className="text-2xl">⚠️</div>
+                <div className="text-2xl">❌</div>
                 <div className="flex-1">
-                  <p className="font-semibold text-amber-900 mb-2">No Camera Data Found</p>
-                  <p className="text-sm text-amber-800">
-                    This image doesn't contain any camera information. Real photos taken with cameras or phones automatically save technical details like camera model, date, and settings. The absence of this data is common in A.I.-generated images, though it can also happen with screenshots or edited photos.
+                  <p className="font-semibold text-red-900 mb-2">No Camera Data Found</p>
+                  <p className="text-sm text-red-800 mb-2">
+                    This image contains <strong>zero camera metadata</strong>. Real photos from cameras and phones <strong>always</strong> embed technical information like camera model, date, and settings.
                   </p>
+                  <div className="bg-white p-3 rounded-lg mt-3">
+                    <p className="text-sm text-red-900 font-semibold mb-2">⚠️ This is a major red flag:</p>
+                    <ul className="space-y-1 text-xs text-red-800">
+                      <li>• A.I. generators never produce camera metadata</li>
+                      <li>• Authentic photos typically have EXIF unless deliberately stripped</li>
+                      <li>• Missing metadata significantly increases A.I. likelihood score</li>
+                    </ul>
+                  </div>
+                  {result.exif_impact && (
+                    <div className="mt-3 p-2 bg-red-100 rounded">
+                      <div className="text-xs font-semibold text-red-900 mb-1">
+                        Score Impact: +{result.exif_impact.score_adjustment} points (toward A.I.)
+                      </div>
+                      <p className="text-xs text-red-800">{result.exif_impact.reasoning}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
