@@ -40,6 +40,15 @@ export default function Home() {
   const [imageClassification, setImageClassification] = useState(null);
   const [userConfirmedType, setUserConfirmedType] = useState(false);
 
+  // Fetch current user
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me().catch(() => null)
+  });
+
+  const isAdmin = currentUser?.role === 'admin';
+  const isTrainer = currentUser?.role === 'trainer';
+
   // Fetch lifetime offer settings
   const { data: lifetimeSettings } = useQuery({
     queryKey: ['lifetimeSettings'],
@@ -1515,6 +1524,84 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
 
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-16 pb-safe">
+        {/* Admin/Trainer Quick Access - At Top */}
+        {(isAdmin || isTrainer) && !result && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border-2 border-indigo-200 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-lg">
+                    {isAdmin ? 'Admin Dashboard' : 'Trainer Dashboard'}
+                  </h3>
+                  <p className="text-sm text-slate-600">Quick access to your tools</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {isAdmin && (
+                  <>
+                    <Link
+                      to={createPageUrl('Admin')}
+                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                    >
+                      <div className="text-2xl mb-2">⚙️</div>
+                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
+                        Admin Panel
+                      </div>
+                    </Link>
+                    <Link
+                      to={createPageUrl('TrainerDashboard')}
+                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                    >
+                      <div className="text-2xl mb-2">🎓</div>
+                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
+                        Training Dashboard
+                      </div>
+                    </Link>
+                    <Link
+                      to={createPageUrl('FeedbackQueue')}
+                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                    >
+                      <div className="text-2xl mb-2">📋</div>
+                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
+                        Feedback Queue
+                      </div>
+                    </Link>
+                  </>
+                )}
+                {isTrainer && !isAdmin && (
+                  <>
+                    <Link
+                      to={createPageUrl('TrainerDashboard')}
+                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                    >
+                      <div className="text-2xl mb-2">🎓</div>
+                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
+                        Training Dashboard
+                      </div>
+                    </Link>
+                    <Link
+                      to={createPageUrl('FeedbackQueue')}
+                      className="p-4 bg-white rounded-xl border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+                    >
+                      <div className="text-2xl mb-2">📋</div>
+                      <div className="font-semibold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
+                        My Assignments
+                      </div>
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         <AnimatePresence mode="wait">
           {analyzing ? (
             <motion.div
