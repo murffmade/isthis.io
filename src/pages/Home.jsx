@@ -1400,10 +1400,10 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
       // Step 5: Enhanced ensemble scoring with provenance and editing detection
       const llmScore = deriveLlmScoreFromPatchVotes(analysisResult.patch_votes);
 
-      // Enhanced provenance scoring
+      // Enhanced provenance scoring - ONLY FOR PHOTOS, NOT ILLUSTRATIONS
       let provenanceScore = null;
-      if (exifData) {
-        // More sophisticated EXIF evaluation
+      if (isPhoto && exifData) {
+        // More sophisticated EXIF evaluation (only relevant for photos)
         const hasCameraInfo = exifData.Make || exifData.Model;
         const hasGPS = exifData.GPSLatitude || exifData.GPSLongitude;
         const hasTimestamp = exifData.DateTime || exifData.DateTimeOriginal;
@@ -1419,7 +1419,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
       const ensemble = ensembleDecision({
         llm: llmScore,
         forensics: forensicsData,
-        provenance: provenanceScore,
+        provenance: isPhoto ? provenanceScore : null, // Only use provenance for photos
         editingIndicators: editingIndicators
       });
 
