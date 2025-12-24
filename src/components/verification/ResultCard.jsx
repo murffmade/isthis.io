@@ -226,6 +226,87 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
         </div>
       )}
 
+      {/* Advanced Detection Results */}
+      {result.content_origin_confidence && (
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-4 text-lg">🔬 Content Origin Analysis</h3>
+          
+          <div className="space-y-3 mb-4">
+            {Object.entries(result.content_origin_confidence).map(([type, confidence]) => {
+              const labels = {
+                camera_native: '📷 Camera Native',
+                traditionally_edited: '✂️ Traditionally Edited',
+                ai_generated: '🤖 AI Generated',
+                hybrid: '🔀 Hybrid (Real + AI)'
+              };
+              
+              const colors = {
+                camera_native: 'bg-emerald-500',
+                traditionally_edited: 'bg-blue-500',
+                ai_generated: 'bg-red-500',
+                hybrid: 'bg-amber-500'
+              };
+              
+              return (
+                <div key={type}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-slate-700">{labels[type]}</span>
+                    <span className="text-sm font-bold text-slate-900">{confidence}%</span>
+                  </div>
+                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full ${colors[type]} transition-all`}
+                      style={{ width: `${confidence}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {result.origin_reasoning && (
+            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <p className="text-sm text-slate-700 leading-relaxed">{result.origin_reasoning}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Photoshop Artifacts Detection */}
+      {result.photoshop_artifacts && result.photoshop_artifacts.length > 0 && (
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-4 text-lg flex items-center gap-2">
+            <span>✂️</span> Traditional Editing Detected
+          </h3>
+          
+          <div className="space-y-3">
+            {result.photoshop_artifacts.map((artifact, idx) => (
+              <div key={idx} className="p-4 bg-white rounded-xl border border-blue-200">
+                <div className="flex items-start gap-3">
+                  <div className="flex-1">
+                    <div className="font-semibold text-slate-900 mb-1">{artifact.artifact_type}</div>
+                    {artifact.location && (
+                      <div className="text-xs text-slate-600 mb-2">📍 {artifact.location}</div>
+                    )}
+                    <p className="text-sm text-slate-700">{artifact.description}</p>
+                  </div>
+                  <div className="text-sm font-bold text-blue-600">
+                    {artifact.confidence}%
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 p-3 bg-blue-100 border border-blue-300 rounded-lg">
+            <p className="text-sm text-blue-900">
+              <strong>Note:</strong> These artifacts suggest traditional photo editing software (Photoshop, GIMP) 
+              was used, not AI generation. Edited photos can still be authentic images that were enhanced or composited.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Video-specific info */}
       {result.content_type === 'video' && result.forensics && (
         <div className="space-y-4 mb-6">
@@ -714,6 +795,17 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
             <div className="space-y-3">
               {result.signals.map((signal, index) => {
                 const context = getSignalContext(signal.signal_type, signal.description, result.result === 'likely_ai');
+                
+                // Determine icon based on artifact category
+                const categoryIcons = {
+                  photoshop: '✂️',
+                  ai_generation: '🤖',
+                  hybrid: '🔀',
+                  camera_artifact: '📷',
+                  compression: '🗜️'
+                };
+                const icon = signal.artifact_category ? categoryIcons[signal.artifact_category] : '🔍';
+                
                 return (
                   <motion.div
                     key={index}
@@ -722,18 +814,39 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
                     transition={{ delay: index * 0.1 }}
                     className="p-4 rounded-xl bg-slate-50 border border-slate-200"
                   >
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      <span className="text-xl">{icon}</span>
                       <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${severityColors[signal.severity]}`}>
                         {signal.severity}
                       </span>
                       <span className="text-base font-bold text-slate-800">{signal.signal_type}</span>
+                      {signal.detection_confidence && (
+                        <span className="text-xs text-slate-500 ml-auto">
+                          {signal.detection_confidence}% confident
+                        </span>
+                      )}
                     </div>
                     <p className="text-base text-slate-700 leading-relaxed mb-3">{signal.description}</p>
                     {context && (
-                      <div className="pt-3 border-t border-slate-200">
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          <span className="font-semibold text-slate-700">Why this matters:</span> {context}
-                        </p>
+                      <div className="pt-3 border-t border-slate-200 space-y-3">
+                        <div>
+                          <p className="text-sm text-slate-600 leading-relaxed">
+                            <span className="font-semibold text-slate-700">🔍 Quick explanation:</span> {context.simple}
+                          </p>
+                        </div>
+                        {context.detailed && (
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-sm text-slate-600 leading-relaxed">
+                              <span className="font-semibold text-slate-700">📚 Detailed breakdown:</span> {context.detailed}
+                            </p>
+                          </div>
+                        )}
+                        {context.weight && (
+                          <div className="flex items-start gap-2 text-xs text-slate-500">
+                            <span className="font-semibold">⚖️ Reliability:</span>
+                            <span>{context.weight}</span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </motion.div>

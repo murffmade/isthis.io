@@ -73,7 +73,7 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
   };
 }
 
-export function ensembleDecision({ llm, forensics, provenance }) {
+export function ensembleDecision({ llm, forensics, provenance, editingIndicators }) {
   // Adaptive weighting based on signal availability and strength
   let weights = {
     llm: 0.7,        // Primary signal

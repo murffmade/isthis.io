@@ -444,7 +444,11 @@ Provide a thorough but accessible analysis.`,
                     signal_type: { type: "string" },
                     description: { type: "string" },
                     severity: { type: "string", enum: ["low", "medium", "high"] },
-                    detection_confidence: { type: "number" }
+                    detection_confidence: { type: "number" },
+                    artifact_category: {
+                      type: "string",
+                      enum: ["photoshop", "ai_generation", "hybrid", "camera_artifact", "compression"]
+                    }
                   }
                 }
               },
@@ -472,14 +476,36 @@ Provide a thorough but accessible analysis.`,
         return;
         }
 
-      // Enhanced image analysis with patches + forensics + EXIF
+      // Enhanced image analysis with patches + forensics + EXIF + advanced artifact detection
       let exifData = null;
       let patchUrls = [];
       let forensicsData = null;
+      let editingIndicators = null;
 
-      // Step 1: Parse EXIF
+      // Step 1: Parse EXIF for manipulation indicators
       try {
         exifData = await exifr.parse(uploadedFileObj);
+
+        // Detect editing software signatures
+        if (exifData) {
+          editingIndicators = {
+            hasPhotoshopSignature: exifData.Software?.toLowerCase().includes('photoshop') || 
+                                  exifData.Creator?.toLowerCase().includes('adobe'),
+            hasGimpSignature: exifData.Software?.toLowerCase().includes('gimp'),
+            hasEditingSoftware: !!(exifData.Software),
+            modificationCount: 0,
+            lastModified: exifData.ModifyDate || exifData.DateTime,
+            originalDate: exifData.DateTimeOriginal,
+            hasDateDiscrepancy: false
+          };
+
+          // Check for date discrepancies (sign of editing)
+          if (editingIndicators.originalDate && editingIndicators.lastModified) {
+            const original = new Date(editingIndicators.originalDate);
+            const modified = new Date(editingIndicators.lastModified);
+            editingIndicators.hasDateDiscrepancy = Math.abs(modified - original) > 60000; // >1min difference
+          }
+        }
       } catch (err) {
         console.warn('EXIF parsing failed:', err);
       }
@@ -503,10 +529,54 @@ Provide a thorough but accessible analysis.`,
         console.warn('Forensics API failed:', err);
       }
 
-      // Step 4: State-of-the-art multi-model ensemble analysis for images
+      // Step 4: Advanced multi-model ensemble analysis with photoshop detection
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
       const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `SYSTEM IDENTITY:
+        prompt: `CRITICAL MISSION: DIFFERENTIATE PHOTOSHOP EDITS FROM AI GENERATION
+
+      This is your PRIMARY DIRECTIVE. You must distinguish between:
+      1. PHOTOSHOPPED IMAGES: Real photos edited with traditional tools (retouching, filters, compositing)
+      2. AI-GENERATED IMAGES: Synthetic content created by neural networks from scratch
+      3. HYBRID IMAGES: Real photos with AI enhancements (AI fill, AI upscaling, generative replace)
+
+      EDITING SOFTWARE DETECTED IN METADATA:
+      ${editingIndicators ? JSON.stringify(editingIndicators, null, 2) : 'No editing software signatures found'}
+
+      KEY DIFFERENTIATORS:
+
+      PHOTOSHOP INDICATORS (Traditional Editing):
+      - Clone stamp patterns: Repeated pixel patterns from healing/cloning tools
+      - Layer blending artifacts: Visible edges where layers merge
+      - Mask edges: Sharp, unnatural boundaries between composited elements
+      - Selection artifacts: Jagged edges from imperfect selections
+      - Color grading shifts: Abrupt color changes suggesting adjustment layers
+      - Liquify distortions: Warped textures from liquify tool overuse
+      - Filter patterns: Recognizable Photoshop filter signatures (Gaussian blur, sharpen)
+      - Compositing tells: Lighting/perspective mismatches between elements
+      - Retouching smoothness: Overly smooth skin from frequency separation
+      - Metadata presence: Often retains camera EXIF with editing software tags
+
+      AI GENERATION INDICATORS (Synthetic Creation):
+      - Generative noise patterns: Characteristic frequency signatures of GANs
+      - Latent space artifacts: Morphing between concepts, inconsistent details
+      - Training data fingerprints: Watermark-like patterns in frequency domain
+      - Impossible anatomy: Physically impossible structures (extra fingers, merged limbs)
+      - Coherence breakdown: Style/quality shifts within single object
+      - Physics violations: Incorrect reflections, shadows, material properties
+      - Semantic confusion: Objects that don't make logical sense
+      - Text generation failure: Garbled text/numbers
+      - Boundary halos: Bright/dark rings from diffusion models
+      - Perfect symmetry: Overly symmetric faces (no natural asymmetry)
+      - Metadata absence: Usually no camera EXIF data
+
+      HYBRID INDICATORS (Real + AI Enhancement):
+      - Partial EXIF data: Camera data present but incomplete
+      - Quality inconsistency: High-res AI-generated areas next to camera sensor noise
+      - Inpainting tells: AI-filled areas with different noise characteristics
+      - Upscaling artifacts: AI super-resolution with characteristic smoothing
+      - Generative fill seams: Boundary between real and AI-generated content
+
+      SYSTEM IDENTITY:
       You are the Advanced AI Detection Engine v4.0 - a multi-model ensemble system combining state-of-the-art detection techniques.
 
       ENSEMBLE ARCHITECTURE:
@@ -589,16 +659,56 @@ For EVERY signal you detect, provide:
 Example: Don't say "unnatural smoothing detected" 
 Say: "Skin shows uniform Gaussian blur (σ≈8px) across pore-scale details. GAN Fingerprint Detector (conf: 87%) and Neural Rendering Detector (conf: 82%) both flag this because real skin has non-uniform micro-texture from pores, fine lines, and subsurface scattering. Authentic photos show detail variation even in professional retouching."
 
-ANALYSIS FRAMEWORK:
+ADVANCED DETECTION FRAMEWORK:
 
-1. IMAGE TYPE CLASSIFICATION (crucial context):
+STEP 0: DETERMINE IMAGE ORIGIN (MOST CRITICAL)
+   For EACH patch, classify as one of:
+   - "camera_native": Taken directly by camera, minimal/no editing (confidence: 0-100)
+   - "traditionally_edited": Real photo edited with Photoshop/GIMP (confidence: 0-100)
+   - "ai_generated": Fully synthetic from AI model (confidence: 0-100)
+   - "hybrid": Real photo with AI enhancements (confidence: 0-100)
+
+   Provide reasoning for each classification based on specific artifacts observed.
+
+STEP 1. IMAGE TYPE CLASSIFICATION (crucial context):
    - Personal/Phone Photo: Look for natural wear, realistic interactions, authentic moments
    - Professional/Editorial: Assess lighting physics, material realism, compositional authenticity
    - Product/Commercial: Check for physical consistency, material properties, realistic shadows
    - Wildlife/Nature: Evaluate animal anatomy, natural behavior, environmental coherence
    - Portrait/Studio: Analyze skin texture, hair detail, clothing physics, eye authenticity
 
-2. PRIMARY AUTHENTICITY MARKERS (for REAL images):
+STEP 2. PHOTOSHOP-SPECIFIC DETECTION:
+   A) Clone Stamp & Healing Brush Detection:
+   - Look for repeated pixel patterns that indicate cloning
+   - Identical texture patches in different locations
+   - Unnatural repetition in "random" areas (clouds, grass, skin texture)
+
+   B) Layer Compositing Analysis:
+   - Lighting direction consistency across elements
+   - Shadow coherence (do all shadows point same direction?)
+   - Perspective alignment (do all elements share vanishing points?)
+   - Color temperature consistency (warm/cool lighting matches?)
+   - Edge quality (are boundaries too sharp or have visible halos?)
+
+   C) Selection & Mask Artifacts:
+   - Jagged or pixelated edges on subjects
+   - Unnatural hardness of boundaries
+   - Background elements that appear "cut out"
+   - Fringing or chromatic aberration only on edges
+
+   D) Retouching Detection:
+   - Overly smooth skin with unnatural texture loss
+   - Frequency separation artifacts (separate detail/color layers)
+   - Patch tool repetitions
+   - Symmetrical blur patterns
+
+   E) Filter Identification:
+   - Recognizable Photoshop filter patterns
+   - Consistent blur radius across unrelated areas
+   - Artificial sharpening halos
+   - Noise reduction that's too uniform
+
+STEP 3. PRIMARY AUTHENTICITY MARKERS (for CAMERA-NATIVE images):
    - EXIF metadata presence and consistency (usually 90-95% confidence if present)
    - Natural image compression artifacts (JPEG blocking, sensor noise) (80-90% confidence)
    - Realistic lens distortion and chromatic aberration (85-92% confidence)
@@ -609,7 +719,7 @@ ANALYSIS FRAMEWORK:
    - Material entropy (fabric texture, surface irregularities) (82-91% confidence)
    - Natural color grading and tone mapping (70-85% confidence)
 
-3. ADVANCED AI GENERATION INDICATORS:
+STEP 4. ADVANCED AI GENERATION INDICATORS (vs Traditional Editing):
 
    A) GAN Artifacts (Fingerprint Detector):
    - Checkerboard patterns in frequency domain (90-98% confidence)
@@ -641,7 +751,14 @@ ANALYSIS FRAMEWORK:
    - Gravity-defying hair/clothing (78-88% confidence)
    - Material properties violations (matte surface with specular highlight) (80-87% confidence)
 
-4. MULTI-REGION PATCH ANALYSIS:
+STEP 5. HYBRID CONTENT DETECTION:
+   - Identify areas that appear camera-native vs AI-generated
+   - Look for seams between real and synthetic content
+   - Detect AI inpainting (filling in areas with generated content)
+   - Check for AI upscaling (neural network super-resolution)
+   - Analyze noise patterns: camera sensor noise vs AI noise
+
+STEP 6. MULTI-REGION PATCH ANALYSIS:
    The first image is the FULL image.
    The remaining ${patchUrls.length} images are PATCHES from different regions.
    
@@ -655,7 +772,7 @@ ANALYSIS FRAMEWORK:
    - Provide low confidence (<50%) only when genuinely ambiguous
    - ASSIGN detection_confidence to EACH signal found in the patch
 
-5. METADATA CONTEXT:
+STEP 7. METADATA FORENSICS:
    EXIF Data: ${exifData ? JSON.stringify(exifData, null, 2) : 'None (WARNING: absence suggests screenshot/AI, but not conclusive)'}
    Forensics Data: ${forensicsData ? JSON.stringify(forensicsData, null, 2) : 'Not available'}
 
@@ -679,16 +796,46 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
         response_json_schema: {
           type: "object",
           properties: {
-            classification: { type: "string" },
+            classification: { 
+              type: "string",
+              enum: ["camera_native", "traditionally_edited", "ai_generated", "hybrid"]
+            },
+            content_origin_confidence: {
+              type: "object",
+              properties: {
+                camera_native: { type: "number" },
+                traditionally_edited: { type: "number" },
+                ai_generated: { type: "number" },
+                hybrid: { type: "number" }
+              }
+            },
+            origin_reasoning: { type: "string" },
+            photoshop_artifacts: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  artifact_type: { type: "string" },
+                  location: { type: "string" },
+                  description: { type: "string" },
+                  confidence: { type: "number" }
+                }
+              }
+            },
             patch_votes: {
               type: "array",
               items: {
                 type: "object",
                 properties: {
                   patch_id: { type: "string" },
+                  origin_classification: { 
+                    type: "string",
+                    enum: ["camera_native", "traditionally_edited", "ai_generated", "hybrid"]
+                  },
                   vote: { type: "string", enum: ["likely_real", "likely_ai", "uncertain"] },
                   confidence: { type: "number" },
                   reasoning: { type: "string" },
+                  detected_editing_type: { type: "string" },
                   signals: {
                     type: "array",
                     items: {
@@ -728,9 +875,9 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
         }
       });
 
-      // Step 5: Enhanced ensemble scoring with provenance
+      // Step 5: Enhanced ensemble scoring with provenance and editing detection
       const llmScore = deriveLlmScoreFromPatchVotes(analysisResult.patch_votes);
-      
+
       // Enhanced provenance scoring
       let provenanceScore = null;
       if (exifData) {
@@ -738,28 +885,33 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
         const hasCameraInfo = exifData.Make || exifData.Model;
         const hasGPS = exifData.GPSLatitude || exifData.GPSLongitude;
         const hasTimestamp = exifData.DateTime || exifData.DateTimeOriginal;
-        
+
         let score = 25; // Base score for EXIF presence
         if (hasCameraInfo) score -= 10; // Camera info suggests real
         if (hasGPS) score -= 5;
         if (hasTimestamp) score -= 5;
-        
+
         provenanceScore = { score: Math.max(5, score) }; // 5-25 range (lower = more real)
       }
-      
+
       const ensemble = ensembleDecision({
         llm: llmScore,
         forensics: forensicsData,
-        provenance: provenanceScore
+        provenance: provenanceScore,
+        editingIndicators: editingIndicators
       });
 
-      // Override with ensemble decision
+      // Override with ensemble decision and include all advanced analysis
       const finalResult = {
         ...analysisResult,
         result: ensemble.result,
         confidence: ensemble.confidence,
         score: ensemble.score,
-        patch_votes: analysisResult.patch_votes
+        patch_votes: analysisResult.patch_votes,
+        content_origin_confidence: analysisResult.content_origin_confidence,
+        origin_reasoning: analysisResult.origin_reasoning,
+        photoshop_artifacts: analysisResult.photoshop_artifacts || [],
+        editing_indicators: editingIndicators
       };
 
       // Step 6: Save to database
