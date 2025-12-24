@@ -712,78 +712,73 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       </div>
 
       {/* Camera & EXIF Metadata Section */}
-      {result.exif_summary && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-          <h3 className="font-semibold text-slate-800 mb-3 text-lg">📷 Camera Information</h3>
-          <div className="space-y-4">
-            {(() => {
-              try {
-                const exifData = JSON.parse(result.exif_summary);
-                const hasCameraInfo = exifData.Make || exifData.Model;
-
-                if (hasCameraInfo) {
-                  return (
-                    <>
-                      <div className="p-4 rounded-xl bg-emerald-50 border-2 border-emerald-200">
-                        <div className="flex items-start gap-3">
-                          <div className="text-2xl">✓</div>
-                          <div className="flex-1">
-                            <p className="font-semibold text-emerald-900 mb-2">Camera Data Found</p>
-                            <p className="text-sm text-emerald-800 mb-3">
-                              This image contains technical information automatically saved by a camera or phone. This is a strong indicator of authenticity because A.I. generators typically don't include camera data.
-                            </p>
-                            <div className="space-y-2 text-sm">
-                              {exifData.Make && (
-                                <div className="flex gap-2">
-                                  <span className="font-semibold text-emerald-900 min-w-24">Camera Brand:</span>
-                                  <span className="text-emerald-800">{exifData.Make}</span>
-                                </div>
-                              )}
-                              {exifData.Model && (
-                                <div className="flex gap-2">
-                                  <span className="font-semibold text-emerald-900 min-w-24">Camera Model:</span>
-                                  <span className="text-emerald-800">{exifData.Model}</span>
-                                </div>
-                              )}
-                              {exifData.DateTime && (
-                                <div className="flex gap-2">
-                                  <span className="font-semibold text-emerald-900 min-w-24">Date Taken:</span>
-                                  <span className="text-emerald-800">{exifData.DateTime}</span>
-                                </div>
-                              )}
-                              {exifData.ISO && (
-                                <div className="flex gap-2">
-                                  <span className="font-semibold text-emerald-900 min-w-24">ISO:</span>
-                                  <span className="text-emerald-800">{exifData.ISO}</span>
-                                </div>
-                              )}
-                              {exifData.FNumber && (
-                                <div className="flex gap-2">
-                                  <span className="font-semibold text-emerald-900 min-w-24">Aperture:</span>
-                                  <span className="text-emerald-800">f/{exifData.FNumber}</span>
-                                </div>
-                              )}
-                              {exifData.ExposureTime && (
-                                <div className="flex gap-2">
-                                  <span className="font-semibold text-emerald-900 min-w-24">Shutter Speed:</span>
-                                  <span className="text-emerald-800">{exifData.ExposureTime}s</span>
-                                </div>
-                              )}
-                            </div>
+      {result.exif_summary && (() => {
+        try {
+          const exifData = JSON.parse(result.exif_summary);
+          const hasCameraInfo = exifData.Make || exifData.Model;
+          
+          if (!hasCameraInfo) return null;
+          
+          return (
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+              <h3 className="font-semibold text-slate-800 mb-3 text-lg">📷 Camera Information</h3>
+              <div className="space-y-4">
+                <div className="p-4 rounded-xl bg-emerald-50 border-2 border-emerald-200">
+                  <div className="flex items-start gap-3">
+                    <div className="text-2xl">✓</div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-emerald-900 mb-2">Camera Data Found</p>
+                      <p className="text-sm text-emerald-800 mb-3">
+                        This image contains technical information automatically saved by a camera or phone. This is a strong indicator of authenticity because A.I. generators typically don't include camera data.
+                      </p>
+                      <div className="space-y-2 text-sm">
+                        {exifData.Make && (
+                          <div className="flex gap-2">
+                            <span className="font-semibold text-emerald-900 min-w-24">Camera Brand:</span>
+                            <span className="text-emerald-800">{exifData.Make}</span>
                           </div>
-                        </div>
+                        )}
+                        {exifData.Model && (
+                          <div className="flex gap-2">
+                            <span className="font-semibold text-emerald-900 min-w-24">Camera Model:</span>
+                            <span className="text-emerald-800">{exifData.Model}</span>
+                          </div>
+                        )}
+                        {exifData.DateTime && (
+                          <div className="flex gap-2">
+                            <span className="font-semibold text-emerald-900 min-w-24">Date Taken:</span>
+                            <span className="text-emerald-800">{exifData.DateTime}</span>
+                          </div>
+                        )}
+                        {exifData.ISO && (
+                          <div className="flex gap-2">
+                            <span className="font-semibold text-emerald-900 min-w-24">ISO:</span>
+                            <span className="text-emerald-800">{exifData.ISO}</span>
+                          </div>
+                        )}
+                        {exifData.FNumber && (
+                          <div className="flex gap-2">
+                            <span className="font-semibold text-emerald-900 min-w-24">Aperture:</span>
+                            <span className="text-emerald-800">f/{exifData.FNumber}</span>
+                          </div>
+                        )}
+                        {exifData.ExposureTime && (
+                          <div className="flex gap-2">
+                            <span className="font-semibold text-emerald-900 min-w-24">Shutter Speed:</span>
+                            <span className="text-emerald-800">{exifData.ExposureTime}s</span>
+                          </div>
+                        )}
                       </div>
-                    </>
-                  );
-                }
-              } catch (e) {
-                // Failed to parse EXIF
-              }
-              return null;
-            })()}
-          </div>
-        </div>
-      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        } catch (e) {
+          return null;
+        }
+      })()}
 
       {!result.exif_summary && result.result === 'likely_ai' && (() => {
         // Only show EXIF warning if this appears to be photorealistic content, not illustrations/art
