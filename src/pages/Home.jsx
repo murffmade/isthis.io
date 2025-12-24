@@ -1714,7 +1714,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       to={createPageUrl('Admin')}
                       className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-lg mb-1">⚙️</div>
                       <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
                         Admin
                       </div>
@@ -1723,7 +1722,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       to={createPageUrl('TrainerDashboard')}
                       className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-lg mb-1">🎓</div>
                       <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
                         Training
                       </div>
@@ -1732,7 +1730,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       to={createPageUrl('FeedbackQueue')}
                       className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-lg mb-1">📋</div>
                       <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
                         Feedback
                       </div>
@@ -1745,7 +1742,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       to={createPageUrl('TrainerDashboard')}
                       className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-lg mb-1">🎓</div>
                       <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
                         Training
                       </div>
@@ -1754,7 +1750,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       to={createPageUrl('FeedbackQueue')}
                       className="p-2 bg-white rounded-lg border border-indigo-200 hover:border-indigo-400 hover:shadow transition-all group text-center"
                     >
-                      <div className="text-lg mb-1">📋</div>
                       <div className="font-semibold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
                         Assignments
                       </div>
