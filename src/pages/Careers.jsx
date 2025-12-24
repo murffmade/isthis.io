@@ -8,25 +8,11 @@ import BottomNav from '@/components/mobile/BottomNav';
 export default function Careers() {
   const openings = [
     {
-      title: 'Senior AI/ML Engineer',
-      department: 'Engineering',
+      title: 'A.I. Trainer',
+      department: 'Training',
       location: 'Remote',
-      type: 'Full-time',
-      description: 'Build and improve our AI detection models. Work with cutting-edge ML technologies.'
-    },
-    {
-      title: 'Full Stack Developer',
-      department: 'Engineering',
-      location: 'Remote',
-      type: 'Full-time',
-      description: 'Develop features for our web platform. React, Node.js, and cloud infrastructure experience.'
-    },
-    {
-      title: 'Product Designer',
-      department: 'Design',
-      location: 'Remote',
-      type: 'Full-time',
-      description: 'Shape the user experience. Make complex AI insights simple and beautiful.'
+      type: 'Contract / Part-time',
+      description: 'Help improve our A.I. detection models by labeling content, identifying artifacts, and providing expert feedback on analysis results.'
     }
   ];
 
@@ -161,15 +147,25 @@ export default function Careers() {
             ))}
           </div>
 
-          <div className="mt-12 text-center">
-            <p className="text-slate-600 mb-4">Don't see the right position?</p>
+          {/* General Application */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-12 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 p-8 text-center"
+          >
+            <h4 className="text-xl font-semibold text-slate-900 mb-3">General Application</h4>
+            <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
+              Don't see a specific role that fits? We're always looking for talented people. 
+              Send us your resume and tell us how you'd like to contribute to our mission.
+            </p>
             <Button
               onClick={() => window.location.href = createPageUrl('Contact')}
-              variant="outline"
+              className="bg-slate-900 hover:bg-slate-800"
             >
-              Send us your resume anyway
+              Submit General Application
             </Button>
-          </div>
+          </motion.div>
         </div>
       </section>
 
