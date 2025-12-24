@@ -16,6 +16,7 @@ import BottomNav from '@/components/mobile/BottomNav';
 import SplashScreen from '@/components/mobile/SplashScreen';
 import AnalysisChecklist from '@/components/verification/AnalysisChecklist';
 import { sendNotification } from '@/components/notifications/PushNotifications';
+import AppIcon from '@/components/shared/AppIcon';
 import { generatePatchesFromFile } from '@/components/utils/imagePatches';
 import { analyzeForensics } from '@/components/utils/forensicsApi';
 import { deriveLlmScoreFromPatchVotes, ensembleDecision } from '@/components/utils/ensembleScore';
@@ -814,9 +815,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               onClick={handleStartOver}
               className="flex items-center gap-2 sm:gap-3 active:scale-95 transition-transform"
             >
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              </div>
+              <AppIcon size="md" />
               <div>
                 <h1 className="text-base sm:text-lg font-bold text-slate-800 leading-tight">IsThis.io</h1>
                 <p className="text-xs text-slate-500 hidden sm:block">Is This Real?</p>
