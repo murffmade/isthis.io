@@ -106,9 +106,19 @@ export default function Home() {
               })
             );
 
-            // Enhanced frame-by-frame and deepfake analysis
+            // State-of-the-art multi-model ensemble analysis for video
             const frameAnalysis = await base44.integrations.Core.InvokeLLM({
-              prompt: `You are an ADVANCED VIDEO DEEPFAKE & AI DETECTION SYSTEM analyzing a video for AI-generated content and deepfakes.
+              prompt: `You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM combining state-of-the-art detection techniques.
+
+            ENSEMBLE APPROACH:
+            You simulate multiple detection models working together:
+            1. Temporal Coherence Model - Analyzes frame-to-frame consistency
+            2. Facial Manipulation Detector - Specializes in deepfake facial artifacts
+            3. GAN Artifact Detector - Identifies generative AI patterns
+            4. Physics-Based Validator - Checks for violations of physical laws
+            5. Compression Analysis Model - Examines encoding patterns
+
+            Each model votes with confidence, and you synthesize their collective intelligence.
 
             VIDEO METADATA:
             - Total Frames Provided: ${frames.length}
@@ -136,31 +146,38 @@ export default function Home() {
         - Look for flickering in lighting, textures, or facial features
         - Check for temporal coherence in motion and physics
 
-        2. DEEPFAKE-SPECIFIC DETECTION:
-        Face & Head Analysis:
-        - Unnatural or absent blinking patterns (real humans blink 15-20 times/min)
-        - Facial feature misalignment between frames
-        - Head movements that don't match speech or body language
-        - Jaw movements inconsistent with audio/speech
-        - Skin tone shifts between frames
-        - Hair that appears "glued" or lacks natural movement
+        2. DEEPFAKE-SPECIFIC DETECTION (High Priority):
 
-        Background & Boundary Analysis:
-        - Distorted or warped backgrounds around the head/face
-        - Unnatural edge blending where face meets background
-        - Background elements that shift unnaturally when head moves
-        - Color bleeding or artifacts around face boundaries
+        A) Face Swap & Synthesis Detection:
+        - Identity Inconsistencies: Face identity changes subtly between frames
+        - Blend Line Detection: Visible seams where face meets head/neck
+        - Facial Hair Anomalies: Beard/mustache that doesn't match lighting or perspective
+        - Ear Morphology: Ears that don't match face age/ethnicity
+        - Face-to-Body Proportion: Head size inconsistent with body
 
-        Lighting & Shadows:
-        - Face lighting that doesn't match scene lighting
-        - Shadows that don't align with light sources
-        - Inconsistent lighting direction on face vs. environment
+        B) Expression & Movement Analysis:
+        - Micro-Expression Timing: Emotions that lag behind context (delayed smile)
+        - Blink Analysis: Frequency, duration, and bilateral symmetry of blinks
+        - Eye Gaze Coherence: Eyes looking at wrong focus point for scene
+        - Lip-Sync Precision: Mouth shapes that don't match phonemes
+        - Facial Action Units: Muscle movements that violate FACS (Facial Action Coding System)
 
-        Facial Expression & Movement:
-        - Micro-expressions that appear unnatural or delayed
-        - Facial features that don't move cohesively
-        - Eye gaze that doesn't track properly
-        - Teeth/mouth interior that looks artificial
+        C) Boundary & Integration Detection:
+        - Face Edge Artifacts: Unnatural softness or sharpness at face boundaries
+        - Color Space Mismatches: Face and neck in different color spaces
+        - Occlusion Handling: Hair/glasses that don't properly occlude face
+        - Perspective Violations: Face angle doesn't match head angle
+
+        D) Physiological Signals:
+        - Pulse Detection: Real faces show subtle color changes from pulse (photoplethysmography)
+        - Respiration Markers: Chest movement inconsistent with speech
+        - Sweat/Shine Patterns: Skin reflectance that's too uniform
+        - Vascular Visibility: Lack of natural blood vessel patterns
+
+        E) Generative AI Signatures:
+        - GAN Fingerprints: Checkerboard artifacts, spectral anomalies
+        - Diffusion Model Tells: Over-smoothed regions, boundary halos
+        - Neural Rendering Patterns: Inconsistent level of detail across face regions
 
         3. SCENE-BASED ANALYSIS:
         - Detect scene changes or cuts
@@ -181,14 +198,23 @@ export default function Home() {
         - Unnatural color grading shifts
         - Compression artifacts typical of AI synthesis
 
-        INSTRUCTIONS:
-        - Analyze EACH frame with the above framework
-        - For consecutive frames, explicitly compare and note any anomalies
-        - Provide confidence scores for each finding
-        - Classify as: "likely_real", "likely_deepfake", "likely_ai", or "uncertain"
-        - Calculate AI influence percentage and deepfake likelihood percentage separately
+        ADVANCED ANALYSIS INSTRUCTIONS:
+        - Apply ALL 5 ensemble models to EACH frame
+        - For consecutive frames, use temporal coherence model to detect inconsistencies
+        - Assign detection confidence (0-100) per signal based on model agreement
+        - Classify using weighted voting: "likely_real", "likely_deepfake", "likely_ai", or "uncertain"
+        - Calculate separate scores: AI Generation % and Deepfake Likelihood %
+        - Provide detailed explanation of WHY each signal was detected, not just WHAT
 
-        Return comprehensive frame-by-frame analysis with deepfake assessment.`,
+        EXPLANATION DEPTH REQUIREMENTS:
+        For each detected signal, explain:
+        1. What specific visual/temporal evidence was found
+        2. Why this evidence indicates manipulation (mechanism explanation)
+        3. Which detection model(s) flagged it
+        4. Confidence level and reasoning
+        5. How this compares to authentic content patterns
+
+        Return comprehensive multi-model ensemble analysis with detailed explanatory reasoning.`,
               file_urls: frameUrls.map(f => f.url),
               response_json_schema: {
                 type: "object",
@@ -461,11 +487,23 @@ Provide a thorough but accessible analysis.`,
         console.warn('Forensics API failed:', err);
       }
 
-      // Step 4: Enhanced LLM analysis with few-shot learning examples
+      // Step 4: State-of-the-art multi-model ensemble analysis for images
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
       const analysisResult = await base44.integrations.Core.InvokeLLM({
         prompt: `SYSTEM IDENTITY:
-You are the Advanced AI Detection Engine v3.0 for "Is This Real" - a critical infrastructure tool for identifying AI-generated imagery.
+      You are the Advanced AI Detection Engine v4.0 - a multi-model ensemble system combining state-of-the-art detection techniques.
+
+      ENSEMBLE ARCHITECTURE:
+      You simulate 6 specialized detection models working in parallel:
+      1. GAN Fingerprint Detector - Identifies generative adversarial network artifacts
+      2. Diffusion Model Analyzer - Detects stable diffusion and DALL-E patterns  
+      3. Neural Rendering Detector - Finds NeRF and 3D reconstruction artifacts
+      4. Deepfake Face Detector - Specializes in face swap and synthesis
+      5. Provenance Validator - Analyzes metadata and compression history
+      6. Physics Validator - Checks lighting, shadows, and material properties
+
+      Each model provides independent assessment with confidence score.
+      Final verdict uses weighted majority voting with uncertainty quantification.
 
 FEW-SHOT LEARNING EXAMPLES:
 
@@ -515,13 +553,25 @@ Signals Found:
 Classification: likely_ai, Confidence: 81%
 
 CRITICAL DIRECTIVE:
-Your PRIMARY OBJECTIVE is to make DECISIVE classifications. Learn from the examples above - each signal should have its own detection_confidence based on how clear that specific indicator is. Uncertainty should ONLY be used when evidence is genuinely contradictory or absent.
+Your PRIMARY OBJECTIVE is ACCURATE classification through ensemble voting with DETAILED explanations.
 
-KEY PHILOSOPHY:
-- Real photos have natural imperfections, wear, entropy, and camera artifacts
-- AI images tend toward perfection, uniformity, and lack of physical realism
-- Be CONFIDENT in your assessments when evidence supports them
-- EACH SIGNAL has varying reliability - assign detection_confidence accordingly
+ENSEMBLE METHODOLOGY:
+1. Each of the 6 models analyzes the content independently
+2. Models vote with confidence scores (0-100)
+3. Signals are weighted by model agreement and historical accuracy
+4. Final classification requires 60%+ weighted consensus
+5. Uncertainty only when models strongly disagree or evidence is contradictory
+
+EXPLANATION REQUIREMENTS:
+For EVERY signal you detect, provide:
+- Specific visual evidence (not generic descriptions)
+- Technical explanation of WHY this indicates AI/manipulation
+- Which detection model(s) flagged it and why
+- Comparison to how authentic content would appear
+- Confidence score with reasoning
+
+Example: Don't say "unnatural smoothing detected" 
+Say: "Skin shows uniform Gaussian blur (σ≈8px) across pore-scale details. GAN Fingerprint Detector (conf: 87%) and Neural Rendering Detector (conf: 82%) both flag this because real skin has non-uniform micro-texture from pores, fine lines, and subsurface scattering. Authentic photos show detail variation even in professional retouching."
 
 ANALYSIS FRAMEWORK:
 
@@ -543,17 +593,37 @@ ANALYSIS FRAMEWORK:
    - Material entropy (fabric texture, surface irregularities) (82-91% confidence)
    - Natural color grading and tone mapping (70-85% confidence)
 
-3. PRIMARY AI INDICATORS (for AI-GENERATED images):
-   - Overly perfect symmetry (especially faces) (85-95% confidence)
-   - Unnatural smoothness or plastic-like skin (88-94% confidence)
-   - Anatomical impossibilities (extra fingers, merged limbs) (95-99% confidence)
-   - Background incoherence or "melted" elements (82-92% confidence)
-   - Lighting that defies physics (multiple shadows, inconsistent) (80-91% confidence)
-   - Repetitive patterns or textures (78-88% confidence)
-   - Uncanny valley facial expressions (75-85% confidence)
-   - Impossible reflections or refractions (83-93% confidence)
-   - Text/signage with garbled letters (90-98% confidence)
-   - Floating or disconnected objects (85-94% confidence)
+3. ADVANCED AI GENERATION INDICATORS:
+
+   A) GAN Artifacts (Fingerprint Detector):
+   - Checkerboard patterns in frequency domain (90-98% confidence)
+   - Spectral anomalies at specific frequencies (85-93% confidence)
+   - Mode collapse indicators (repeated facial features) (88-95% confidence)
+   - Training data memorization (exact replication of known images) (95-99% confidence)
+
+   B) Diffusion Model Signatures (Diffusion Analyzer):
+   - Boundary halos (bright/dark rings around objects) (87-94% confidence)
+   - Over-smoothed micro-details with sharp macro-details (82-91% confidence)
+   - Latent space interpolation artifacts (morphing between concepts) (78-88% confidence)
+   - Prompt bleeding (mixed unrelated elements) (85-92% confidence)
+
+   C) Neural Rendering Tells (Neural Rendering Detector):
+   - View-dependent effects that violate perspective (80-90% confidence)
+   - Inconsistent level-of-detail across object (83-91% confidence)
+   - Volumetric rendering artifacts (75-85% confidence)
+   - Normal map inconsistencies (texture vs. geometry mismatch) (79-87% confidence)
+
+   D) Deepfake Face Indicators (Deepfake Detector):
+   - Face-boundary color space mismatch (88-96% confidence)
+   - Identity leakage (source face features bleeding through) (82-93% confidence)
+   - Temporal identity drift in videos (85-94% confidence)
+   - Expression-identity coupling violations (mouth moves, eyes don't match) (80-89% confidence)
+
+   E) Physical Impossibilities (Physics Validator):
+   - Lighting direction inconsistent with shadows (85-93% confidence)
+   - Impossible reflections in eyes/glasses (82-91% confidence)
+   - Gravity-defying hair/clothing (78-88% confidence)
+   - Material properties violations (matte surface with specular highlight) (80-87% confidence)
 
 4. MULTI-REGION PATCH ANALYSIS:
    The first image is the FULL image.
@@ -581,7 +651,14 @@ DECISION GUIDELINES:
 - Weight signals by their individual detection_confidence values
 
 OUTPUT REQUIREMENTS:
-Provide comprehensive patch voting with decisive classifications, justified confidence scores, and per-signal detection_confidence values.`,
+1. For EACH patch: all 6 models vote independently with reasoning
+2. Per-signal explanations must be technically detailed and specific
+3. Include which models agreed/disagreed and why
+4. Provide weighted ensemble confidence score
+5. Explain final classification with model voting breakdown
+6. For uncertain cases, explain the source of disagreement between models
+
+Remember: Generic descriptions are unacceptable. Every signal needs specific technical detail and multi-model analysis.`,
         file_urls: allImageUrls,
         response_json_schema: {
           type: "object",
