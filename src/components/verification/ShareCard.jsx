@@ -96,13 +96,13 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
         height: '100%',
         display: 'flex',
         flexDirection: hasImage ? 'row' : 'column',
-        padding: hasImage ? '50px' : '60px',
-        gap: hasImage ? '50px' : '0'
+        padding: hasImage ? '40px' : '60px',
+        gap: hasImage ? '40px' : '0'
       }}>
         {/* Left side: Image (if present) */}
         {hasImage && (
           <div style={{
-            flex: '0 0 450px',
+            flex: '0 0 520px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -110,10 +110,10 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
             <div style={{
               width: '100%',
               height: '100%',
-              maxHeight: '530px',
-              borderRadius: '24px',
+              maxHeight: '550px',
+              borderRadius: '20px',
               overflow: 'hidden',
-              boxShadow: `0 25px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08), 0 0 80px ${config.color}40`,
+              boxShadow: `0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1), 0 0 60px ${config.color}35`,
               position: 'relative'
             }}>
               <img 
@@ -144,8 +144,8 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          gap: hasImage ? '32px' : '48px',
-          paddingLeft: hasImage ? '20px' : '0'
+          gap: hasImage ? '28px' : '48px',
+          paddingLeft: hasImage ? '10px' : '0'
         }}>
           {/* Logo & Branding */}
           <div style={{ marginBottom: hasImage ? '0' : '20px' }}>
@@ -169,7 +169,7 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
               </div>
               <div>
                 <div style={{
-                  fontSize: hasImage ? '38px' : '52px',
+                  fontSize: hasImage ? '34px' : '52px',
                   fontWeight: '900',
                   background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
                   WebkitBackgroundClip: 'text',
@@ -181,7 +181,7 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
                   IsThis.io
                 </div>
                 <div style={{
-                  fontSize: hasImage ? '14px' : '18px',
+                  fontSize: hasImage ? '13px' : '18px',
                   color: '#94a3b8',
                   fontWeight: '600',
                   marginTop: '4px',
@@ -195,10 +195,10 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
 
           {/* Verdict Badge */}
           <div style={{
-            padding: hasImage ? '36px 42px' : '48px 56px',
+            padding: hasImage ? '32px 36px' : '48px 56px',
             background: config.bgGradient,
-            borderRadius: '24px',
-            boxShadow: `0 24px 48px ${config.color}50, 0 0 0 1px rgba(255,255,255,0.15)`,
+            borderRadius: '20px',
+            boxShadow: `0 20px 40px ${config.color}55, 0 0 0 1px rgba(255,255,255,0.15)`,
             position: 'relative',
             overflow: 'hidden'
           }}>
@@ -218,13 +218,13 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
                 marginBottom: '16px'
               }}>
                 <Icon style={{ 
-                  width: hasImage ? '48px' : '64px', 
-                  height: hasImage ? '48px' : '64px',
+                  width: hasImage ? '44px' : '64px', 
+                  height: hasImage ? '44px' : '64px',
                   color: 'white',
                   filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))'
                 }} />
                 <div style={{
-                  fontSize: hasImage ? '52px' : '68px',
+                  fontSize: hasImage ? '46px' : '68px',
                   fontWeight: '900',
                   color: 'white',
                   lineHeight: 1,
@@ -235,7 +235,7 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
                 </div>
               </div>
               <div style={{
-                fontSize: hasImage ? '24px' : '32px',
+                fontSize: hasImage ? '22px' : '32px',
                 color: 'rgba(255,255,255,0.95)',
                 fontWeight: '700',
                 letterSpacing: '-0.02em'
@@ -248,15 +248,15 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
           {/* Summary Box */}
           {result.summary && (
             <div style={{
-              padding: hasImage ? '24px 28px' : '32px 40px',
+              padding: hasImage ? '20px 24px' : '32px 40px',
               background: 'rgba(255, 255, 255, 0.06)',
-              borderRadius: '20px',
+              borderRadius: '16px',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               backdropFilter: 'blur(12px)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
             }}>
               <div style={{
-                fontSize: hasImage ? '16px' : '20px',
+                fontSize: hasImage ? '15px' : '20px',
                 color: 'rgba(255, 255, 255, 0.92)',
                 lineHeight: 1.5,
                 fontWeight: '500',
