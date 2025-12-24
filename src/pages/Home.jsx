@@ -1805,27 +1805,39 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                             { value: 'screenshot', label: 'Screenshot' },
                             { value: 'digital_art', label: 'Digital Art' },
                             { value: 'illustration', label: 'Illustration' }
-                          ].map((option) => (
-                            <button
-                              key={option.value}
-                              onClick={() => {
-                                const aiPrediction = imageClassification.originalPrediction || imageClassification.type;
-                                setImageClassification({
-                                  ...imageClassification,
-                                  type: option.value,
-                                  userCorrected: option.value !== aiPrediction,
-                                  originalPrediction: aiPrediction
-                                });
-                              }}
-                              className={`p-3 rounded-lg border-2 transition-all text-sm font-semibold ${
-                                imageClassification.type === option.value
-                                  ? 'border-blue-600 bg-blue-600 text-white shadow-md'
-                                  : 'border-slate-300 bg-white text-slate-700 hover:border-blue-300'
-                              }`}
-                            >
-                              {option.label}
-                            </button>
-                          ))}
+                          ].map((option) => {
+                            const aiPrediction = imageClassification.originalPrediction || imageClassification.type;
+                            const isAiPick = option.value === aiPrediction;
+                            const isSelected = imageClassification.type === option.value;
+
+                            return (
+                              <button
+                                key={option.value}
+                                onClick={() => {
+                                  setImageClassification({
+                                    ...imageClassification,
+                                    type: option.value,
+                                    userCorrected: option.value !== aiPrediction,
+                                    originalPrediction: aiPrediction
+                                  });
+                                }}
+                                className={`p-3 rounded-lg border-2 transition-all text-sm font-semibold relative ${
+                                  isSelected
+                                    ? 'border-blue-600 bg-blue-600 text-white shadow-md'
+                                    : 'border-slate-300 bg-white text-slate-700 hover:border-blue-300'
+                                }`}
+                              >
+                                {isAiPick && (
+                                  <span className={`absolute -top-2 -right-2 px-2 py-0.5 rounded-full text-xs font-bold ${
+                                    isSelected ? 'bg-emerald-500 text-white' : 'bg-blue-600 text-white'
+                                  }`}>
+                                    AI
+                                  </span>
+                                )}
+                                {option.label}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
 
