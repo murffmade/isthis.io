@@ -10,6 +10,81 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
+function AdminStats() {
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ['allUsers'],
+    queryFn: () => base44.entities.User.list()
+  });
+
+  const { data: subscriptions = [] } = useQuery({
+    queryKey: ['allSubscriptions'],
+    queryFn: () => base44.entities.Subscription.list()
+  });
+
+  const { data: analyses = [] } = useQuery({
+    queryKey: ['recentAnalyses'],
+    queryFn: () => base44.entities.AnalysisRecord.list('-created_date', 1000)
+  });
+
+  const totalUsers = allUsers.length;
+  const premiumUsers = subscriptions.filter(s => 
+    (s.plan === 'annual' || s.plan === 'lifetime') && s.status === 'active'
+  ).length;
+  const freeUsers = totalUsers - premiumUsers;
+  
+  const today = new Date().toDateString();
+  const activeToday = analyses.filter(a => 
+    new Date(a.created_date).toDateString() === today
+  ).length;
+
+  return (
+    <div className="lg:col-span-3 grid md:grid-cols-4 gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-xl border border-slate-200 p-6"
+      >
+        <Users className="w-8 h-8 text-slate-900 mb-3" />
+        <div className="text-2xl font-bold text-slate-900">{totalUsers}</div>
+        <div className="text-sm text-slate-600">Total Users</div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="bg-white rounded-xl border border-slate-200 p-6"
+      >
+        <CreditCard className="w-8 h-8 text-emerald-600 mb-3" />
+        <div className="text-2xl font-bold text-slate-900">{premiumUsers}</div>
+        <div className="text-sm text-slate-600">Premium Users</div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white rounded-xl border border-slate-200 p-6"
+      >
+        <Shield className="w-8 h-8 text-blue-600 mb-3" />
+        <div className="text-2xl font-bold text-slate-900">{freeUsers}</div>
+        <div className="text-sm text-slate-600">Free Users</div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="bg-white rounded-xl border border-slate-200 p-6"
+      >
+        <Settings className="w-8 h-8 text-purple-600 mb-3" />
+        <div className="text-2xl font-bold text-slate-900">{activeToday}</div>
+        <div className="text-sm text-slate-600">Analyses Today</div>
+      </motion.div>
+    </div>
+  );
+}
+
 function FeatureToggles() {
   const queryClient = useQueryClient();
 
@@ -317,50 +392,7 @@ export default function Admin() {
           </div>
 
           {/* Stats */}
-          <div className="lg:col-span-3 grid md:grid-cols-4 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl border border-slate-200 p-6"
-            >
-              <Users className="w-8 h-8 text-slate-900 mb-3" />
-              <div className="text-2xl font-bold text-slate-900">-</div>
-              <div className="text-sm text-slate-600">Total Users</div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white rounded-xl border border-slate-200 p-6"
-            >
-              <CreditCard className="w-8 h-8 text-emerald-600 mb-3" />
-              <div className="text-2xl font-bold text-slate-900">-</div>
-              <div className="text-sm text-slate-600">Premium Users</div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white rounded-xl border border-slate-200 p-6"
-            >
-              <Shield className="w-8 h-8 text-blue-600 mb-3" />
-              <div className="text-2xl font-bold text-slate-900">-</div>
-              <div className="text-sm text-slate-600">Free Users</div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white rounded-xl border border-slate-200 p-6"
-            >
-              <Settings className="w-8 h-8 text-purple-600 mb-3" />
-              <div className="text-2xl font-bold text-slate-900">-</div>
-              <div className="text-sm text-slate-600">Active Today</div>
-            </motion.div>
-          </div>
+          <AdminStats />
 
           {/* User Search */}
           <div className="lg:col-span-3">
