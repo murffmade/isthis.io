@@ -295,7 +295,7 @@ export default function Admin() {
     queryFn: async () => {
       if (!selectedUser) return null;
       const subs = await base44.entities.Subscription.filter({ 
-        created_by: selectedUser.email 
+        user_email: selectedUser.email 
       });
       return subs.length > 0 ? subs[0] : null;
     },
@@ -312,25 +312,28 @@ export default function Admin() {
         await base44.entities.Subscription.update(userSubscription.id, {
           plan,
           status,
-          expires_at: plan === 'lifetime' ? null : userSubscription.expires_at
+          expires_at: plan === 'lifetime' ? null : userSubscription.expires_at,
+          granted_by_admin: true
         });
       } else {
-        // Create new
+        // Create new admin-granted subscription
         const subData = {
+          user_email: selectedUser.email,
           plan,
           status,
-          expires_at: plan === 'lifetime' ? null : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+          expires_at: plan === 'lifetime' ? null : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+          granted_by_admin: true
         };
-        // Need to create as the user
         await base44.entities.Subscription.create(subData);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['subscription']);
-      toast.success('Subscription updated successfully');
+      queryClient.invalidateQueries(['allSubscriptions']);
+      toast.success('Lifetime premium granted successfully!');
     },
     onError: () => {
-      toast.error('Failed to update subscription');
+      toast.error('Failed to grant subscription');
     }
   });
 

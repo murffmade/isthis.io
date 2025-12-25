@@ -24,6 +24,7 @@ import HolidayGift from './pages/HolidayGift';
 import Home from './pages/Home';
 import InfluencerDashboard from './pages/InfluencerDashboard';
 import Learn from './pages/Learn';
+import LearnModule from './pages/LearnModule';
 import ModelPerformance from './pages/ModelPerformance';
 import MyGifts from './pages/MyGifts';
 import PaymentSuccess from './pages/PaymentSuccess';
@@ -35,7 +36,6 @@ import Support from './pages/Support';
 import TermsOfService from './pages/TermsOfService';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import LearnModule from './pages/LearnModule';
 import __Layout from './Layout.jsx';
 
 
@@ -66,6 +66,7 @@ export const PAGES = {
     "Home": Home,
     "InfluencerDashboard": InfluencerDashboard,
     "Learn": Learn,
+    "LearnModule": LearnModule,
     "ModelPerformance": ModelPerformance,
     "MyGifts": MyGifts,
     "PaymentSuccess": PaymentSuccess,
@@ -77,7 +78,6 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "LearnModule": LearnModule,
 }
 
 export const pagesConfig = {
