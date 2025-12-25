@@ -1,71 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, ChevronLeft, Sparkles } from 'lucide-react';
+import { ArrowRight, Shield, Upload, Zap, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const steps = [
   {
     id: 'welcome',
-    target: null,
+    icon: Shield,
     title: 'Welcome to IsThis.io',
-    content: "Let's take a quick tour to help you verify if content is real or AI-generated. This will only take 30 seconds!",
-    position: 'center'
+    content: "Let's take a quick 30-second tour of how to verify if content is real or AI-generated.",
+    image: null
   },
   {
     id: 'upload',
-    target: '[data-tour="upload-zone"]',
+    icon: Upload,
     title: 'Upload Your Content',
-    content: 'Start by uploading an image or video, or paste a URL. We support all major formats and social media links.',
-    position: 'bottom'
+    content: 'Upload an image or video, or paste a URL from any social media platform. We support all major formats.',
+    image: null
   },
   {
     id: 'verify',
-    target: '[data-tour="verify-button"]',
-    title: 'Instant Verification',
-    content: 'Click "Verify Now" to analyze your content. Our AI will examine multiple regions, metadata, and visual patterns in seconds.',
-    position: 'top'
+    icon: Zap,
+    title: 'Instant AI Detection',
+    content: 'Our advanced AI analyzes visual artifacts, metadata, compression patterns, and multiple regions to detect AI generation.',
+    image: null
   },
   {
-    id: 'features',
-    target: '[data-tour="how-it-works"]',
-    title: 'How We Detect AI',
-    content: 'We analyze visual artifacts, metadata, compression patterns, and more. Each signal is weighted by confidence to give you an accurate result.',
-    position: 'top'
-  },
-  {
-    id: 'results-tip',
-    target: null,
-    title: 'Understanding Results',
-    content: 'After analysis, you\'ll see: <strong>Likely Real</strong> (authentic), <strong>Likely AI</strong> (generated), or <strong>Uncertain</strong>. Each comes with a confidence score and detailed explanations.',
-    position: 'center'
-  },
-  {
-    id: 'confidence-tip',
-    target: null,
-    title: 'Confidence Scores',
-    content: 'Scores range 0-100. <strong>Lower scores (0-42)</strong> suggest real content, <strong>higher scores (58-100)</strong> suggest AI generation. The middle range (43-57) means we\'re uncertain.',
-    position: 'center'
-  },
-  {
-    id: 'share-tip',
-    target: null,
-    title: 'Share Your Findings',
-    content: 'After verification, you can create beautiful shareable cards to spread awareness about AI content detection on social media!',
-    position: 'center'
-  },
-  {
-    id: 'complete',
-    target: null,
-    title: 'You\'re All Set!',
-    content: 'Now you\'re ready to verify content. Remember: our analysis is a tool to help you, but always check multiple sources for important decisions.',
-    position: 'center'
+    id: 'results',
+    icon: CheckCircle2,
+    title: 'Get Clear Results',
+    content: 'Receive a confidence score (0-100) with detailed explanations. Lower scores = real content, higher scores = AI-generated.',
+    image: null
   }
 ];
 
 export default function OnboardingTour({ onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem('onboarding-completed');
@@ -74,56 +45,11 @@ export default function OnboardingTour({ onComplete }) {
     }
   }, []);
 
-  useEffect(() => {
-    if (!isActive) return;
-
-    const step = steps[currentStep];
-    if (step.target) {
-      const element = document.querySelector(step.target);
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        const scrollY = window.scrollY;
-        
-        // Calculate position based on step.position
-        let top, left;
-        if (step.position === 'bottom') {
-          top = rect.bottom + scrollY + 20;
-          left = rect.left + rect.width / 2;
-        } else if (step.position === 'top') {
-          top = rect.top + scrollY - 20;
-          left = rect.left + rect.width / 2;
-        }
-        
-        setPosition({ top, left });
-
-        // Highlight element
-        element.style.position = 'relative';
-        element.style.zIndex = '60';
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-
-    return () => {
-      // Cleanup highlight
-      const element = document.querySelector(step.target);
-      if (element) {
-        element.style.position = '';
-        element.style.zIndex = '';
-      }
-    };
-  }, [currentStep, isActive]);
-
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       handleComplete();
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -138,127 +64,101 @@ export default function OnboardingTour({ onComplete }) {
   };
 
   const step = steps[currentStep];
+  const Icon = step.icon;
+  const progress = ((currentStep + 1) / steps.length) * 100;
 
   return (
-    <>
-      {/* Backdrop overlay */}
-      <AnimatePresence>
-        {isActive && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
-            onClick={handleSkip}
-          />
-        )}
-      </AnimatePresence>
+    <AnimatePresence>
+      {isActive && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4"
+        >
+          {/* Animated background */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-20 left-20 w-96 h-96 bg-[#3498DB]/20 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 right-20 w-96 h-96 bg-[#2C3E50]/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          </div>
 
-      {/* Tooltip */}
-      <AnimatePresence>
-        {isActive && (
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed z-50"
-            style={step.position === 'center' ? {
-              top: '15vh',
-              left: '1rem',
-              width: '90vw',
-              maxWidth: '28rem'
-            } : {
-              top: `${position.top}px`,
-              left: `${position.left}px`,
-              transform: step.position === 'bottom' ? 'translateX(-50%)' : 'translate(-50%, -100%)'
-            }}
-          >
-            <div className="bg-white rounded-2xl shadow-2xl p-6 border-2 border-[#3498DB] w-full">
-              {/* Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-[#3498DB]" />
-                  <h3 className="text-lg font-bold text-slate-900">{step.title}</h3>
-                </div>
-                <button
-                  onClick={handleSkip}
-                  className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+          {/* Content */}
+          <div className="relative w-full max-w-3xl">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="text-center"
+              >
+                {/* Icon */}
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', duration: 0.6 }}
+                  className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-gradient-to-br from-[#3498DB] to-[#2C3E50] mb-8 shadow-2xl"
                 >
-                  <X className="w-5 h-5 text-slate-400" />
-                </button>
-              </div>
+                  <Icon className="w-12 h-12 text-white" />
+                </motion.div>
 
-              {/* Content */}
-              <div 
-                className="text-slate-700 mb-6 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: step.content }}
-              />
+                {/* Title */}
+                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">
+                  {step.title}
+                </h2>
 
-              {/* Footer */}
-              <div className="flex items-center justify-between">
-                <div className="flex gap-1">
-                  {steps.map((_, i) => (
-                    <div
-                      key={i}
-                      className={`h-1.5 rounded-full transition-all ${
-                        i === currentStep 
-                          ? 'w-8 bg-[#3498DB]' 
-                          : 'w-1.5 bg-slate-200'
-                      }`}
-                    />
-                  ))}
-                </div>
+                {/* Content */}
+                <p className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+                  {step.content}
+                </p>
 
-                <div className="flex items-center gap-2">
-                  {currentStep > 0 && (
-                    <Button
-                      onClick={handleBack}
-                      variant="outline"
-                      size="sm"
-                      className="gap-1"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      Back
-                    </Button>
-                  )}
+                {/* Navigation */}
+                <div className="flex flex-col items-center gap-6">
                   <Button
                     onClick={handleNext}
-                    size="sm"
-                    className="bg-[#3498DB] hover:bg-[#2980b9] gap-1"
+                    size="lg"
+                    className="bg-[#3498DB] hover:bg-[#2980b9] text-white px-12 py-6 text-lg rounded-xl shadow-2xl hover:shadow-[#3498DB]/50 transition-all"
                   >
-                    {currentStep === steps.length - 1 ? 'Get Started' : 'Next'}
-                    {currentStep < steps.length - 1 && <ChevronRight className="w-4 h-4" />}
+                    {currentStep === steps.length - 1 ? "Let's Get Started" : 'Continue'}
+                    <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
-                </div>
-              </div>
 
-              {/* Skip link */}
-              {currentStep < steps.length - 1 && (
-                <div className="text-center mt-4">
                   <button
                     onClick={handleSkip}
-                    className="text-xs text-slate-500 hover:text-slate-700 transition-colors"
+                    className="text-slate-400 hover:text-white transition-colors text-sm"
                   >
                     Skip tour
                   </button>
                 </div>
-              )}
-            </div>
+              </motion.div>
+            </AnimatePresence>
 
-            {/* Arrow pointer for positioned tooltips */}
-            {step.position !== 'center' && (
-              <div
-                className={`absolute left-1/2 -translate-x-1/2 w-0 h-0 ${
-                  step.position === 'bottom'
-                    ? 'top-0 -translate-y-full border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-white'
-                    : 'bottom-0 translate-y-full border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white'
-                }`}
-              />
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+            {/* Progress indicators */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-2 mt-12">
+              {steps.map((_, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === currentStep
+                      ? 'w-12 bg-[#3498DB]'
+                      : i < currentStep
+                      ? 'w-2 bg-[#3498DB]/50'
+                      : 'w-2 bg-slate-600'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Step counter */}
+          <div className="absolute top-8 right-8 text-slate-400 text-sm font-medium">
+            {currentStep + 1} / {steps.length}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
