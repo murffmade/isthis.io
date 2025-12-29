@@ -52,15 +52,17 @@ function AdminStats() {
 
   return (
     <div className="lg:col-span-3 grid md:grid-cols-4 gap-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl border border-slate-200 p-6"
-      >
-        <Users className="w-8 h-8 text-slate-900 mb-3" />
-        <div className="text-2xl font-bold text-slate-900">{totalUsers}</div>
-        <div className="text-sm text-slate-600">Total Users</div>
-      </motion.div>
+      <Link to={createPageUrl('TotalUsersDashboard')}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-xl border border-slate-200 p-6 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer"
+        >
+          <Users className="w-8 h-8 text-slate-900 mb-3" />
+          <div className="text-2xl font-bold text-slate-900">{totalUsers}</div>
+          <div className="text-sm text-slate-600">Total Users</div>
+        </motion.div>
+      </Link>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
