@@ -82,6 +82,14 @@ export default function OnboardingTour({ onComplete }) {
             <div className="absolute bottom-20 right-20 w-96 h-96 bg-[#2C3E50]/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
           </div>
 
+          {/* Skip button at top */}
+          <button
+            onClick={handleSkip}
+            className="absolute top-8 right-8 text-slate-400 hover:text-white transition-colors text-sm z-10"
+          >
+            Skip tour
+          </button>
+
           {/* Content */}
           <div className="relative w-full max-w-3xl">
             <AnimatePresence mode="wait">
@@ -122,13 +130,6 @@ export default function OnboardingTour({ onComplete }) {
                     {currentStep === steps.length - 1 ? "Let's Get Started" : 'Continue'}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
-
-                  <button
-                    onClick={handleSkip}
-                    className="text-slate-400 hover:text-white transition-colors text-sm"
-                  >
-                    Skip tour
-                  </button>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -154,7 +155,7 @@ export default function OnboardingTour({ onComplete }) {
           </div>
 
           {/* Step counter */}
-          <div className="absolute top-8 right-8 text-slate-400 text-sm font-medium">
+          <div className="absolute top-8 left-8 text-slate-400 text-sm font-medium">
             {currentStep + 1} / {steps.length}
           </div>
         </motion.div>
