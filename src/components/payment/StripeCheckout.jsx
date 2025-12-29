@@ -9,19 +9,19 @@ export default function StripeCheckout({ plan, onSuccess, onCancel }) {
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      const result = await base44.functions.createCheckoutSession({
+      const result = await base44.functions.invoke('createCheckoutSession', {
         plan_name: plan.name,
         price_cents: plan.price * 100 // Convert dollars to cents
       });
 
-      if (result.success && result.checkout_url) {
+      if (result.data.success && result.data.checkout_url) {
         // For gifts, call onSuccess with session ID before redirect if available
-        if (onSuccess && result.session_id) {
-          await onSuccess(result.session_id);
+        if (onSuccess && result.data.session_id) {
+          await onSuccess(result.data.session_id);
         }
-        window.location.href = result.checkout_url;
+        window.location.href = result.data.checkout_url;
       } else {
-        toast.error(result.error || 'Payment system not configured. Please set up Stripe in your dashboard.');
+        toast.error(result.data.error || 'Payment system not configured. Please set up Stripe in your dashboard.');
         setLoading(false);
       }
     } catch (error) {
