@@ -90,6 +90,11 @@ export default function OnboardingTour({ onComplete }) {
             Skip tour
           </button>
 
+          {/* Step counter */}
+          <div className="absolute top-8 left-8 text-slate-400 text-sm font-medium">
+            {currentStep + 1} / {steps.length}
+          </div>
+
           {/* Content */}
           <div className="relative w-full max-w-3xl">
             <AnimatePresence mode="wait">
@@ -149,14 +154,9 @@ export default function OnboardingTour({ onComplete }) {
                       />
                     ))}
                   </div>
-                  </div>
-                  </motion.div>
-                  </AnimatePresence>
-                  </div>
-
-          {/* Step counter */}
-          <div className="absolute top-8 left-8 text-slate-400 text-sm font-medium">
-            {currentStep + 1} / {steps.length}
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </motion.div>
       )}
