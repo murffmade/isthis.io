@@ -1,13 +1,22 @@
-import Stripe from 'stripe';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import Stripe from 'npm:stripe@14.0.0';
 
-export default async function createCheckoutSession({ plan_name, price_cents }, context) {
+Deno.serve(async (req) => {
   try {
-    const stripe = new Stripe(context.secrets.STRIPE_SECRET_KEY);
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { plan_name, price_cents } = await req.json();
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     
     // Get or create customer
     let customer;
     const existingCustomers = await stripe.customers.list({
-      email: context.user.email,
+      email: user.email,
       limit: 1
     });
     
@@ -15,13 +24,15 @@ export default async function createCheckoutSession({ plan_name, price_cents }, 
       customer = existingCustomers.data[0];
     } else {
       customer = await stripe.customers.create({
-        email: context.user.email,
+        email: user.email,
         metadata: {
-          user_id: context.user.id,
-          user_email: context.user.email
+          user_id: user.id,
+          user_email: user.email
         }
       });
     }
+
+    const appUrl = new URL(req.url).origin;
     
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
@@ -41,26 +52,26 @@ export default async function createCheckoutSession({ plan_name, price_cents }, 
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `${context.appUrl}/PaymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${context.appUrl}/Home`,
+      success_url: `${appUrl}/PaymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/Home`,
       metadata: {
-        user_id: context.user.id,
-        user_email: context.user.email,
+        user_id: user.id,
+        user_email: user.email,
         plan_name: plan_name,
         plan_type: plan_name.includes('Lifetime') ? 'lifetime' : 'annual'
       }
     });
     
-    return {
+    return Response.json({
       success: true,
       checkout_url: session.url,
       session_id: session.id
-    };
+    });
   } catch (error) {
     console.error('Stripe checkout error:', error);
-    return {
+    return Response.json({
       success: false,
       error: error.message || 'Failed to create checkout session'
-    };
+    }, { status: 500 });
   }
-}
+});
