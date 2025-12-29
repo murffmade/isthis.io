@@ -34,9 +34,9 @@ import Scam from './pages/Scam';
 import Settings from './pages/Settings';
 import Support from './pages/Support';
 import TermsOfService from './pages/TermsOfService';
+import TotalUsersDashboard from './pages/TotalUsersDashboard';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import TotalUsersDashboard from './pages/TotalUsersDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -77,9 +77,9 @@ export const PAGES = {
     "Settings": Settings,
     "Support": Support,
     "TermsOfService": TermsOfService,
+    "TotalUsersDashboard": TotalUsersDashboard,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "TotalUsersDashboard": TotalUsersDashboard,
 }
 
 export const pagesConfig = {

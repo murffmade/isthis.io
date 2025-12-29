@@ -63,7 +63,10 @@ export default function AccountPage() {
 
   const { data: subscriptionData, isLoading } = useQuery({
     queryKey: ['currentSubscription'],
-    queryFn: () => base44.functions.getCurrentSubscription({})
+    queryFn: async () => {
+      const result = await base44.functions.invoke('getCurrentSubscription', {});
+      return result.data;
+    }
   });
 
   const updateUserMutation = useMutation({
@@ -89,7 +92,10 @@ export default function AccountPage() {
   }, [currentUser, isEditing]);
 
   const portalMutation = useMutation({
-    mutationFn: () => base44.functions.getCustomerPortalUrl({}),
+    mutationFn: async () => {
+      const result = await base44.functions.invoke('getCustomerPortalUrl', {});
+      return result.data;
+    },
     onSuccess: (result) => {
       if (result.success && result.portal_url) {
         window.location.href = result.portal_url;
@@ -115,6 +121,8 @@ export default function AccountPage() {
   }
 
   const subscription = subscriptionData?.subscription || { plan: 'free', status: 'active' };
+  const billingHistory = subscriptionData?.billing_history || [];
+  const paymentMethods = subscriptionData?.payment_methods || [];
   const currentPlan = planConfig[subscription.plan];
   const Icon = currentPlan.icon;
 
@@ -367,6 +375,90 @@ export default function AccountPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* Billing History */}
+        {billingHistory.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl border-2 border-slate-200 p-8 mb-8"
+          >
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">Billing History</h2>
+            <div className="space-y-3">
+              {billingHistory.map((charge) => (
+                <div key={charge.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                      charge.status === 'succeeded' ? 'bg-emerald-100' : 'bg-slate-200'
+                    }`}>
+                      <CreditCard className={`w-5 h-5 ${
+                        charge.status === 'succeeded' ? 'text-emerald-600' : 'text-slate-500'
+                      }`} />
+                    </div>
+                    <div>
+                      <div className="font-medium text-slate-900">{charge.description}</div>
+                      <div className="text-sm text-slate-500">
+                        {moment(charge.created).format('MMM D, YYYY')}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-slate-900">
+                      ${charge.amount.toFixed(2)} {charge.currency}
+                    </div>
+                    {charge.receipt_url && (
+                      <a
+                        href={charge.receipt_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-600 hover:text-blue-700"
+                      >
+                        View Receipt
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Payment Methods */}
+        {paymentMethods.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl border-2 border-slate-200 p-8 mb-8"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-slate-900">Payment Methods</h2>
+              <button
+                onClick={() => portalMutation.mutate()}
+                disabled={portalMutation.isPending}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Manage
+              </button>
+            </div>
+            <div className="space-y-3">
+              {paymentMethods.map((pm) => (
+                <div key={pm.id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+                  <div className="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center">
+                    <CreditCard className="w-5 h-5 text-slate-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-slate-900 capitalize">
+                      {pm.brand} •••• {pm.last4}
+                    </div>
+                    <div className="text-sm text-slate-500">
+                      Expires {pm.exp_month}/{pm.exp_year}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Upgrade Options */}
         {subscription.plan !== 'lifetime' && (
