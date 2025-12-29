@@ -48,14 +48,21 @@ export default function Home() {
     const isWebView = 
       // iOS WebView
       /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(userAgent) ||
-      // Android WebView
+      // Android WebView  
       /wv/.test(userAgent) ||
-      // Check for native app indicator (can be set by native app)
+      // Check for native app indicator
       window.ReactNativeWebView !== undefined ||
       // Check for custom query parameter
-      window.location.search.includes('native=true');
+      window.location.search.includes('native=true') ||
+      // Additional Android detection
+      /Android.*wv|Android.*Version\/\d+\.\d+\s+Chrome\/\d+/i.test(userAgent);
     
     setIsNativeApp(isWebView);
+    
+    // Log for debugging
+    if (isWebView) {
+      console.log('[Native App] Running in WebView - payments disabled');
+    }
   }, []);
 
   // Fetch current user
