@@ -133,23 +133,26 @@ export default function OnboardingTour({ onComplete }) {
 
                   {/* Progress indicators */}
                   <div className="flex items-center gap-2 mt-4">
-              {steps.map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: i * 0.1 }}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    i === currentStep
-                      ? 'w-12 bg-[#3498DB]'
-                      : i < currentStep
-                      ? 'w-2 bg-[#3498DB]/50'
-                      : 'w-2 bg-slate-600'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
+                    {steps.map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: i * 0.1 }}
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          i === currentStep
+                            ? 'w-12 bg-[#3498DB]'
+                            : i < currentStep
+                            ? 'w-2 bg-[#3498DB]/50'
+                            : 'w-2 bg-slate-600'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  </div>
+                  </motion.div>
+                  </AnimatePresence>
+                  </div>
 
           {/* Step counter */}
           <div className="absolute top-8 left-8 text-slate-400 text-sm font-medium">
