@@ -130,12 +130,9 @@ export default function OnboardingTour({ onComplete }) {
                     {currentStep === steps.length - 1 ? "Let's Get Started" : 'Continue'}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
-                </div>
-              </motion.div>
-            </AnimatePresence>
 
-            {/* Progress indicators */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-2 mt-12">
+                  {/* Progress indicators */}
+                  <div className="flex items-center gap-2 mt-4">
               {steps.map((_, i) => (
                 <motion.div
                   key={i}
