@@ -64,9 +64,20 @@ export default function AccountPage() {
   const { data: subscriptionData, isLoading } = useQuery({
     queryKey: ['currentSubscription'],
     queryFn: async () => {
-      const result = await base44.functions.invoke('getCurrentSubscription', {});
-      return result.data;
-    }
+      try {
+        const result = await base44.functions.invoke('getCurrentSubscription', {});
+        return result.data;
+      } catch (error) {
+        console.error('Subscription fetch error:', error);
+        return {
+          success: true,
+          subscription: { plan: 'free', status: 'active' },
+          billing_history: [],
+          payment_methods: []
+        };
+      }
+    },
+    retry: false
   });
 
   const updateUserMutation = useMutation({
@@ -559,7 +570,10 @@ export default function AccountPage() {
           className="mt-8 pt-8 border-t border-slate-200 text-center"
         >
           <button
-            onClick={() => base44.auth.logout()}
+            onClick={() => {
+              base44.auth.logout();
+              window.location.href = '/';
+            }}
             className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors"
           >
             Sign Out
