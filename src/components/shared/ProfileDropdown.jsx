@@ -15,6 +15,7 @@ import {
 export default function ProfileDropdown({ onOpenSettings }) {
   const handleSignOut = () => {
     base44.auth.logout();
+    setTimeout(() => window.location.href = '/', 100);
   };
 
   return (
