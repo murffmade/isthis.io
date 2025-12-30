@@ -340,7 +340,8 @@ export default function Admin() {
   });
 
   const grantFreePremium = (plan) => {
-    updateSubscriptionMutation.mutate({ plan, status: 'active' });
+    const status = plan === 'free' ? 'cancelled' : 'active';
+    updateSubscriptionMutation.mutate({ plan, status });
   };
 
   if (!isAdmin) {
@@ -747,6 +748,8 @@ export default function Admin() {
                       <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         userSubscription.status === 'active'
                           ? 'bg-emerald-100 text-emerald-700'
+                          : userSubscription.status === 'expired'
+                          ? 'bg-amber-100 text-amber-700'
                           : 'bg-slate-200 text-slate-700'
                       }`}>
                         {userSubscription.status}
@@ -757,55 +760,107 @@ export default function Admin() {
                         Expires: {new Date(userSubscription.expires_at).toLocaleDateString()}
                       </div>
                     )}
+                    {userSubscription.granted_by_admin && (
+                      <div className="text-xs text-purple-600 mt-1">Admin Granted</div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-slate-900 font-semibold">Free Plan (No subscription)</div>
                 )}
               </div>
 
-              <div className="space-y-4">
-                <h3 className="font-semibold text-slate-900">Grant Free Premium Access:</h3>
-                
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Button
-                    onClick={() => grantFreePremium('annual')}
-                    disabled={updateSubscriptionMutation.isPending}
-                    variant="outline"
-                    className="h-auto py-4 flex-col items-start border-blue-200 hover:border-blue-500 hover:bg-blue-50"
-                  >
-                    <div className="font-semibold text-blue-900 mb-1">1 Year Premium</div>
-                    <div className="text-xs text-slate-600">Grant annual plan access</div>
-                  </Button>
-
-                  <Button
-                    onClick={() => grantFreePremium('lifetime')}
-                    disabled={updateSubscriptionMutation.isPending}
-                    className="h-auto py-4 flex-col items-start bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900"
-                  >
-                    <div className="font-semibold mb-1">Lifetime Premium</div>
-                    <div className="text-xs opacity-90">Grant lifetime access</div>
-                  </Button>
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-slate-200">
-                  <h3 className="font-semibold text-slate-900 mb-3">Additional Actions:</h3>
-                  <div className="flex gap-3">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-3">Assign Subscription Plan:</h3>
+                  <div className="grid md:grid-cols-3 gap-3">
                     <Button
-                      onClick={() => {
-                        updateSubscriptionMutation.mutate({ 
-                          plan: userSubscription?.plan || 'free', 
-                          status: 'cancelled' 
-                        });
-                      }}
+                      onClick={() => grantFreePremium('free')}
                       disabled={updateSubscriptionMutation.isPending}
                       variant="outline"
-                      className="border-red-200 text-red-700 hover:bg-red-50 hover:border-red-400"
+                      className="h-auto py-4 flex-col items-start"
                     >
-                      <X className="w-4 h-4 mr-2" />
-                      Revoke Premium
+                      <Shield className="w-5 h-5 mb-2 text-slate-600" />
+                      <div className="font-semibold text-slate-900 mb-1">Free Plan</div>
+                      <div className="text-xs text-slate-600">Remove premium access</div>
+                    </Button>
+
+                    <Button
+                      onClick={() => grantFreePremium('annual')}
+                      disabled={updateSubscriptionMutation.isPending}
+                      variant="outline"
+                      className="h-auto py-4 flex-col items-start border-blue-200 hover:border-blue-500 hover:bg-blue-50"
+                    >
+                      <Crown className="w-5 h-5 mb-2 text-blue-600" />
+                      <div className="font-semibold text-blue-900 mb-1">Annual Premium</div>
+                      <div className="text-xs text-slate-600">1 year access</div>
+                    </Button>
+
+                    <Button
+                      onClick={() => grantFreePremium('lifetime')}
+                      disabled={updateSubscriptionMutation.isPending}
+                      className="h-auto py-4 flex-col items-start bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900"
+                    >
+                      <Infinity className="w-5 h-5 mb-2" />
+                      <div className="font-semibold mb-1">Lifetime Premium</div>
+                      <div className="text-xs opacity-90">Forever access</div>
                     </Button>
                   </div>
                 </div>
+
+                {userSubscription && userSubscription.plan !== 'free' && (
+                  <div className="pt-6 border-t border-slate-200">
+                    <h3 className="font-semibold text-slate-900 mb-3">Change Status:</h3>
+                    <div className="flex flex-wrap gap-3">
+                      <Button
+                        onClick={() => {
+                          updateSubscriptionMutation.mutate({ 
+                            plan: userSubscription.plan, 
+                            status: 'active' 
+                          });
+                        }}
+                        disabled={updateSubscriptionMutation.isPending || userSubscription.status === 'active'}
+                        variant="outline"
+                        size="sm"
+                        className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                      >
+                        <Check className="w-4 h-4 mr-2" />
+                        Set Active
+                      </Button>
+
+                      <Button
+                        onClick={() => {
+                          updateSubscriptionMutation.mutate({ 
+                            plan: userSubscription.plan, 
+                            status: 'expired' 
+                          });
+                        }}
+                        disabled={updateSubscriptionMutation.isPending}
+                        variant="outline"
+                        size="sm"
+                        className="border-amber-200 text-amber-700 hover:bg-amber-50"
+                      >
+                        <Clock className="w-4 h-4 mr-2" />
+                        Mark Expired
+                      </Button>
+
+                      <Button
+                        onClick={() => {
+                          updateSubscriptionMutation.mutate({ 
+                            plan: 'free', 
+                            status: 'cancelled' 
+                          });
+                        }}
+                        disabled={updateSubscriptionMutation.isPending}
+                        variant="outline"
+                        size="sm"
+                        className="border-red-200 text-red-700 hover:bg-red-50"
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        Cancel & Revoke
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
