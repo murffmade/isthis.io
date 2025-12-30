@@ -50,11 +50,20 @@ export default function Home() {
   const isAdmin = currentUser?.role === 'admin';
   const isTrainer = currentUser?.role === 'trainer';
 
-  // Fetch user's subscription
+  // Fetch user's subscription/entitlement
   const { data: userSubscription } = useQuery({
     queryKey: ['userSubscription'],
     queryFn: async () => {
       if (!currentUser) return null;
+      // Check UserEntitlement first (new system)
+      const entitlements = await base44.entities.UserEntitlement.filter({ 
+        user_email: currentUser.email,
+        status: 'active'
+      });
+      if (entitlements && entitlements.length > 0) {
+        return { plan: entitlements[0].plan_key, status: 'active' };
+      }
+      // Fallback to old Subscription entity
       const subs = await base44.entities.Subscription.filter({ created_by: currentUser.email });
       return subs[0] || null;
     },
@@ -85,7 +94,7 @@ export default function Home() {
     if (!userSubscription || userSubscription.plan === 'free') {
       return { name: 'Free', limit: 5, period: 'month' };
     }
-    if (userSubscription.plan === 'annual' && userSubscription.status === 'active') {
+    if ((userSubscription.plan === 'annual' || userSubscription.plan === 'monthly') && userSubscription.status === 'active') {
       return { name: 'Premium', limit: null, period: 'year' };
     }
     if (userSubscription.plan === 'lifetime' && userSubscription.status === 'active') {
