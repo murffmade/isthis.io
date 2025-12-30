@@ -5,7 +5,9 @@ import { createPageUrl } from '@/utils';
 import ScrollToTop from '@/components/shared/ScrollToTop';
 import PushNotifications from '@/components/notifications/PushNotifications';
 import { base44 } from '@/api/base44Client';
+import { base44Auth } from '@/components/api/base44ClientAuth';
 import { useQuery } from '@tanstack/react-query';
+import { LogIn } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const { data: currentUser } = useQuery({
