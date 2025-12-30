@@ -58,7 +58,8 @@ export default function AccountPage() {
 
   const { data: currentUser, isLoading: userLoading } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me()
+    queryFn: () => base44.auth.me(),
+    retry: false
   });
 
   const { data: subscription, isLoading: subLoading } = useQuery({
@@ -93,13 +94,30 @@ export default function AccountPage() {
 
   const handleLogout = () => {
     base44.auth.logout();
-    window.location.href = '/';
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 100);
   };
 
   if (userLoading || subLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-6">
+        <div className="text-center">
+          <Shield className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Please Sign In</h2>
+          <p className="text-slate-600 mb-6">You need to be logged in to view your account.</p>
+          <Button onClick={() => base44.auth.redirectToLogin(window.location.pathname)}>
+            Sign In
+          </Button>
+        </div>
       </div>
     );
   }

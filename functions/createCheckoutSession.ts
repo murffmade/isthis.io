@@ -4,12 +4,13 @@ import Stripe from 'npm:stripe@14.0.0';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    
+    // Get authenticated user
     const user = await base44.auth.me();
-
     if (!user) {
       return Response.json({ 
         success: false,
-        error: 'Unauthorized - please log in' 
+        error: 'Please log in to continue' 
       }, { status: 401 });
     }
 
@@ -18,37 +19,18 @@ Deno.serve(async (req) => {
     if (!Deno.env.get('STRIPE_SECRET_KEY')) {
       return Response.json({
         success: false,
-        error: 'Stripe not configured. Please set STRIPE_SECRET_KEY.'
+        error: 'Payment system not configured'
       }, { status: 500 });
     }
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     
-    // Get or create customer
-    let customer;
-    const existingCustomers = await stripe.customers.list({
-      email: user.email,
-      limit: 1
-    });
-    
-    if (existingCustomers.data.length > 0) {
-      customer = existingCustomers.data[0];
-    } else {
-      customer = await stripe.customers.create({
-        email: user.email,
-        name: user.full_name || user.email,
-        metadata: {
-          user_email: user.email
-        }
-      });
-    }
-
     const appUrl = new URL(req.url).origin;
     const planType = plan_name.toLowerCase().includes('lifetime') ? 'lifetime' : 'annual';
     
-    // Create checkout session
+    // Create checkout session - let Stripe handle customer creation
     const session = await stripe.checkout.sessions.create({
-      customer: customer.id,
+      customer_email: user.email,
       payment_method_types: ['card'],
       line_items: [{
         price_data: {
@@ -78,10 +60,10 @@ Deno.serve(async (req) => {
       session_id: session.id
     });
   } catch (error) {
-    console.error('Stripe checkout error:', error);
+    console.error('Checkout error:', error);
     return Response.json({
       success: false,
-      error: error.message || 'Failed to create checkout session'
+      error: 'Failed to create checkout session'
     }, { status: 500 });
   }
 });
