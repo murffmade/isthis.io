@@ -3,92 +3,50 @@ import Stripe from 'npm:stripe@14.0.0';
 
 Deno.serve(async (req) => {
   try {
+    // PUBLIC ENDPOINT - No auth required
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-
-    if (!user) {
-      return Response.json({ 
-        success: false,
-        error: 'Unauthorized' 
-      }, { status: 401 });
-    }
-
+    
     const { session_id } = await req.json();
     
     if (!session_id) {
-      return Response.json({ 
+      return Response.json({
         success: false,
-        error: 'Session ID required' 
+        error: 'session_id required'
       }, { status: 400 });
     }
 
     if (!Deno.env.get('STRIPE_SECRET_KEY')) {
       return Response.json({
         success: false,
-        error: 'Stripe not configured'
+        error: 'Payment system not configured'
       }, { status: 500 });
     }
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     
-    // Retrieve the session
+    // Retrieve checkout session
     const session = await stripe.checkout.sessions.retrieve(session_id);
     
-    if (session.payment_status !== 'paid') {
+    if (session.payment_status === 'paid') {
       return Response.json({
-        success: false,
+        success: true,
+        paid: true,
+        plan_key: session.metadata.plan_key,
+        user_email: session.metadata.base44_user_email,
+        amount: session.amount_total
+      });
+    } else {
+      return Response.json({
+        success: true,
         paid: false,
         status: session.payment_status
       });
     }
-
-    const { user_email, plan_type } = session.metadata;
-    
-    if (!user_email || !plan_type) {
-      return Response.json({
-        success: false,
-        error: 'Invalid session metadata'
-      }, { status: 400 });
-    }
-    
-    // Check if subscription exists (webhook may have already created it)
-    const existingSubs = await base44.asServiceRole.entities.Subscription.filter({
-      user_email: user_email
-    });
-    
-    // Create subscription if it doesn't exist yet
-    if (existingSubs.length === 0) {
-      let expires_at = null;
-      if (plan_type === 'annual') {
-        const expiresDate = new Date();
-        expiresDate.setFullYear(expiresDate.getFullYear() + 1);
-        expires_at = expiresDate.toISOString();
-      }
-
-      await base44.asServiceRole.entities.Subscription.create({
-        user_email: user_email,
-        plan: plan_type,
-        status: 'active',
-        stripe_customer_id: session.customer,
-        stripe_payment_intent_id: session.payment_intent,
-        expires_at: expires_at,
-        purchased_at: new Date().toISOString(),
-        amount_paid: session.amount_total || 0
-      });
-      
-      console.log('Created subscription from verifyPayment for', user_email);
-    }
-
-    return Response.json({
-      success: true,
-      paid: true,
-      plan: plan_type
-    });
   } catch (error) {
-    console.error('Verify payment error:', error);
+    console.error('Payment verification error:', error);
     return Response.json({
       success: false,
-      error: error.message
+      error: 'Failed to verify payment'
     }, { status: 500 });
   }
 });

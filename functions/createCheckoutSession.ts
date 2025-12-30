@@ -5,17 +5,24 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
-    // Get authenticated user
+    // REQUIRED: User must be authenticated
     const user = await base44.auth.me();
     if (!user) {
       return Response.json({ 
         success: false,
-        error: 'Please log in to continue' 
+        error: 'Authentication required' 
       }, { status: 401 });
     }
 
-    const { plan_name, price_cents } = await req.json();
+    const { plan_key } = await req.json();
     
+    if (!plan_key) {
+      return Response.json({
+        success: false,
+        error: 'plan_key is required'
+      }, { status: 400 });
+    }
+
     if (!Deno.env.get('STRIPE_SECRET_KEY')) {
       return Response.json({
         success: false,
@@ -23,12 +30,25 @@ Deno.serve(async (req) => {
       }, { status: 500 });
     }
 
+    // Fetch plan config from database (server-side trusted source)
+    const planConfigs = await base44.asServiceRole.entities.PlanConfig.filter({
+      plan_key: plan_key,
+      active: true
+    });
+
+    if (planConfigs.length === 0) {
+      return Response.json({
+        success: false,
+        error: 'Invalid plan'
+      }, { status: 400 });
+    }
+
+    const planConfig = planConfigs[0];
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     
     const appUrl = new URL(req.url).origin;
-    const planType = plan_name.toLowerCase().includes('lifetime') ? 'lifetime' : 'annual';
     
-    // Create checkout session - let Stripe handle customer creation
+    // Create checkout session with server-side price
     const session = await stripe.checkout.sessions.create({
       customer_email: user.email,
       payment_method_types: ['card'],
@@ -36,12 +56,10 @@ Deno.serve(async (req) => {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `IsThis.io ${plan_name}`,
-            description: planType === 'lifetime'
-              ? 'Unlimited verifications, forever'
-              : 'Unlimited verifications for 1 year'
+            name: planConfig.display_name,
+            description: planConfig.features?.join(', ') || ''
           },
-          unit_amount: price_cents,
+          unit_amount: Math.round(planConfig.price_usd * 100), // Cents, no float issues
         },
         quantity: 1,
       }],
@@ -49,8 +67,9 @@ Deno.serve(async (req) => {
       success_url: `${appUrl}/PaymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/Account`,
       metadata: {
-        user_email: user.email,
-        plan_type: planType
+        base44_user_email: user.email,
+        base44_user_id: user.id,
+        plan_key: plan_key
       }
     });
     
@@ -63,7 +82,7 @@ Deno.serve(async (req) => {
     console.error('Checkout error:', error);
     return Response.json({
       success: false,
-      error: 'Failed to create checkout session'
+      error: error.message || 'Failed to create checkout session'
     }, { status: 500 });
   }
 });

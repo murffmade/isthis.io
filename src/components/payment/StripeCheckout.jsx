@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { base44Auth } from '@/api/base44ClientAuth';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
@@ -9,19 +9,28 @@ export default function StripeCheckout({ plan, onSuccess, onCancel }) {
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      const result = await base44.functions.invoke('createCheckoutSession', {
-        plan_name: plan.name,
-        price_cents: plan.price * 100 // Convert dollars to cents
+      // Check authentication first
+      try {
+        await base44Auth.auth.me();
+      } catch (authError) {
+        toast.error('Please sign in to continue');
+        const currentPath = window.location.pathname;
+        base44Auth.auth.redirectToLogin(currentPath);
+        return;
+      }
+
+      // Use plan_key only - server will determine pricing
+      const result = await base44Auth.functions.invoke('createCheckoutSession', {
+        plan_key: plan.key
       });
 
       if (result.data.success && result.data.checkout_url) {
-        // For gifts, call onSuccess with session ID before redirect if available
         if (onSuccess && result.data.session_id) {
           await onSuccess(result.data.session_id);
         }
         window.location.href = result.data.checkout_url;
       } else {
-        toast.error(result.data.error || 'Payment system not configured. Please set up Stripe in your dashboard.');
+        toast.error(result.data.error || 'Unable to start checkout');
         setLoading(false);
       }
     } catch (error) {
