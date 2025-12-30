@@ -7,37 +7,45 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
 
     if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ 
+        success: false,
+        error: 'Unauthorized' 
+      }, { status: 401 });
     }
 
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
-    
+    if (!Deno.env.get('STRIPE_SECRET_KEY')) {
+      return Response.json({
+        success: false,
+        error: 'Stripe not configured'
+      }, { status: 500 });
+    }
+
     // Get user's subscription
     const subs = await base44.asServiceRole.entities.Subscription.filter({
-      created_by: user.email
+      user_email: user.email
     });
-    
+
     if (subs.length === 0 || !subs[0].stripe_customer_id) {
       return Response.json({
         success: false,
-        error: 'No payment methods found'
-      }, { status: 400 });
+        error: 'No active subscription found'
+      }, { status: 404 });
     }
 
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     const appUrl = new URL(req.url).origin;
-    
-    // Create portal session
+
     const session = await stripe.billingPortal.sessions.create({
       customer: subs[0].stripe_customer_id,
       return_url: `${appUrl}/Account`
     });
-    
+
     return Response.json({
       success: true,
       portal_url: session.url
     });
   } catch (error) {
-    console.error('Customer portal error:', error);
+    console.error('Portal error:', error);
     return Response.json({
       success: false,
       error: error.message || 'Failed to create portal session'

@@ -7,17 +7,20 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
 
     if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ 
+        success: false,
+        error: 'Unauthorized' 
+      }, { status: 401 });
     }
 
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
-    
-    // Get user's subscription
+    // Get subscription for current user
     const subs = await base44.asServiceRole.entities.Subscription.filter({
-      created_by: user.email
+      user_email: user.email
     });
-    
-    if (subs.length === 0) {
+
+    const sub = subs.length > 0 ? subs[0] : null;
+
+    if (!sub) {
       return Response.json({
         success: true,
         subscription: {
@@ -27,41 +30,19 @@ Deno.serve(async (req) => {
           purchased_at: null,
           amount_paid: 0
         },
-        billing_history: []
+        billing_history: [],
+        payment_methods: []
       });
     }
-    
-    const sub = subs[0];
-    
-    // Check if annual subscription has expired
-    if (sub.plan === 'annual' && sub.expires_at) {
-      const expiresDate = new Date(sub.expires_at);
-      if (expiresDate < new Date()) {
-        await base44.asServiceRole.entities.Subscription.update(sub.id, {
-          status: 'expired',
-          plan: 'free'
-        });
-        
-        return Response.json({
-          success: true,
-          subscription: {
-            plan: 'free',
-            status: 'expired',
-            expires_at: sub.expires_at,
-            purchased_at: sub.purchased_at,
-            amount_paid: sub.amount_paid
-          },
-          billing_history: []
-        });
-      }
-    }
 
-    // Fetch billing history if customer exists
+    // Fetch Stripe data if available
     let billing_history = [];
     let payment_methods = [];
     
-    if (sub.stripe_customer_id) {
+    if (sub.stripe_customer_id && Deno.env.get('STRIPE_SECRET_KEY')) {
       try {
+        const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+        
         const charges = await stripe.charges.list({
           customer: sub.stripe_customer_id,
           limit: 10
@@ -76,11 +57,7 @@ Deno.serve(async (req) => {
           description: charge.description || 'IsThis.io Subscription',
           receipt_url: charge.receipt_url
         }));
-      } catch (err) {
-        console.error('Error fetching charges:', err);
-      }
 
-      try {
         const paymentMethods = await stripe.paymentMethods.list({
           customer: sub.stripe_customer_id,
           type: 'card'
@@ -94,10 +71,10 @@ Deno.serve(async (req) => {
           exp_year: pm.card.exp_year
         }));
       } catch (err) {
-        console.error('Error fetching payment methods:', err);
+        console.error('Stripe fetch error:', err.message);
       }
     }
-    
+
     return Response.json({
       success: true,
       subscription: {
@@ -105,7 +82,7 @@ Deno.serve(async (req) => {
         status: sub.status,
         expires_at: sub.expires_at,
         purchased_at: sub.purchased_at,
-        amount_paid: sub.amount_paid,
+        amount_paid: sub.amount_paid || 0,
         stripe_customer_id: sub.stripe_customer_id
       },
       billing_history,
@@ -114,8 +91,16 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('Get subscription error:', error);
     return Response.json({
-      success: false,
-      error: error.message
-    }, { status: 500 });
+      success: true,
+      subscription: {
+        plan: 'free',
+        status: 'active',
+        expires_at: null,
+        purchased_at: null,
+        amount_paid: 0
+      },
+      billing_history: [],
+      payment_methods: []
+    });
   }
 });
