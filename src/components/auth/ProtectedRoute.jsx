@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { base44Auth } from '@/api/base44ClientAuth';
+import { base44Auth } from '@/components/api/base44ClientAuth';
 import { Loader2 } from 'lucide-react';
 
 export default function ProtectedRoute({ children }) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44Auth } from '@/api/base44ClientAuth';
+import { base44Auth } from '@/components/api/base44ClientAuth';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
