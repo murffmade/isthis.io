@@ -9,7 +9,7 @@ export const copy = {
   // Hero section
   heroTitle: 'Is This Real?',
   heroSubtitle: 'Get clarity on whether images and video were likely created by AI',
-  heroDescription: 'IsThis.io analyzes patterns and signals in content to help you understand what you're seeing',
+  heroDescription: "IsThis.io analyzes patterns and signals in content to help you understand what you're seeing",
   heroTrustLine: 'No scare tactics. No false certainty. Just helpful insight you can actually use.',
   
   // CTAs
@@ -23,7 +23,7 @@ export const copy = {
   disclaimerExpanded: 'IsThis.io provides decision-support insights based on observable signals. Results can be wrong, especially for short or heavily edited content. Use this as one input among many.',
   
   // Trust messaging
-  trustStatement: 'IsThis.io doesn\'t claim to know for sure. Instead, it helps you understand how likely AI involvement may be—so you can decide what to do next.',
+  trustStatement: "IsThis.io doesn't claim to know for sure. Instead, it helps you understand how likely AI involvement may be—so you can decide what to do next.",
   trustTagline: 'Helpful insight, not black-box judgments.',
   
   // Feature descriptions
