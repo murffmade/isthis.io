@@ -23,20 +23,32 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
 
-    // Fetch plan from server-trusted catalog
-    const plans = await base44.asServiceRole.entities.PlanConfig.filter({
-      plan_key: plan_key,
-      active: true
-    });
+    // Define plan configurations with Stripe price IDs
+    const planConfigs = {
+      'monthly': {
+        stripe_price_id: 'price_1Sjz4rDxwHtxi3th91iEEk4G',
+        mode: 'subscription',
+        display_name: 'Basic Monthly'
+      },
+      'annual': {
+        stripe_price_id: 'price_1Sjz4vDxwHtxi3thgVy2v1BY',
+        mode: 'subscription',
+        display_name: 'Premium Annual'
+      },
+      'lifetime': {
+        stripe_price_id: 'price_1Sjz4wDxwHtxi3thVSqLOQ04',
+        mode: 'payment',
+        display_name: 'Lifetime Premium'
+      }
+    };
 
-    if (plans.length === 0) {
+    const plan = planConfigs[plan_key];
+    if (!plan) {
       return Response.json({
         success: false,
-        error: 'Invalid or inactive plan'
+        error: 'Invalid plan'
       }, { status: 400 });
     }
-
-    const plan = plans[0];
     
     if (!Deno.env.get('STRIPE_SECRET_KEY')) {
       return Response.json({
