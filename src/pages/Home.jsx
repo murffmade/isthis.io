@@ -1741,14 +1741,12 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
             className="mb-6"
           >
             <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border border-amber-200 p-2.5">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-600 to-yellow-600 flex items-center justify-center">
-                  <Shield className="w-3.5 h-3.5 text-white" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-xs">
-                  {isAdmin ? 'Admin' : 'Trainer'}
-                </h3>
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-600 to-yellow-600 flex items-center justify-center mb-2">
+                <Shield className="w-3.5 h-3.5 text-white" />
               </div>
+              <h3 className="font-bold text-slate-900 text-xs mb-2">
+                {isAdmin ? 'Admin' : 'Trainer'}
+              </h3>
               <div className="flex flex-wrap justify-center gap-2">
                 {isAdmin && (
                   <>
