@@ -3,7 +3,7 @@ import Stripe from 'npm:stripe@14.0.0';
 
 Deno.serve(async (req) => {
   try {
-    // PUBLIC ENDPOINT - No auth required
+    // PUBLIC endpoint - must work even if user is logged out
     const base44 = createClientFromRequest(req);
     
     const { session_id } = await req.json();
@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
     if (!session_id) {
       return Response.json({
         success: false,
-        error: 'session_id required'
+        error: 'session_id is required'
       }, { status: 400 });
     }
 
@@ -24,29 +24,45 @@ Deno.serve(async (req) => {
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     
-    // Retrieve checkout session
+    // Retrieve session from Stripe
     const session = await stripe.checkout.sessions.retrieve(session_id);
     
-    if (session.payment_status === 'paid') {
-      return Response.json({
-        success: true,
-        paid: true,
-        plan_key: session.metadata.plan_key,
-        user_email: session.metadata.base44_user_email,
-        amount: session.amount_total
-      });
-    } else {
+    const paid = session.payment_status === 'paid';
+    const user_email = session.metadata?.user_email;
+    const plan_key = session.metadata?.plan_key;
+    
+    if (!paid) {
       return Response.json({
         success: true,
         paid: false,
-        status: session.payment_status
+        status: 'unpaid'
       });
     }
+    
+    // Check if entitlement exists and is active
+    let entitlementStatus = 'pending';
+    if (user_email) {
+      const entitlements = await base44.asServiceRole.entities.UserEntitlement.filter({
+        user_email: user_email
+      });
+      
+      if (entitlements.length > 0 && entitlements[0].status === 'active') {
+        entitlementStatus = 'active';
+      }
+    }
+    
+    return Response.json({
+      success: true,
+      paid: true,
+      status: entitlementStatus,
+      plan_key: plan_key,
+      user_email: user_email
+    });
   } catch (error) {
-    console.error('Payment verification error:', error);
+    console.error('verifyPayment error:', error);
     return Response.json({
       success: false,
-      error: 'Failed to verify payment'
+      error: error.message || 'Failed to verify payment'
     }, { status: 500 });
   }
 });
