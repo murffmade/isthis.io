@@ -50,6 +50,19 @@ export default function APIInternal() {
     onError: () => toast.error('Failed to revoke API key')
   });
 
+  const rotateMutation = useMutation({
+    mutationFn: async (keyId) => {
+      const result = await base44.functions.invoke('rotateApiKey', { key_id: keyId });
+      return result.data;
+    },
+    onSuccess: (data) => {
+      setGeneratedKey(data.api_key);
+      queryClient.invalidateQueries(['apiKeys']);
+      toast.success('API key rotated successfully');
+    },
+    onError: () => toast.error('Failed to rotate API key')
+  });
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard');
@@ -189,14 +202,24 @@ export default function APIInternal() {
                         {key.last_used && ` • Last: ${new Date(key.last_used).toLocaleDateString()}`}
                       </div>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => revokeMutation.mutate(key.id)}
-                      disabled={revokeMutation.isPending}
-                    >
-                      Revoke
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => rotateMutation.mutate(key.id)}
+                        disabled={rotateMutation.isPending}
+                      >
+                        Rotate
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => revokeMutation.mutate(key.id)}
+                        disabled={revokeMutation.isPending}
+                      >
+                        Revoke
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -335,13 +358,13 @@ Content-Type: application/json`}
             </div>
 
             {/* GET /api/batch/:id */}
-            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
               <div className="p-6 bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-slate-200">
                 <div className="flex items-center gap-3">
                   <span className="px-3 py-1 bg-amber-600 text-white text-sm font-bold rounded">GET</span>
                   <code className="text-lg font-mono text-slate-900">/api/batch/:id</code>
                 </div>
-                <p className="text-sm text-slate-600 mt-2">Get batch job status and results</p>
+                <p className="text-sm text-slate-600 mt-2">Get batch job status, progress, and results</p>
               </div>
               <div className="p-6">
                 <h5 className="font-semibold text-slate-900 mb-2">Response</h5>
@@ -353,12 +376,53 @@ Content-Type: application/json`}
     "name": "Batch Assessment 1",
     "status": "completed",
     "total_items": 2,
-    "completed_items": 2
+    "completed_items": 2,
+    "failed_items": 0,
+    "pending_items": 0,
+    "progress_percentage": 100
   },
   "items": [...],
   "results": [...]
 }`}
                 </pre>
+              </div>
+            </div>
+
+            {/* POST /api/reports */}
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <div className="p-6 bg-gradient-to-r from-rose-50 to-pink-50 border-b border-slate-200">
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1 bg-rose-600 text-white text-sm font-bold rounded">POST</span>
+                  <code className="text-lg font-mono text-slate-900">/api/reports</code>
+                </div>
+                <p className="text-sm text-slate-600 mt-2">Generate exportable audit report (PDF/JSON)</p>
+              </div>
+              <div className="p-6">
+                <h5 className="font-semibold text-slate-900 mb-2">Request Body</h5>
+                <pre className="bg-slate-900 text-slate-300 p-4 rounded-lg text-sm mb-4 overflow-auto">
+{`{
+  "result_id": "uuid",
+  "format": "pdf"  // or "json"
+}`}
+                </pre>
+
+                <h5 className="font-semibold text-slate-900 mb-2">Response (JSON format)</h5>
+                <pre className="bg-slate-900 text-slate-300 p-4 rounded-lg text-sm mb-4 overflow-auto">
+{`{
+  "report_type": "assessment_audit",
+  "generated_at": "2025-01-01T00:00:00Z",
+  "assessment": {...},
+  "result": {
+    "risk_level": "MEDIUM",
+    "likelihood_range": "45-65%",
+    "signals": [...],
+    "narrative_explanation": "..."
+  }
+}`}
+                </pre>
+
+                <h5 className="font-semibold text-slate-900 mb-2">Response (PDF format)</h5>
+                <p className="text-sm text-slate-600 mb-2">Returns PDF file as application/pdf with attachment disposition</p>
               </div>
             </div>
           </div>

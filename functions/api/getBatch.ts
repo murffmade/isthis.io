@@ -46,6 +46,12 @@ Deno.serve(async (req) => {
     // Fetch batch items
     const batchItems = await base44.asServiceRole.entities.BatchItem.filter({ batch_job_id: batchId });
 
+    // Calculate progress
+    const completedItems = batchItems.filter(item => item.status === 'completed').length;
+    const failedItems = batchItems.filter(item => item.status === 'failed').length;
+    const pendingItems = batchItems.filter(item => item.status === 'pending').length;
+    const progress = batchJob.total_items > 0 ? Math.round((completedItems / batchJob.total_items) * 100) : 0;
+
     // Fetch results for completed items
     const results = [];
     for (const item of batchItems) {
@@ -54,9 +60,16 @@ Deno.serve(async (req) => {
         if (resultData && resultData.length > 0) {
           results.push({
             item_index: item.item_index,
+            status: item.status,
             result: resultData[0]
           });
         }
+      } else if (item.status === 'failed') {
+        results.push({
+          item_index: item.item_index,
+          status: 'failed',
+          error: 'Processing failed'
+        });
       }
     }
 
@@ -67,7 +80,10 @@ Deno.serve(async (req) => {
         name: batchJob.name,
         status: batchJob.status,
         total_items: batchJob.total_items,
-        completed_items: batchJob.completed_items,
+        completed_items: completedItems,
+        failed_items: failedItems,
+        pending_items: pendingItems,
+        progress_percentage: progress,
         created_date: batchJob.created_date,
         summary: batchJob.summary
       },
