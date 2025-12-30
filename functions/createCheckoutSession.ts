@@ -7,10 +7,21 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
 
     if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ 
+        success: false,
+        error: 'Unauthorized' 
+      }, { status: 401 });
     }
 
     const { plan_name, price_cents } = await req.json();
+    
+    if (!Deno.env.get('STRIPE_SECRET_KEY')) {
+      return Response.json({
+        success: false,
+        error: 'Stripe not configured'
+      }, { status: 500 });
+    }
+
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     
     // Get or create customer
@@ -25,8 +36,8 @@ Deno.serve(async (req) => {
     } else {
       customer = await stripe.customers.create({
         email: user.email,
+        name: user.full_name || user.email,
         metadata: {
-          user_id: user.id,
           user_email: user.email
         }
       });
@@ -43,7 +54,7 @@ Deno.serve(async (req) => {
           currency: 'usd',
           product_data: {
             name: `IsThis.io ${plan_name}`,
-            description: plan_name === 'Lifetime Premium' 
+            description: plan_name.includes('Lifetime') 
               ? 'Unlimited verifications, forever'
               : 'Unlimited verifications for 1 year'
           },
@@ -53,11 +64,9 @@ Deno.serve(async (req) => {
       }],
       mode: 'payment',
       success_url: `${appUrl}/PaymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/Home`,
+      cancel_url: `${appUrl}/Account`,
       metadata: {
-        user_id: user.id,
         user_email: user.email,
-        plan_name: plan_name,
         plan_type: plan_name.includes('Lifetime') ? 'lifetime' : 'annual'
       }
     });
