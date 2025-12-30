@@ -1,39 +1,98 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle, ArrowRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import confetti from 'canvas-confetti';
 import BottomNav from '@/components/mobile/BottomNav';
+import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 
 export default function PaymentSuccess() {
+  const [verifying, setVerifying] = useState(true);
+  const [verified, setVerified] = useState(false);
+
   useEffect(() => {
-    // Trigger confetti animation
-    const duration = 3000;
-    const end = Date.now() + duration;
+    const verifyPayment = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+      
+      if (!sessionId) {
+        toast.error('Invalid payment session');
+        setVerifying(false);
+        return;
+      }
 
-    const frame = () => {
-      confetti({
-        particleCount: 2,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors: ['#10b981', '#3b82f6', '#8b5cf6']
-      });
-      confetti({
-        particleCount: 2,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors: ['#10b981', '#3b82f6', '#8b5cf6']
-      });
+      try {
+        const result = await base44.functions.invoke('verifyPayment', {
+          session_id: sessionId
+        });
 
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
+        if (result.data.success && result.data.paid) {
+          setVerified(true);
+          // Trigger confetti animation
+          const duration = 3000;
+          const end = Date.now() + duration;
+
+          const frame = () => {
+            confetti({
+              particleCount: 2,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0 },
+              colors: ['#10b981', '#3b82f6', '#8b5cf6']
+            });
+            confetti({
+              particleCount: 2,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1 },
+              colors: ['#10b981', '#3b82f6', '#8b5cf6']
+            });
+
+            if (Date.now() < end) {
+              requestAnimationFrame(frame);
+            }
+          };
+          frame();
+        }
+      } catch (error) {
+        console.error('Payment verification error:', error);
+        toast.error('Payment verification failed');
+      } finally {
+        setVerifying(false);
       }
     };
-    frame();
+
+    verifyPayment();
   }, []);
+
+  if (verifying) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center px-6">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-slate-400 animate-spin mx-auto mb-4" />
+          <p className="text-slate-600">Verifying your payment...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!verified) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center px-6">
+        <div className="text-center max-w-md">
+          <p className="text-slate-600 mb-6">Payment could not be verified. Please check your account or contact support.</p>
+          <Link
+            to={createPageUrl('Account')}
+            className="inline-flex items-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors"
+          >
+            Go to Account
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center px-6 pb-20 md:pb-0">

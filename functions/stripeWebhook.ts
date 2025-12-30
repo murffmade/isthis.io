@@ -1,28 +1,34 @@
-import Stripe from 'stripe';
-import { base44 } from '@base44/sdk';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import Stripe from 'npm:stripe@14.0.0';
 
-export default async function stripeWebhook({ rawBody, signature }, context) {
+Deno.serve(async (req) => {
   try {
-    const stripe = new Stripe(context.secrets.STRIPE_SECRET_KEY);
-    
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+    const sig = req.headers.get('stripe-signature');
+    const body = await req.text();
+
     // Verify webhook signature
     let event;
     try {
-      event = stripe.webhooks.constructEvent(
-        rawBody,
-        signature,
-        context.secrets.STRIPE_WEBHOOK_SECRET
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        sig,
+        Deno.env.get('STRIPE_WEBHOOK_SECRET')
       );
     } catch (err) {
       console.error('Webhook signature verification failed:', err.message);
-      return { success: false, error: 'Invalid signature' };
+      return Response.json({ error: 'Invalid signature' }, { status: 400 });
     }
+
+    const base44 = createClientFromRequest(req);
     
     // Handle the event
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
-        const { user_id, user_email, plan_type } = session.metadata;
+        const { user_email, plan_type } = session.metadata;
+        
+        console.log('Processing checkout for:', user_email, plan_type);
         
         // Calculate expiration date
         let expires_at = null;
@@ -34,32 +40,26 @@ export default async function stripeWebhook({ rawBody, signature }, context) {
         
         // Create or update subscription record
         const existingSubs = await base44.asServiceRole.entities.Subscription.filter({
-          created_by: user_email
+          user_email: user_email
         });
         
+        const subData = {
+          user_email: user_email,
+          plan: plan_type,
+          status: 'active',
+          stripe_customer_id: session.customer,
+          stripe_payment_intent_id: session.payment_intent,
+          expires_at: expires_at,
+          purchased_at: new Date().toISOString(),
+          amount_paid: session.amount_total
+        };
+
         if (existingSubs.length > 0) {
-          // Update existing subscription
-          await base44.asServiceRole.entities.Subscription.update(existingSubs[0].id, {
-            plan: plan_type,
-            status: 'active',
-            stripe_customer_id: session.customer,
-            stripe_payment_intent_id: session.payment_intent,
-            expires_at: expires_at,
-            purchased_at: new Date().toISOString(),
-            amount_paid: session.amount_total
-          });
+          await base44.asServiceRole.entities.Subscription.update(existingSubs[0].id, subData);
+          console.log('Updated subscription:', existingSubs[0].id);
         } else {
-          // Create new subscription
-          await base44.asServiceRole.entities.Subscription.create({
-            created_by: user_email,
-            plan: plan_type,
-            status: 'active',
-            stripe_customer_id: session.customer,
-            stripe_payment_intent_id: session.payment_intent,
-            expires_at: expires_at,
-            purchased_at: new Date().toISOString(),
-            amount_paid: session.amount_total
-          });
+          await base44.asServiceRole.entities.Subscription.create(subData);
+          console.log('Created new subscription');
         }
         break;
       }
@@ -68,7 +68,6 @@ export default async function stripeWebhook({ rawBody, signature }, context) {
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
         
-        // Find subscription by Stripe customer ID
         const subs = await base44.asServiceRole.entities.Subscription.filter({
           stripe_customer_id: subscription.customer
         });
@@ -85,9 +84,9 @@ export default async function stripeWebhook({ rawBody, signature }, context) {
         console.log(`Unhandled event type: ${event.type}`);
     }
     
-    return { success: true, received: true };
+    return Response.json({ received: true });
   } catch (error) {
     console.error('Webhook error:', error);
-    return { success: false, error: error.message };
+    return Response.json({ error: error.message }, { status: 500 });
   }
-}
+});
