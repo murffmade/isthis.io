@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Plus, Edit2, Trash2, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Shield, Plus, Edit2, Trash2, Check, X, ChevronDown, ChevronUp, ArrowUpRight, GitBranch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,63 +8,50 @@ import { Textarea } from '@/components/ui/textarea';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { PERMISSION_MODULES } from '@/components/hooks/useRBAC';
 
-const PERMISSION_MODULES = {
-  users: {
-    label: 'User Management',
-    icon: '👥',
-    permissions: ['view', 'create', 'edit', 'delete']
-  },
-  content_moderation: {
-    label: 'Content Moderation',
-    icon: '🛡️',
-    permissions: ['view', 'approve', 'reject', 'delete']
-  },
-  payouts: {
-    label: 'Payouts',
-    icon: '💰',
-    permissions: ['view', 'process', 'approve', 'reject']
-  },
-  analytics: {
-    label: 'Analytics',
-    icon: '📊',
-    permissions: ['view', 'export']
-  },
-  influencers: {
-    label: 'Influencer Management',
-    icon: '🌟',
-    permissions: ['view', 'edit', 'manage_tiers']
-  },
-  blog: {
-    label: 'Blog Management',
-    icon: '📝',
-    permissions: ['view', 'create', 'edit', 'publish', 'delete']
-  },
-  settings: {
-    label: 'System Settings',
-    icon: '⚙️',
-    permissions: ['view', 'edit']
-  },
-  roles: {
-    label: 'Role Management',
-    icon: '🔐',
-    permissions: ['view', 'create', 'edit', 'delete', 'assign']
-  }
+const HIERARCHY_LEVELS = {
+  admin: 100,
+  manager: 50,
+  moderator: 30,
+  contributor: 10,
+  viewer: 0
 };
 
 function PermissionCheckbox({ module, permission, checked, onChange, disabled }) {
   const permissionLabels = {
     view: 'View',
+    view_all: 'View All',
+    view_own: 'View Own',
+    view_basic: 'View Basic',
+    view_detailed: 'View Detailed',
+    view_financial: 'View Financial',
+    view_logs: 'View Logs',
+    view_feedback: 'View Feedback',
     create: 'Create',
     edit: 'Edit',
+    edit_own: 'Edit Own',
+    edit_app: 'Edit App',
+    edit_features: 'Edit Features',
+    edit_billing: 'Edit Billing',
     delete: 'Delete',
     approve: 'Approve',
     reject: 'Reject',
     process: 'Process',
     export: 'Export',
+    export_logs: 'Export Logs',
     manage_tiers: 'Manage Tiers',
+    manage_roles: 'Manage Roles',
+    manage_payouts: 'Manage Payouts',
     publish: 'Publish',
-    assign: 'Assign'
+    assign: 'Assign',
+    invite: 'Invite',
+    grant: 'Grant',
+    cancel: 'Cancel',
+    flag: 'Flag',
+    label_content: 'Label Content',
+    review_feedback: 'Review Feedback',
+    assign_tasks: 'Assign Tasks'
   };
 
   return (
@@ -81,10 +68,13 @@ function PermissionCheckbox({ module, permission, checked, onChange, disabled })
   );
 }
 
-function RoleEditor({ role, onSave, onCancel }) {
+function RoleEditor({ role, onSave, onCancel, allRoles }) {
   const [name, setName] = useState(role?.name || '');
   const [description, setDescription] = useState(role?.description || '');
   const [permissions, setPermissions] = useState(role?.permissions || {});
+  const [hierarchyLevel, setHierarchyLevel] = useState(role?.hierarchy_level || 0);
+  const [parentRoleId, setParentRoleId] = useState(role?.parent_role_id || '');
+  const [inheritsPermissions, setInheritsPermissions] = useState(role?.inherits_permissions !== false);
   const [expandedModules, setExpandedModules] = useState({});
 
   const togglePermission = (module, permission, value) => {
@@ -122,7 +112,14 @@ function RoleEditor({ role, onSave, onCancel }) {
       toast.error('Role name is required');
       return;
     }
-    onSave({ name, description, permissions });
+    onSave({ 
+      name, 
+      description, 
+      permissions,
+      hierarchy_level: hierarchyLevel,
+      parent_role_id: parentRoleId || null,
+      inherits_permissions: inheritsPermissions
+    });
   };
 
   return (
@@ -154,6 +151,51 @@ function RoleEditor({ role, onSave, onCancel }) {
             className="mt-2"
             rows={3}
           />
+        </div>
+
+        <div className="mb-6 grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="hierarchy-level">Hierarchy Level</Label>
+            <select
+              id="hierarchy-level"
+              value={hierarchyLevel}
+              onChange={(e) => setHierarchyLevel(parseInt(e.target.value))}
+              className="mt-2 w-full px-3 py-2 border border-slate-300 rounded-md"
+            >
+              <option value={0}>Viewer (0) - Lowest</option>
+              <option value={10}>Contributor (10)</option>
+              <option value={30}>Moderator (30)</option>
+              <option value={50}>Manager (50)</option>
+              <option value={100}>Admin (100) - Highest</option>
+            </select>
+            <p className="text-xs text-slate-500 mt-1">Higher levels inherit lower level permissions</p>
+          </div>
+
+          <div>
+            <Label htmlFor="parent-role">Parent Role (Optional)</Label>
+            <select
+              id="parent-role"
+              value={parentRoleId}
+              onChange={(e) => setParentRoleId(e.target.value)}
+              className="mt-2 w-full px-3 py-2 border border-slate-300 rounded-md"
+            >
+              <option value="">No parent</option>
+              {allRoles?.filter(r => r.id !== role?.id).map(r => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+            {parentRoleId && (
+              <label className="flex items-center gap-2 mt-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={inheritsPermissions}
+                  onChange={(e) => setInheritsPermissions(e.target.checked)}
+                  className="rounded"
+                />
+                <span className="text-slate-600">Inherit parent permissions</span>
+              </label>
+            )}
+          </div>
         </div>
 
         <div className="mb-6">
@@ -245,6 +287,13 @@ export default function RoleManagement() {
     queryFn: () => base44.entities.Role.list()
   });
 
+  // Get role hierarchy map
+  const getRoleHierarchy = (roleId) => {
+    const role = roles.find(r => r.id === roleId);
+    if (!role || !role.parent_role_id) return [];
+    return [role.parent_role_id, ...getRoleHierarchy(role.parent_role_id)];
+  };
+
   const createRoleMutation = useMutation({
     mutationFn: (roleData) => base44.entities.Role.create(roleData),
     onSuccess: () => {
@@ -322,6 +371,7 @@ export default function RoleManagement() {
           <div className="mb-6">
             <RoleEditor
               role={editingRole}
+              allRoles={roles}
               onSave={handleSaveRole}
               onCancel={() => {
                 setShowEditor(false);
@@ -366,9 +416,18 @@ export default function RoleManagement() {
                         Inactive
                       </span>
                     )}
+                    <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded">
+                      Level {role.hierarchy_level || 0}
+                    </span>
                   </div>
                   {role.description && (
-                    <p className="text-sm text-slate-600">{role.description}</p>
+                    <p className="text-sm text-slate-600 mb-2">{role.description}</p>
+                  )}
+                  {role.parent_role_id && (
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                      <GitBranch className="w-3 h-3" />
+                      <span>Inherits from: {roles.find(r => r.id === role.parent_role_id)?.name || 'Unknown'}</span>
+                    </div>
                   )}
                 </div>
                 <div className="flex gap-2">
