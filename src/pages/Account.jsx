@@ -11,6 +11,7 @@ import StripeCheckout from '@/components/payment/StripeCheckout';
 import BottomNav from '@/components/mobile/BottomNav';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { ExternalLink, Receipt, CreditCard as CreditCardIcon } from 'lucide-react';
 
 const planConfig = {
   free: {
@@ -70,6 +71,30 @@ export default function AccountPage() {
       return subs[0] || null;
     },
     enabled: !!currentUser
+  });
+
+  const { data: billingInfo } = useQuery({
+    queryKey: ['billingInfo'],
+    queryFn: async () => {
+      const result = await base44.functions.invoke('getBillingInfo', {});
+      return result.data;
+    },
+    enabled: !!currentUser && !!subscription && subscription.plan !== 'free'
+  });
+
+  const createPortalMutation = useMutation({
+    mutationFn: async () => {
+      const result = await base44.functions.invoke('createCustomerPortal', {});
+      return result.data;
+    },
+    onSuccess: (data) => {
+      if (data.success && data.portal_url) {
+        window.location.href = data.portal_url;
+      } else {
+        toast.error('Unable to open billing portal');
+      }
+    },
+    onError: () => toast.error('Failed to open billing portal')
   });
 
   const updateUserMutation = useMutation({
@@ -303,7 +328,116 @@ export default function AccountPage() {
               ))}
             </div>
           </div>
+
+          {subscription && subscription.plan !== 'free' && subscription.stripe_customer_id && (
+            <div className="mt-6 pt-6 border-t border-slate-200">
+              <Button
+                onClick={() => createPortalMutation.mutate()}
+                disabled={createPortalMutation.isPending}
+                variant="outline"
+                className="w-full"
+              >
+                {createPortalMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Manage Billing & Payments
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </motion.div>
+
+        {/* Billing History */}
+        {subscription && subscription.plan !== 'free' && billingInfo?.billing_history?.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl border-2 border-slate-200 p-8 mb-8"
+          >
+            <div className="flex items-center gap-2 mb-6">
+              <Receipt className="w-5 h-5 text-slate-700" />
+              <h2 className="text-2xl font-bold text-slate-900">Billing History</h2>
+            </div>
+
+            <div className="space-y-3">
+              {billingInfo.billing_history.map((charge) => (
+                <div key={charge.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                  <div>
+                    <div className="font-medium text-slate-900">
+                      ${(charge.amount / 100).toFixed(2)} {charge.currency.toUpperCase()}
+                    </div>
+                    <div className="text-sm text-slate-500">
+                      {moment.unix(charge.created).format('MMM D, YYYY')}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      charge.status === 'succeeded' 
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-slate-200 text-slate-700'
+                    }`}>
+                      {charge.status}
+                    </span>
+                    {charge.receipt_url && (
+                      <a
+                        href={charge.receipt_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                      >
+                        Receipt
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Payment Methods */}
+        {subscription && subscription.plan !== 'free' && billingInfo?.payment_methods?.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl border-2 border-slate-200 p-8 mb-8"
+          >
+            <div className="flex items-center gap-2 mb-6">
+              <CreditCardIcon className="w-5 h-5 text-slate-700" />
+              <h2 className="text-2xl font-bold text-slate-900">Payment Methods</h2>
+            </div>
+
+            <div className="space-y-3">
+              {billingInfo.payment_methods.map((pm) => (
+                <div key={pm.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-8 bg-slate-200 rounded flex items-center justify-center">
+                      <CreditCardIcon className="w-5 h-5 text-slate-600" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-slate-900 capitalize">
+                        {pm.brand} •••• {pm.last4}
+                      </div>
+                      <div className="text-sm text-slate-500">
+                        Expires {pm.exp_month}/{pm.exp_year}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 text-sm text-slate-600">
+              Use "Manage Billing & Payments" above to add or remove cards
+            </div>
+          </motion.div>
+        )}
 
         {/* Upgrade Options */}
         {currentPlan !== 'lifetime' && (
