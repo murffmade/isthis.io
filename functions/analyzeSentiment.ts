@@ -59,6 +59,18 @@ Provide nuanced analysis that goes beyond surface-level sentiment.`,
       }
     });
 
+    // Save to history
+    const emotionTags = result.emotional_tones?.map(t => t.emotion) || [];
+    await base44.entities.AIAnalysisHistory.create({
+      analysis_type: 'sentiment',
+      content_preview: content.substring(0, 200),
+      content_type: 'text',
+      result,
+      outcome: result.primary_sentiment,
+      confidence_score: Math.round(result.sentiment_score * 100),
+      tags: ['sentiment', result.primary_sentiment, ...emotionTags, result.sarcasm_detected ? 'sarcasm' : ''].filter(Boolean)
+    });
+
     return Response.json({ success: true, analysis: result });
   } catch (error) {
     console.error('Sentiment analysis error:', error);

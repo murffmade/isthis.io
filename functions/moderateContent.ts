@@ -73,6 +73,19 @@ Provide a detailed moderation report with specific violations found and confiden
       });
     }
 
+    // Save to history
+    const violationTags = result.violations?.map(v => v.category) || [];
+    await base44.entities.AIAnalysisHistory.create({
+      analysis_type: 'moderation',
+      content_preview: `${content_type} content`,
+      content_type: content_type || 'unknown',
+      file_url,
+      result,
+      outcome: result.action,
+      confidence_score: result.violations?.[0]?.confidence ? Math.round(result.violations[0].confidence * 100) : 0,
+      tags: ['moderation', result.action, result.overall_risk, ...violationTags].filter(Boolean)
+    });
+
     return Response.json({ success: true, moderation: result });
   } catch (error) {
     console.error('Content moderation error:', error);

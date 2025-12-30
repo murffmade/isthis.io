@@ -53,6 +53,18 @@ Provide a structured analysis with:
       }
     });
 
+    // Save to history
+    const tags = result.detected_biases?.map(b => b.type) || [];
+    await base44.entities.AIAnalysisHistory.create({
+      analysis_type: 'bias',
+      content_preview: content.substring(0, 200),
+      content_type: 'text',
+      result,
+      outcome: result.bias_level === 'low' ? 'low_risk' : result.bias_level === 'moderate' ? 'medium_risk' : 'high_risk',
+      confidence_score: 100 - result.overall_score,
+      tags: ['bias', ...tags]
+    });
+
     return Response.json({ success: true, analysis: result });
   } catch (error) {
     console.error('Bias analysis error:', error);
