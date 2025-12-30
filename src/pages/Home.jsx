@@ -2063,7 +2063,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       </li>
                     </ul>
                     <StripeCheckout
-                      plan={{ name: 'Basic Monthly', price: 9.99, buttonText: 'Get Basic' }}
+                      plan={{ key: 'monthly', name: 'Basic Monthly', price: 9.99, buttonText: 'Get Basic' }}
                       onSuccess={handlePaymentSuccess}
                     />
                   </div>
@@ -2095,7 +2095,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       </li>
                     </ul>
                     <StripeCheckout
-                      plan={{ name: 'Premium Annual', price: 29, buttonText: 'Get Premium' }}
+                      plan={{ key: 'annual', name: 'Premium Annual', price: 29, buttonText: 'Get Premium' }}
                       onSuccess={handlePaymentSuccess}
                     />
                   </div>
@@ -2153,7 +2153,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       </div>
 
                       <StripeCheckout
-                        plan={{ name: 'Lifetime Premium', price: 99, buttonText: 'Get Lifetime Access' }}
+                        plan={{ key: 'lifetime', name: 'Lifetime Premium', price: 99, buttonText: 'Get Lifetime Access' }}
                         onSuccess={handlePaymentSuccess}
                       />
                     </div>

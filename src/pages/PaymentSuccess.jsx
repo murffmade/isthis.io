@@ -5,13 +5,17 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import confetti from 'canvas-confetti';
 import BottomNav from '@/components/mobile/BottomNav';
-import { base44 } from '@/api/base44Client';
+import { base44Public } from '@/components/api/base44ClientPublic';
+import { base44Auth } from '@/components/api/base44ClientAuth';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function PaymentSuccess() {
   const [verifying, setVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -25,12 +29,31 @@ export default function PaymentSuccess() {
       }
 
       try {
-        const result = await base44.functions.invoke('verifyPayment', {
+        // Check if user is authenticated
+        let authenticated = false;
+        try {
+          const user = await base44Auth.auth.me();
+          authenticated = !!user;
+          setIsAuthenticated(authenticated);
+        } catch (e) {
+          setIsAuthenticated(false);
+        }
+
+        // Use PUBLIC client to verify payment (no auth required)
+        const result = await base44Public.functions.invoke('verifyPayment', {
           session_id: sessionId
         });
 
         if (result.data.success && result.data.paid) {
           setVerified(true);
+          
+          // If authenticated, refresh user data
+          if (authenticated) {
+            queryClient.invalidateQueries({ queryKey: ['authUser'] });
+            queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+            queryClient.invalidateQueries({ queryKey: ['userSubscription'] });
+            queryClient.invalidateQueries({ queryKey: ['billingInfo'] });
+          }
           
           // Trigger confetti animation
           const duration = 3000;
@@ -70,7 +93,7 @@ export default function PaymentSuccess() {
     };
 
     verifyPayment();
-  }, []);
+  }, [queryClient]);
 
   if (verifying) {
     return (
@@ -160,17 +183,35 @@ export default function PaymentSuccess() {
           </ul>
         </div>
 
-        <Link
-          to={createPageUrl('Home')}
-          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
-        >
-          Start Verifying Content
-          <ArrowRight className="w-5 h-5" />
-        </Link>
-
-        <p className="text-sm text-slate-500 mt-6">
-          A confirmation email has been sent to your inbox
-        </p>
+        {isAuthenticated ? (
+          <>
+            <Link
+              to={createPageUrl('Home')}
+              className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+            >
+              Start Verifying Content
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <p className="text-sm text-slate-500 mt-6">
+              A confirmation email has been sent to your inbox
+            </p>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => {
+                base44Auth.auth.redirectToLogin('/Account');
+              }}
+              className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+            >
+              Sign In to Activate
+              <ArrowRight className="w-5 h-5" />
+            </button>
+            <p className="text-sm text-slate-500 mt-6">
+              Sign in with the email you used for payment to activate your subscription
+            </p>
+          </>
+        )}
       </motion.div>
 
       <BottomNav />
