@@ -14,9 +14,10 @@ import CustomModelEditor from '@/components/enterprise/CustomModelEditor';
 import PolicyEditor from '@/components/enterprise/PolicyEditor';
 import ABTestDashboard from '@/components/enterprise/ABTestDashboard';
 import APIManagement from '@/components/enterprise/APIManagement';
+import AnalysisDashboard from '@/components/enterprise/AnalysisDashboard';
 
 export default function EnterpriseAI() {
-  const [activeTab, setActiveTab] = useState('models');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const queryClient = useQueryClient();
 
   const { data: currentUser } = useQuery({
@@ -27,6 +28,7 @@ export default function EnterpriseAI() {
   const isEnterprise = currentUser?.role === 'admin'; // In production, check for enterprise subscription
 
   const tabs = [
+    { id: 'dashboard', label: 'Analysis Dashboard', icon: TrendingUp },
     { id: 'models', label: 'Custom Models', icon: Brain },
     { id: 'policies', label: 'Moderation Policies', icon: Shield },
     { id: 'testing', label: 'A/B Testing', icon: TestTube2 },
@@ -122,6 +124,7 @@ export default function EnterpriseAI() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
+        {activeTab === 'dashboard' && <AnalysisDashboard />}
         {activeTab === 'models' && <CustomModelEditor />}
         {activeTab === 'policies' && <PolicyEditor />}
         {activeTab === 'testing' && <ABTestDashboard />}
