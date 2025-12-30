@@ -59,6 +59,7 @@ Deno.serve(async (req) => {
     // Fetch billing history if customer exists
     let billing_history = [];
     let payment_methods = [];
+    
     if (sub.stripe_customer_id) {
       try {
         const charges = await stripe.charges.list({
@@ -75,7 +76,11 @@ Deno.serve(async (req) => {
           description: charge.description || 'IsThis.io Subscription',
           receipt_url: charge.receipt_url
         }));
+      } catch (err) {
+        console.error('Error fetching charges:', err);
+      }
 
+      try {
         const paymentMethods = await stripe.paymentMethods.list({
           customer: sub.stripe_customer_id,
           type: 'card'
@@ -89,7 +94,7 @@ Deno.serve(async (req) => {
           exp_year: pm.card.exp_year
         }));
       } catch (err) {
-        console.error('Error fetching Stripe data:', err);
+        console.error('Error fetching payment methods:', err);
       }
     }
     

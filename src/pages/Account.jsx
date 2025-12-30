@@ -123,7 +123,7 @@ export default function AccountPage() {
   const subscription = subscriptionData?.subscription || { plan: 'free', status: 'active' };
   const billingHistory = subscriptionData?.billing_history || [];
   const paymentMethods = subscriptionData?.payment_methods || [];
-  const currentPlan = planConfig[subscription.plan];
+  const currentPlan = planConfig[subscription.plan] || planConfig.free;
   const Icon = currentPlan.icon;
 
   return (
