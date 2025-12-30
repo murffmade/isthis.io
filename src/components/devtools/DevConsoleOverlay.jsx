@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { devConsoleStore } from './devConsoleStore';
 import { startConsoleInterceptor, stopConsoleInterceptor } from './consoleInterceptor';
 import { startWindowErrorListeners, stopWindowErrorListeners } from './errorListeners';
-import { X, Minimize2, Copy, Trash2, Download, ChevronDown, ChevronRight } from 'lucide-react';
+import { X, Settings, Copy, Trash2, Download, ChevronDown, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DevConsoleOverlay() {
@@ -23,6 +23,9 @@ export default function DevConsoleOverlay() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [expandedStacks, setExpandedStacks] = useState(new Set());
+  const [showSettings, setShowSettings] = useState(false);
+  const [buttonColor, setButtonColor] = useState(() => localStorage.getItem('DEV_CONSOLE_BUTTON_COLOR') || '#0f172a');
+  const [transparency, setTransparency] = useState(() => parseInt(localStorage.getItem('DEV_CONSOLE_TRANSPARENCY') || '100'));
   const dragRef = useRef(null);
   const hasAutoOpened = useRef(false);
 
@@ -213,9 +216,10 @@ export default function DevConsoleOverlay() {
           left: `${position.x}px`,
           top: `${position.y}px`,
           cursor: isDragging ? 'grabbing' : 'grab',
-          zIndex: 9999
+          zIndex: 9999,
+          backgroundColor: buttonColor
         }}
-        className="w-14 h-14 bg-slate-900 text-white rounded-full shadow-lg flex items-center justify-center font-bold text-xs hover:bg-slate-800 transition-colors select-none"
+        className="w-14 h-14 text-white rounded-full shadow-lg flex items-center justify-center font-bold text-xs hover:opacity-90 transition-all select-none"
       >
         DEV
         {unseenCount > 0 && (
@@ -238,7 +242,8 @@ export default function DevConsoleOverlay() {
         bottom: 0,
         width: '400px',
         maxWidth: '100vw',
-        zIndex: 9999
+        zIndex: 9999,
+        opacity: transparency / 100
       }}
       className="bg-white shadow-2xl border-l border-slate-300 flex flex-col overflow-hidden"
     >
@@ -276,12 +281,12 @@ export default function DevConsoleOverlay() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setIsExpanded(false);
+              setShowSettings(!showSettings);
             }}
             className="p-1 hover:bg-slate-700 rounded"
-            title="Minimize"
+            title="Settings"
           >
-            <Minimize2 className="w-4 h-4" />
+            <Settings className="w-4 h-4" />
           </button>
           <button
             onClick={(e) => {
@@ -363,6 +368,84 @@ export default function DevConsoleOverlay() {
           ))
         )}
       </div>
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
+          <div className="bg-white rounded-lg shadow-xl p-6 m-4 max-w-sm w-full">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-lg text-slate-900">Dev Console Settings</h3>
+              <button
+                onClick={() => setShowSettings(false)}
+                className="p-1 hover:bg-slate-100 rounded"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Button Color
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={buttonColor}
+                    onChange={(e) => {
+                      setButtonColor(e.target.value);
+                      localStorage.setItem('DEV_CONSOLE_BUTTON_COLOR', e.target.value);
+                    }}
+                    className="w-12 h-12 rounded border border-slate-300 cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={buttonColor}
+                    onChange={(e) => {
+                      setButtonColor(e.target.value);
+                      localStorage.setItem('DEV_CONSOLE_BUTTON_COLOR', e.target.value);
+                    }}
+                    className="flex-1 px-3 py-2 border border-slate-300 rounded text-sm font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Console Transparency: {transparency}%
+                </label>
+                <input
+                  type="range"
+                  min="20"
+                  max="100"
+                  value={transparency}
+                  onChange={(e) => {
+                    setTransparency(parseInt(e.target.value));
+                    localStorage.setItem('DEV_CONSOLE_TRANSPARENCY', e.target.value);
+                  }}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-slate-500 mt-1">
+                  <span>20%</span>
+                  <span>100%</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setButtonColor('#0f172a');
+                  setTransparency(100);
+                  localStorage.setItem('DEV_CONSOLE_BUTTON_COLOR', '#0f172a');
+                  localStorage.setItem('DEV_CONSOLE_TRANSPARENCY', '100');
+                }}
+                className="w-full px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded text-sm font-medium text-slate-700"
+              >
+                Reset to Defaults
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer controls */}
       <div className="border-t border-slate-200 p-3 bg-slate-50 space-y-2">
