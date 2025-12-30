@@ -53,10 +53,20 @@ Provide:
   }
 }
 
-export async function moderateVideo(videoUrl, contentId = null) {
+export async function moderateVideo(videoFrameUrls, contentId = null) {
+  // Video moderation uses extracted frames instead of video file
+  // since Core.InvokeLLM doesn't support video formats
+  if (!videoFrameUrls || videoFrameUrls.length === 0) {
+    console.warn('No video frames provided for moderation');
+    return null;
+  }
+
   try {
+    // Use first few frames for moderation check
+    const framesToCheck = videoFrameUrls.slice(0, 3);
+    
     const analysis = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an AI content moderator. Analyze this video for inappropriate content including:
+      prompt: `You are an AI content moderator. Analyze these video frames for inappropriate content including:
 - Nudity or sexually explicit content
 - Violence or gore
 - Hate speech or discrimination
@@ -68,7 +78,7 @@ Provide:
 2. A confidence_score (0-100)
 3. A brief explanation
 4. Whether it should be flagged for review (flag_for_review: true/false)`,
-      file_urls: [videoUrl],
+      file_urls: framesToCheck,
       response_json_schema: {
         type: "object",
         properties: {
@@ -85,7 +95,7 @@ Provide:
       await base44.entities.FlaggedContent.create({
         content_type: 'video',
         content_id: contentId,
-        content_url: videoUrl,
+        file_url: framesToCheck[0], // Store first frame as reference
         flag_reason: analysis.flag_reason,
         confidence_score: analysis.confidence_score,
         ai_analysis: analysis,

@@ -350,6 +350,9 @@ export default function Home() {
             );
             console.log('[VIDEO ANALYSIS] All frames uploaded successfully');
 
+            // Run content moderation on video frames (background check)
+            moderateVideo(frameUrls.map(f => f.url)).catch(console.error);
+
             // Perform frame-by-frame comparison analysis
             console.log('[VIDEO ANALYSIS] Performing frame-by-frame comparison...');
             const frameComparisons = [];
