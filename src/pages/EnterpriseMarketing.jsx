@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, ArrowLeft, CheckCircle2, Building2, Zap, Lock, TrendingUp } from 'lucide-react';
+import { Shield, ArrowLeft, CheckCircle2, Building2, Zap, Lock, TrendingUp, Layers, Workflow, Gauge, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -103,38 +103,47 @@ ${formData.message}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
             {[
               {
-                icon: '📦',
+                icon: Layers,
                 title: 'Batch Analysis',
-                desc: 'Process up to 1,000 items simultaneously with progress tracking and automated reporting'
+                desc: 'Process up to 1,000 items simultaneously with progress tracking and automated reporting',
+                color: 'from-blue-500 to-blue-600'
               },
               {
-                icon: '🔌',
+                icon: Workflow,
                 title: 'API Access',
-                desc: 'RESTful API with webhooks, SDKs, and comprehensive documentation for seamless integration'
+                desc: 'RESTful API with webhooks, SDKs, and comprehensive documentation for seamless integration',
+                color: 'from-purple-500 to-purple-600'
               },
               {
-                icon: '⚡',
+                icon: Gauge,
                 title: 'Priority Processing',
-                desc: 'Dedicated infrastructure with guaranteed uptime and sub-second analysis times'
+                desc: 'Dedicated infrastructure with guaranteed uptime and sub-second analysis times',
+                color: 'from-amber-500 to-amber-600'
               },
               {
-                icon: '🔐',
+                icon: ShieldCheck,
                 title: 'Enterprise Security',
-                desc: 'SOC 2 compliance, private deployments, and custom data retention policies'
+                desc: 'SOC 2 compliance, private deployments, and custom data retention policies',
+                color: 'from-emerald-500 to-emerald-600'
               }
-            ].map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * i }}
-                className="bg-white rounded-xl p-6 border-2 border-slate-200"
-              >
-                <div className="text-4xl mb-3">{feature.icon}</div>
-                <h4 className="font-semibold text-slate-900 mb-2">{feature.title}</h4>
-                <p className="text-sm text-slate-600 leading-relaxed">{feature.desc}</p>
-              </motion.div>
-            ))}
+            ].map((feature, i) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * i }}
+                  className="bg-white rounded-xl p-6 border border-slate-200 hover:border-slate-300 transition-all group"
+                >
+                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="font-semibold text-slate-900 mb-2">{feature.title}</h4>
+                  <p className="text-sm text-slate-600 leading-relaxed">{feature.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* Benefits */}
