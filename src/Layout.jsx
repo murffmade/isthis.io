@@ -4,6 +4,7 @@ import { Toaster } from 'sonner';
 import { createPageUrl } from '@/utils';
 import ScrollToTop from '@/components/shared/ScrollToTop';
 import PushNotifications from '@/components/notifications/PushNotifications';
+import DevConsoleOverlay from '@/components/devtools/DevConsoleOverlay';
 import { base44 } from '@/api/base44Client';
 import { base44Auth } from '@/components/api/base44ClientAuth';
 import { useQuery } from '@tanstack/react-query';
@@ -34,6 +35,7 @@ export default function Layout({ children, currentPageName }) {
       </Helmet>
       <ScrollToTop />
       <PushNotifications />
+      <DevConsoleOverlay />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
