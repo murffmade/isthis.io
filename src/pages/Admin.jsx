@@ -22,6 +22,9 @@ import ContentModeration from '@/components/admin/ContentModeration';
 import AuditTrail from '@/components/admin/AuditTrail';
 import BlogManagement from '@/components/admin/BlogManagement';
 import LearningManagement from '@/components/admin/LearningManagement';
+import UserManagement from '@/components/admin/UserManagement';
+import SubscriptionOverview from '@/components/admin/SubscriptionOverview';
+import MetricsDashboard from '@/components/admin/MetricsDashboard';
 
 function AdminStats() {
   const { data: allUsers = [] } = useQuery({
@@ -390,7 +393,10 @@ export default function Admin() {
         <div className="mb-8 border-b border-slate-200">
           <div className="flex gap-1 overflow-x-auto">
               {[
-                { id: 'overview', label: 'Overview', icon: BarChart3 },
+                { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+                { id: 'users', label: 'Users', icon: Users },
+                { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
+                { id: 'overview', label: 'Settings', icon: Settings },
                 { id: 'analytics', label: 'Analytics', icon: TrendingUp },
                 { id: 'moderation', label: 'Content Moderation', icon: Shield },
                 { id: 'audit', label: 'Audit Trail', icon: Activity },
@@ -402,8 +408,7 @@ export default function Admin() {
                 { id: 'activity', label: 'User Activity', icon: Activity },
                 { id: 'system', label: 'System Metrics', icon: TrendingUp },
                 { id: 'analyses', label: 'Analyses', icon: Shield },
-                { id: 'announcements', label: 'Announcements', icon: Megaphone },
-                { id: 'users', label: 'User Management', icon: Users }
+                { id: 'announcements', label: 'Announcements', icon: Megaphone }
               ].map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -424,6 +429,12 @@ export default function Admin() {
           </div>
         </div>
 
+        {activeTab === 'dashboard' && <MetricsDashboard />}
+        
+        {activeTab === 'users' && <UserManagement />}
+        
+        {activeTab === 'subscriptions' && <SubscriptionOverview />}
+        
         {activeTab === 'overview' && (
           <div className="space-y-8">
             <AdminStats />

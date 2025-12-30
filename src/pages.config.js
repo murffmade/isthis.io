@@ -28,6 +28,7 @@ import LearnModule from './pages/LearnModule';
 import ModelPerformance from './pages/ModelPerformance';
 import MyGifts from './pages/MyGifts';
 import PaymentSuccess from './pages/PaymentSuccess';
+import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Safe from './pages/Safe';
 import Scam from './pages/Scam';
@@ -37,7 +38,6 @@ import TermsOfService from './pages/TermsOfService';
 import TotalUsersDashboard from './pages/TotalUsersDashboard';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import Pricing from './pages/Pricing';
 import __Layout from './Layout.jsx';
 
 
@@ -72,6 +72,7 @@ export const PAGES = {
     "ModelPerformance": ModelPerformance,
     "MyGifts": MyGifts,
     "PaymentSuccess": PaymentSuccess,
+    "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
     "Safe": Safe,
     "Scam": Scam,
@@ -81,7 +82,6 @@ export const PAGES = {
     "TotalUsersDashboard": TotalUsersDashboard,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "Pricing": Pricing,
 }
 
 export const pagesConfig = {
