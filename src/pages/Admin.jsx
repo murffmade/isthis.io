@@ -25,6 +25,7 @@ import LearningManagement from '@/components/admin/LearningManagement';
 import UserManagement from '@/components/admin/UserManagement';
 import SubscriptionOverview from '@/components/admin/SubscriptionOverview';
 import MetricsDashboard from '@/components/admin/MetricsDashboard';
+import ModerationReview from '@/components/admin/ModerationReview';
 
 function AdminStats() {
   const { data: allUsers = [] } = useQuery({
@@ -490,7 +491,7 @@ export default function Admin() {
         )}
 
         {activeTab === 'analytics' && <AnalyticsDashboard />}
-        {activeTab === 'moderation' && <ContentModeration />}
+        {activeTab === 'moderation' && <ModerationReview />}
         {activeTab === 'audit' && <AuditTrail />}
         {activeTab === 'blog' && <BlogManagement />}
         {activeTab === 'learning' && <LearningManagement />}
