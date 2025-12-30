@@ -3,9 +3,6 @@ import Stripe from 'npm:stripe@14.0.0';
 
 Deno.serve(async (req) => {
   try {
-    // PUBLIC endpoint - must work even if user is logged out
-    const base44 = createClientFromRequest(req);
-    
     const { session_id } = await req.json();
     
     if (!session_id) {
