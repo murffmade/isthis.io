@@ -109,8 +109,9 @@ export default function DevConsoleOverlay() {
     }
   }, [isExpanded, unseenCount]);
 
-  // Dragging logic
+  // Dragging logic (only for collapsed state)
   const handleMouseDown = (e) => {
+    if (isExpanded) return; // Don't drag when expanded
     if (e.target.closest('button')) return;
     
     setIsDragging(true);
@@ -226,27 +227,24 @@ export default function DevConsoleOverlay() {
     );
   }
 
-  // Expanded panel
+  // Expanded panel (full-height column on right)
   return (
     <div
       ref={dragRef}
       style={{
         position: 'fixed',
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        width: '360px',
-        maxWidth: 'calc(100vw - 20px)',
-        height: '420px',
-        maxHeight: 'calc(100vh - 20px)',
+        right: 0,
+        top: 0,
+        bottom: 0,
+        width: '400px',
+        maxWidth: '100vw',
         zIndex: 9999
       }}
-      className="bg-white rounded-lg shadow-2xl border border-slate-300 flex flex-col overflow-hidden"
+      className="bg-white shadow-2xl border-l border-slate-300 flex flex-col overflow-hidden"
     >
       {/* Header */}
       <div
-        onMouseDown={handleMouseDown}
-        className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between cursor-grab select-none"
-        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between select-none"
       >
         <div className="flex items-center gap-2">
           <span className="font-bold text-sm">Dev Console</span>
