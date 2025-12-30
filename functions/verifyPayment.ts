@@ -7,13 +7,26 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
 
     if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ 
+        success: false,
+        error: 'Unauthorized' 
+      }, { status: 401 });
     }
 
     const { session_id } = await req.json();
     
     if (!session_id) {
-      return Response.json({ error: 'Session ID required' }, { status: 400 });
+      return Response.json({ 
+        success: false,
+        error: 'Session ID required' 
+      }, { status: 400 });
+    }
+
+    if (!Deno.env.get('STRIPE_SECRET_KEY')) {
+      return Response.json({
+        success: false,
+        error: 'Stripe not configured'
+      }, { status: 500 });
     }
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
@@ -31,13 +44,20 @@ Deno.serve(async (req) => {
 
     const { user_email, plan_type } = session.metadata;
     
-    // Ensure subscription is created
+    if (!user_email || !plan_type) {
+      return Response.json({
+        success: false,
+        error: 'Invalid session metadata'
+      }, { status: 400 });
+    }
+    
+    // Check if subscription exists (webhook may have already created it)
     const existingSubs = await base44.asServiceRole.entities.Subscription.filter({
       user_email: user_email
     });
     
+    // Create subscription if it doesn't exist yet
     if (existingSubs.length === 0) {
-      // Create subscription if webhook hasn't processed yet
       let expires_at = null;
       if (plan_type === 'annual') {
         const expiresDate = new Date();
@@ -53,8 +73,10 @@ Deno.serve(async (req) => {
         stripe_payment_intent_id: session.payment_intent,
         expires_at: expires_at,
         purchased_at: new Date().toISOString(),
-        amount_paid: session.amount_total
+        amount_paid: session.amount_total || 0
       });
+      
+      console.log('Created subscription from verifyPayment for', user_email);
     }
 
     return Response.json({

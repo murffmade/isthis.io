@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, Loader2 } from 'lucide-react';
+import { CheckCircle, ArrowRight, Loader2, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import confetti from 'canvas-confetti';
@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 export default function PaymentSuccess() {
   const [verifying, setVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -18,7 +19,7 @@ export default function PaymentSuccess() {
       const sessionId = params.get('session_id');
       
       if (!sessionId) {
-        toast.error('Invalid payment session');
+        setError('Invalid payment session - no session ID found');
         setVerifying(false);
         return;
       }
@@ -30,6 +31,7 @@ export default function PaymentSuccess() {
 
         if (result.data.success && result.data.paid) {
           setVerified(true);
+          
           // Trigger confetti animation
           const duration = 3000;
           const end = Date.now() + duration;
@@ -55,10 +57,13 @@ export default function PaymentSuccess() {
             }
           };
           frame();
+        } else {
+          setError(result.data.error || 'Payment not confirmed');
         }
       } catch (error) {
         console.error('Payment verification error:', error);
-        toast.error('Payment verification failed');
+        setError(error.message || 'Failed to verify payment');
+        toast.error('Payment verification failed - please contact support');
       } finally {
         setVerifying(false);
       }
@@ -71,25 +76,41 @@ export default function PaymentSuccess() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center px-6">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-slate-400 animate-spin mx-auto mb-4" />
-          <p className="text-slate-600">Verifying your payment...</p>
+          <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">Verifying Payment...</h2>
+          <p className="text-slate-600">Please wait while we confirm your payment</p>
         </div>
       </div>
     );
   }
 
-  if (!verified) {
+  if (error || !verified) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center px-6">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center px-6 pb-20 md:pb-0">
         <div className="text-center max-w-md">
-          <p className="text-slate-600 mb-6">Payment could not be verified. Please check your account or contact support.</p>
-          <Link
-            to={createPageUrl('Account')}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors"
-          >
-            Go to Account
-          </Link>
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 mb-6">
+            <XCircle className="w-10 h-10 text-red-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-900 mb-4">Payment Verification Issue</h1>
+          <p className="text-slate-600 mb-6">
+            {error || 'We could not verify your payment. Please check your account or contact support.'}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to={createPageUrl('Account')}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors"
+            >
+              Go to Account
+            </Link>
+            <Link
+              to={createPageUrl('Support')}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-slate-200 text-slate-900 rounded-xl font-semibold hover:bg-slate-50 transition-colors"
+            >
+              Contact Support
+            </Link>
+          </div>
         </div>
+        <BottomNav />
       </div>
     );
   }
@@ -110,34 +131,38 @@ export default function PaymentSuccess() {
         </h1>
         
         <p className="text-lg text-slate-600 mb-8">
-          Welcome to IsThis.io Premium! Your account has been upgraded and you now have unlimited access to all premium features.
+          Welcome to IsThis.io Premium! Your account has been upgraded and you now have unlimited access to all features.
         </p>
 
         <div className="bg-white rounded-2xl border-2 border-emerald-200 p-6 mb-8">
           <h2 className="font-semibold text-slate-900 mb-3">What's included:</h2>
           <ul className="space-y-2 text-left">
             <li className="flex items-start gap-2 text-sm text-slate-600">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-emerald-500 font-bold">✓</span>
               <span>Unlimited verifications</span>
             </li>
             <li className="flex items-start gap-2 text-sm text-slate-600">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-emerald-500 font-bold">✓</span>
               <span>Priority analysis speed</span>
             </li>
             <li className="flex items-start gap-2 text-sm text-slate-600">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-emerald-500 font-bold">✓</span>
               <span>Advanced detection signals</span>
             </li>
             <li className="flex items-start gap-2 text-sm text-slate-600">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-emerald-500 font-bold">✓</span>
               <span>Export verification reports</span>
+            </li>
+            <li className="flex items-start gap-2 text-sm text-slate-600">
+              <span className="text-emerald-500 font-bold">✓</span>
+              <span>Full analysis history</span>
             </li>
           </ul>
         </div>
 
         <Link
           to={createPageUrl('Home')}
-          className="inline-flex items-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
         >
           Start Verifying Content
           <ArrowRight className="w-5 h-5" />
