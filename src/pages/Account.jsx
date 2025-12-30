@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Crown, Infinity, ArrowLeft, Check, Loader2, User, Mail, MapPin, Clock, CreditCard, Calendar } from 'lucide-react';
+import { Shield, Crown, Infinity, ArrowLeft, Check, Loader2, User, Mail, MapPin, Clock, CreditCard, Calendar, Bell, Lock, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -12,6 +12,10 @@ import BottomNav from '@/components/mobile/BottomNav';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, Receipt, CreditCard as CreditCardIcon } from 'lucide-react';
+import ProfileSettings from '@/components/account/ProfileSettings';
+import CommunicationSettings from '@/components/account/CommunicationSettings';
+import RecentActivity from '@/components/account/RecentActivity';
+import PrivacySettings from '@/components/account/PrivacySettings';
 
 const planConfig = {
   free: {
@@ -56,6 +60,7 @@ export default function AccountPage() {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({});
+  const [activeTab, setActiveTab] = useState('overview');
 
   const { data: currentUser, isLoading: userLoading } = useQuery({
     queryKey: ['currentUser'],
@@ -178,86 +183,66 @@ export default function AccountPage() {
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-12">
-        {/* Account Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl border-2 border-slate-200 p-8 mb-8"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-slate-900">Account Information</h2>
-            {!isEditing ? (
-              <Button onClick={() => setIsEditing(true)} variant="outline" size="sm">
-                Edit Profile
-              </Button>
-            ) : (
-              <div className="flex gap-2">
-                <Button onClick={() => setIsEditing(false)} variant="outline" size="sm">
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => updateUserMutation.mutate(editedUser)}
-                  disabled={updateUserMutation.isPending}
-                  size="sm"
+        {/* Tabs */}
+        <div className="mb-8">
+          <div className="flex gap-2 border-b border-slate-200 overflow-x-auto">
+            {[
+              { id: 'overview', label: 'Overview', icon: User },
+              { id: 'profile', label: 'Profile', icon: User },
+              { id: 'notifications', label: 'Notifications', icon: Bell },
+              { id: 'privacy', label: 'Privacy', icon: Lock },
+              { id: 'activity', label: 'Activity', icon: Activity }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'border-indigo-600 text-indigo-600'
+                      : 'border-transparent text-slate-600 hover:text-slate-900'
+                  }`}
                 >
-                  {updateUserMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
-                </Button>
-              </div>
-            )}
+                  <Icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
-                <User className="w-4 h-4" />
-                Full Name
-              </label>
-              {isEditing ? (
-                <Input
-                  value={editedUser.full_name || ''}
-                  onChange={(e) => setEditedUser({ ...editedUser, full_name: e.target.value })}
-                  placeholder="Enter your name"
-                />
-              ) : (
-                <div className="text-slate-900 font-medium">{currentUser?.full_name || 'Not set'}</div>
-              )}
-            </div>
+        {/* Tab Content */}
+        {activeTab === 'profile' && (
+          <ProfileSettings
+            currentUser={currentUser}
+            onUpdate={(data) => updateUserMutation.mutate(data)}
+            isUpdating={updateUserMutation.isPending}
+          />
+        )}
 
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
-                <Mail className="w-4 h-4" />
-                Email
-              </label>
-              <div className="text-slate-900 font-medium">{currentUser?.email}</div>
-            </div>
+        {activeTab === 'notifications' && (
+          <CommunicationSettings
+            currentUser={currentUser}
+            onUpdate={(data) => updateUserMutation.mutate(data)}
+            isUpdating={updateUserMutation.isPending}
+          />
+        )}
 
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
-                <MapPin className="w-4 h-4" />
-                Location
-              </label>
-              {isEditing ? (
-                <Input
-                  value={editedUser.location || ''}
-                  onChange={(e) => setEditedUser({ ...editedUser, location: e.target.value })}
-                  placeholder="City, Country"
-                />
-              ) : (
-                <div className="text-slate-900 font-medium">{currentUser?.location || 'Not set'}</div>
-              )}
-            </div>
+        {activeTab === 'privacy' && (
+          <PrivacySettings
+            currentUser={currentUser}
+            onUpdate={(data) => updateUserMutation.mutate(data)}
+            isUpdating={updateUserMutation.isPending}
+          />
+        )}
 
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
-                <Clock className="w-4 h-4" />
-                Member Since
-              </label>
-              <div className="text-slate-900 font-medium">
-                {moment(currentUser?.created_date).format('MMMM YYYY')}
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        {activeTab === 'activity' && (
+          <RecentActivity currentUser={currentUser} />
+        )}
+
+        {activeTab === 'overview' && (
+          <div className="space-y-8">
 
         {/* Current Plan */}
         <motion.div
@@ -522,19 +507,21 @@ export default function AccountPage() {
           </motion.div>
         )}
 
-        {/* Sign Out */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8 pt-8 border-t border-slate-200 text-center"
-        >
-          <button
-            onClick={handleLogout}
-            className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors"
+          {/* Sign Out */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 pt-8 border-t border-slate-200 text-center"
           >
-            Sign Out
-          </button>
-        </motion.div>
+            <button
+              onClick={handleLogout}
+              className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors"
+            >
+              Sign Out
+            </button>
+          </motion.div>
+        </div>
+        )}
       </main>
 
       <BottomNav currentPage="account" />
