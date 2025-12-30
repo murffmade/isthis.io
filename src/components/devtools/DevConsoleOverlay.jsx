@@ -257,48 +257,6 @@ export default function DevConsoleOverlay() {
             {events.filter(e => e.type === 'error' || e.type === 'rejection').length} errors
           </span>
         </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopy();
-            }}
-            className="p-1 hover:bg-slate-700 rounded"
-            title="Copy All"
-          >
-            <Copy className="w-4 h-4" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClear();
-            }}
-            className="p-1 hover:bg-slate-700 rounded"
-            title="Clear"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowSettings(!showSettings);
-            }}
-            className="p-1 hover:bg-slate-700 rounded"
-            title="Settings"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsExpanded(false);
-            }}
-            className="p-1 hover:bg-slate-700 rounded"
-            title="Close"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
       </div>
 
       {/* Status bar */}
@@ -449,6 +407,54 @@ export default function DevConsoleOverlay() {
 
       {/* Footer controls */}
       <div className="border-t border-slate-200 p-3 bg-slate-50 space-y-2">
+        {/* Action buttons */}
+        <div className="flex items-center gap-1 pb-2 border-b border-slate-200">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopy();
+            }}
+            className="flex items-center gap-1 px-2 py-1 bg-slate-200 hover:bg-slate-300 rounded text-slate-700 text-xs"
+            title="Copy All"
+          >
+            <Copy className="w-3 h-3" />
+            Copy All
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClear();
+            }}
+            className="flex items-center gap-1 px-2 py-1 bg-slate-200 hover:bg-slate-300 rounded text-slate-700 text-xs"
+            title="Clear"
+          >
+            <Trash2 className="w-3 h-3" />
+            Clear
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowSettings(!showSettings);
+            }}
+            className="flex items-center gap-1 px-2 py-1 bg-slate-200 hover:bg-slate-300 rounded text-slate-700 text-xs"
+            title="Settings"
+          >
+            <Settings className="w-3 h-3" />
+            Settings
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(false);
+            }}
+            className="flex items-center gap-1 px-2 py-1 bg-red-100 hover:bg-red-200 rounded text-red-700 text-xs ml-auto"
+            title="Close"
+          >
+            <X className="w-3 h-3" />
+            Close
+          </button>
+        </div>
+
         <div className="flex items-center justify-between text-xs">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
