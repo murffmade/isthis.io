@@ -263,18 +263,26 @@ export default function Home() {
         // Video analysis flow
         if (isVideo) {
           try {
+            console.log('[VIDEO ANALYSIS] Starting video analysis for file:', uploadedFileObj.name, 'Type:', uploadedFileObj.type, 'Size:', uploadedFileObj.size);
             // Extract frames from video (increased for better temporal analysis)
+            console.log('[VIDEO ANALYSIS] Extracting frames...');
             const { frames, metadata } = await extractFramesFromVideo(uploadedFileObj, 8);
+            console.log('[VIDEO ANALYSIS] Frames extracted successfully:', frames.length, 'frames. Metadata:', metadata);
 
             // Upload frames
+            console.log('[VIDEO ANALYSIS] Uploading frames to storage...');
             const frameUrls = await Promise.all(
-              frames.map(async (frame) => {
+              frames.map(async (frame, idx) => {
+                console.log(`[VIDEO ANALYSIS] Uploading frame ${idx + 1}/${frames.length} at ${frame.timestamp.toFixed(2)}s`);
                 const { file_url } = await base44.integrations.Core.UploadFile({ file: frame.file });
+                console.log(`[VIDEO ANALYSIS] Frame ${idx + 1} uploaded:`, file_url);
                 return { url: file_url, timestamp: frame.timestamp };
               })
             );
+            console.log('[VIDEO ANALYSIS] All frames uploaded successfully');
 
             // State-of-the-art multi-model ensemble analysis for video
+            console.log('[VIDEO ANALYSIS] Calling LLM for frame analysis with', frameUrls.length, 'frames');
             const frameAnalysis = await base44.integrations.Core.InvokeLLM({
               prompt: `You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM combining state-of-the-art detection techniques.
 
@@ -481,6 +489,7 @@ export default function Home() {
                 }
               }
             });
+            console.log('[VIDEO ANALYSIS] LLM analysis completed. Result:', frameAnalysis.overall_result, 'Confidence:', frameAnalysis.overall_confidence);
 
             // Aggregate signals from all frames and frame comparisons
             const allSignals = [];
@@ -545,6 +554,7 @@ export default function Home() {
               });
             }
 
+            console.log('[VIDEO ANALYSIS] Creating database record with', allSignals.length, 'signals');
             const record = await base44.entities.AnalysisRecord.create({
               content_type: 'video',
               file_url: uploadedFile,
@@ -565,6 +575,7 @@ export default function Home() {
                 video_metadata: metadata
               }
             });
+            console.log('[VIDEO ANALYSIS] Database record created successfully, ID:', record.id);
 
             setResult({ ...record, ...frameAnalysis });
             
@@ -574,10 +585,13 @@ export default function Home() {
               `Result: ${frameAnalysis.overall_result.replace('_', ' ')} (${frameAnalysis.overall_confidence}% confidence)`
             );
             
+            console.log('[VIDEO ANALYSIS] ✓ Video analysis completed successfully');
             return;
           } catch (error) {
-            console.error('Video analysis error:', error);
-            toast.error('Video analysis failed. Please try again.');
+            console.error('[VIDEO ANALYSIS] ✗ Video analysis failed at step:', error.message);
+            console.error('[VIDEO ANALYSIS] Full error:', error);
+            console.error('[VIDEO ANALYSIS] Error stack:', error.stack);
+            toast.error(`Video analysis failed: ${error.message || 'Unknown error'}`);
             setAnalyzing(false);
             return;
           }
