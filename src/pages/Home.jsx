@@ -110,6 +110,9 @@ export default function Home() {
 
   const tier = getUserTier();
 
+  // Update usage terminology
+  const usageLabel = tier.limit ? `${usageCount}/${tier.limit}` : 'Unlimited';
+
   // Fetch lifetime offer settings
   const { data: lifetimeSettings } = useQuery({
     queryKey: ['lifetimeSettings'],
@@ -1082,7 +1085,7 @@ You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM co
             
             // Send notification
             sendNotification(
-              'Video Analysis Complete',
+              'Assessment Complete',
               `Result: ${frameAnalysis.overall_result.replace('_', ' ')} (${frameAnalysis.overall_confidence}% confidence)`
             );
             
@@ -1150,7 +1153,7 @@ Provide a thorough but accessible analysis.`,
 
         // Send notification
         sendNotification(
-          'URL Analysis Complete',
+          'Assessment Complete',
           `Result: ${analysisResult.result.replace('_', ' ')} (${analysisResult.confidence}% confidence)`
         );
 
@@ -2116,7 +2119,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
 
       // Send notification
       sendNotification(
-        'Image Analysis Complete',
+        'Assessment Complete',
         `Result: ${finalResult.result.replace('_', ' ')} (${finalResult.confidence}% confidence)`
       );
       } catch (error) {
@@ -2144,7 +2147,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "IsThis.io",
-    "description": "Free AI Content Verification - Instantly detect if images and videos are real or AI-generated",
+    "description": "AI Content Assessment - Get clarity on whether images and videos were likely created by AI with likelihood-based analysis",
     "url": "https://isthis.io",
     "applicationCategory": "SecurityApplication",
     "operatingSystem": "Web",
@@ -2162,20 +2165,20 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
       "worstRating": "1"
     },
     "featureList": [
-      "AI-generated image detection",
-      "Deepfake video detection",
-      "Free unlimited basic analysis",
-      "Advanced forensic analysis",
-      "Confidence scoring"
+      "Likelihood-based AI assessment",
+      "Deepfake detection analysis",
+      "Plain-language explanations",
+      "Shareable PDF reports",
+      "Transparent signal analysis"
     ]
   };
 
   return (
     <>
       <SEO
-        title="IsThis.io - Free AI Detection Tool | Verify Images & Videos"
-        description="Instantly verify if images and videos are real or AI-generated. Free AI detection tool with advanced forensic analysis, deepfake detection, and confidence scoring."
-        keywords="AI detection, deepfake detection, image verification, video verification, AI-generated content, fake image detector, deepfake checker, content authenticity, synthetic media detection, free AI tool"
+        title="IsThis.io - AI Content Assessment | Understand What You're Seeing"
+        description="Get clarity on whether images and videos were likely created by AI. Likelihood-based assessments with plain-language explanations. No false certainty, just helpful insight."
+        keywords="AI content assessment, likelihood analysis, AI detection, deepfake detection, image verification, video verification, AI-generated content, content authenticity, synthetic media detection, AI analysis"
         url="https://isthis.io"
         image="https://isthis.io/og-home.jpg"
         structuredData={structuredData}
@@ -2278,13 +2281,22 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-300 text-[#2C3E50] text-xs sm:text-sm mb-6 shadow-soft font-medium"
                 >
                   <Sparkles className="w-4 h-4 text-[#3498DB]" />
-                  Free AI Detection Tool
+                  AI Content Assessment
                 </motion.div>
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-slate-900 mb-6 leading-[1.1] px-4 tracking-tight">
                   Is This Real?
                 </h1>
-                <p className="text-lg sm:text-2xl text-slate-600 max-w-3xl mx-auto mb-8 px-4 font-light leading-relaxed">
-                  Instantly verify if images and videos are real or AI-generated with advanced detection technology
+                <p className="text-lg sm:text-2xl text-slate-600 max-w-3xl mx-auto mb-4 px-4 font-light leading-relaxed">
+                  Get clarity on whether images and video were likely created by AI
+                </p>
+                <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto mb-2 px-4 leading-relaxed">
+                  IsThis.io analyzes patterns and signals in content to help you understand what you're seeing
+                </p>
+                <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto mb-8 px-4 italic">
+                  No scare tactics. No false certainty. Just helpful insight you can actually use.
+                </p>
+                <p className="text-xs text-slate-400 max-w-xl mx-auto mb-8 px-4">
+                  This tool offers likelihood-based assessments, not definitive answers.
                 </p>
               </div>
 
@@ -2445,7 +2457,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     ) : (
                       <>
                         <Zap className="w-5 h-5" />
-                        {imageClassification && !userConfirmedType ? 'Confirm Type First' : 'Verify Now - Free'}
+                        {imageClassification && !userConfirmedType ? 'Confirm Type First' : 'Check Content'}
                       </>
                     )}
                   </button>
@@ -2457,9 +2469,9 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-10 sm:mb-12 tracking-tight">How It Works</h2>
                 <div className="grid grid-cols-3 gap-6 sm:gap-10">
                   {[
-                    { icon: Upload, title: 'Upload', desc: 'Upload an image, video, or paste a URL from anywhere', color: 'from-[#7F8C8D] to-[#2C3E50]' },
-                    { icon: Zap, title: 'Analyze', desc: 'Our AI analyzes visual artifacts, patterns, and inconsistencies', color: 'from-[#3498DB] to-[#2980b9]' },
-                    { icon: CheckCircle2, title: 'Get Results', desc: 'Receive a clear verdict with confidence score and detailed explanation', color: 'from-[#3498DB] to-[#2C3E50]' }
+                    { icon: Upload, title: 'Look for Signals', desc: 'We look at different patterns in the content—things that often show up in AI-generated material', color: 'from-[#7F8C8D] to-[#2C3E50]' },
+                    { icon: Zap, title: 'Estimate Likelihood', desc: 'Those signals are combined into a simple risk range, rather than a yes-or-no answer', color: 'from-[#3498DB] to-[#2980b9]' },
+                    { icon: CheckCircle2, title: 'Explain What It Means', desc: 'We explain what influenced the result and where uncertainty may exist, so you\'re never left guessing', color: 'from-[#3498DB] to-[#2C3E50]' }
                   ].map((step, i) => (
                     <motion.div
                       key={i}
@@ -2478,11 +2490,24 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 </div>
               </div>
 
+              {/* Trust & Transparency */}
+              <section className="py-12 sm:py-20 bg-slate-50 -mx-4 sm:-mx-6 px-4 sm:px-6">
+                <div className="max-w-4xl mx-auto text-center">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6 tracking-tight">Built for Trust</h2>
+                  <p className="text-lg sm:text-xl text-slate-700 mb-4 leading-relaxed">
+                    IsThis.io doesn't claim to know for sure. Instead, it helps you understand how likely AI involvement may be—so you can decide what to do next.
+                  </p>
+                  <p className="text-base sm:text-lg text-slate-500 italic">
+                    Helpful insight, not black-box judgments.
+                  </p>
+                </div>
+              </section>
+
               {/* Pricing */}
               <section className="py-12 sm:py-20">
                 <div className="text-center mb-10 sm:mb-16 px-4">
-                  <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Choose Your Plan</h2>
-                  <p className="text-lg sm:text-xl text-slate-600 font-light">Get unlimited verifications and advanced features</p>
+                  <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Ready to Take a Look?</h2>
+                  <p className="text-lg sm:text-xl text-slate-600 font-light">See what the signals suggest and understand the result in plain language</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6 max-w-6xl mx-auto">
@@ -2493,11 +2518,11 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>5 verifications/month</span>
+                        <span>5 assessments/month</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Basic AI detection</span>
+                        <span>Likelihood-based analysis</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -2517,11 +2542,11 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>25 verifications/month</span>
+                        <span>25 assessments/month</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Advanced AI detection</span>
+                        <span>Detailed signal analysis</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -2549,7 +2574,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span><strong>Unlimited</strong> verifications</span>
+                        <span><strong>Unlimited</strong> assessments</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -2557,11 +2582,11 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Advanced detection</span>
+                        <span>Shareable PDF reports</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Export reports</span>
+                        <span>Bulk analysis</span>
                       </li>
                     </ul>
                     <StripeCheckout
@@ -2626,10 +2651,19 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         plan={{ key: 'lifetime', name: 'Lifetime Premium', price: 99, buttonText: 'Get Lifetime Access' }}
                         onSuccess={handlePaymentSuccess}
                       />
-                    </div>
-                  )}
-                  </div>
-                  </section>
+                      </div>
+                      )}
+                      </div>
+
+                      {/* Footer Disclaimer */}
+                      <div className="max-w-4xl mx-auto mt-12 px-4">
+                      <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        IsThis.io provides likelihood-based assessments using observable signals and heuristic analysis. Results are meant to support informed decisions and should not be treated as factual verification.
+                      </p>
+                      </div>
+                      </div>
+                      </section>
                   </motion.div>
           ) : (
             <motion.div

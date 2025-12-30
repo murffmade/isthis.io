@@ -1,5 +1,6 @@
 import AIHistory from './pages/AIHistory';
 import APIDocs from './pages/APIDocs';
+import APIInternal from './pages/APIInternal';
 import About from './pages/About';
 import Account from './pages/Account';
 import Admin from './pages/Admin';
@@ -40,13 +41,13 @@ import TermsOfService from './pages/TermsOfService';
 import TotalUsersDashboard from './pages/TotalUsersDashboard';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import APIInternal from './pages/APIInternal';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AIHistory": AIHistory,
     "APIDocs": APIDocs,
+    "APIInternal": APIInternal,
     "About": About,
     "Account": Account,
     "Admin": Admin,
@@ -87,7 +88,6 @@ export const PAGES = {
     "TotalUsersDashboard": TotalUsersDashboard,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "APIInternal": APIInternal,
 }
 
 export const pagesConfig = {
