@@ -25,7 +25,21 @@ export default function EnterpriseAI() {
     queryFn: () => base44.auth.me()
   });
 
-  const isEnterprise = currentUser?.role === 'admin'; // In production, check for enterprise subscription
+  const { data: entitlement } = useQuery({
+    queryKey: ['userEntitlement', currentUser?.email],
+    queryFn: async () => {
+      if (!currentUser) return null;
+      const entitlements = await base44.entities.UserEntitlement.filter({ 
+        user_email: currentUser.email 
+      });
+      return entitlements.find(e => 
+        e.status === 'active' && (e.plan_key === 'lifetime' || e.plan_key === 'annual')
+      ) || null;
+    },
+    enabled: !!currentUser
+  });
+
+  const isEnterprise = currentUser?.role === 'admin' || !!entitlement;
 
   const tabs = [
     { id: 'dashboard', label: 'Analysis Dashboard', icon: TrendingUp },

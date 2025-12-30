@@ -1,3 +1,4 @@
+import AIHistory from './pages/AIHistory';
 import APIDocs from './pages/APIDocs';
 import About from './pages/About';
 import Account from './pages/Account';
@@ -16,6 +17,7 @@ import Careers from './pages/Careers';
 import Contact from './pages/Contact';
 import ContentGenerator from './pages/ContentGenerator';
 import Enterprise from './pages/Enterprise';
+import EnterpriseAI from './pages/EnterpriseAI';
 import EnterpriseMarketing from './pages/EnterpriseMarketing';
 import FeedbackQueue from './pages/FeedbackQueue';
 import GiftRedemption from './pages/GiftRedemption';
@@ -38,12 +40,11 @@ import TermsOfService from './pages/TermsOfService';
 import TotalUsersDashboard from './pages/TotalUsersDashboard';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import AIHistory from './pages/AIHistory';
-import EnterpriseAI from './pages/EnterpriseAI';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AIHistory": AIHistory,
     "APIDocs": APIDocs,
     "About": About,
     "Account": Account,
@@ -62,6 +63,7 @@ export const PAGES = {
     "Contact": Contact,
     "ContentGenerator": ContentGenerator,
     "Enterprise": Enterprise,
+    "EnterpriseAI": EnterpriseAI,
     "EnterpriseMarketing": EnterpriseMarketing,
     "FeedbackQueue": FeedbackQueue,
     "GiftRedemption": GiftRedemption,
@@ -84,8 +86,6 @@ export const PAGES = {
     "TotalUsersDashboard": TotalUsersDashboard,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "AIHistory": AIHistory,
-    "EnterpriseAI": EnterpriseAI,
 }
 
 export const pagesConfig = {
