@@ -158,6 +158,17 @@ export default function Home() {
       setUploadProgress(0);
       setUploadedFileObj(file);
       
+      // For videos, create a local URL (UploadFile doesn't support video formats)
+      if (file.type.startsWith('video/')) {
+        const videoUrl = URL.createObjectURL(file);
+        setUploadProgress(100);
+        setUploadedFile(videoUrl);
+        setUploading(false);
+        toast.success('Video loaded! Click "Check Content" to analyze.');
+        return;
+      }
+
+      // For images, upload normally
       // Simulate progress for better UX (actual upload happens quickly)
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
@@ -174,11 +185,9 @@ export default function Home() {
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      // Run content moderation in background
+      // Run content moderation in background (images only)
       if (file.type.startsWith('image/')) {
         moderateImage(file_url).catch(console.error);
-      } else if (file.type.startsWith('video/')) {
-        moderateVideo(file_url).catch(console.error);
       }
 
       setTimeout(async () => {
@@ -267,11 +276,14 @@ export default function Home() {
         if (isVideo) {
           try {
             console.log('[VIDEO ANALYSIS] Starting video analysis for file:', uploadedFileObj.name, 'Type:', uploadedFileObj.type, 'Size:', uploadedFileObj.size);
-            
+
             // Extract frames from video (increased to 16 for better temporal analysis)
             console.log('[VIDEO ANALYSIS] Extracting frames...');
             const { frames, metadata } = await extractFramesFromVideo(uploadedFileObj, 16);
             console.log('[VIDEO ANALYSIS] Frames extracted successfully:', frames.length, 'frames. Metadata:', metadata);
+
+            // Create video thumbnail URL for database
+            const videoThumbnailUrl = URL.createObjectURL(frames[0].file);
 
             // Extract audio for advanced manipulation detection
             console.log('[VIDEO ANALYSIS] Extracting audio track for deepfake voice detection...');
@@ -1058,7 +1070,7 @@ You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM co
             console.log('[VIDEO ANALYSIS] Creating database record with', allSignals.length, 'signals');
             const record = await base44.entities.AnalysisRecord.create({
               content_type: 'video',
-              file_url: uploadedFile,
+              file_url: null, // Video file not uploaded to storage (too large, local only)
               thumbnail_url: frameUrls[0]?.url,
               result: frameAnalysis.overall_result,
               confidence: frameAnalysis.overall_confidence,
@@ -1081,14 +1093,20 @@ You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM co
             });
             console.log('[VIDEO ANALYSIS] Database record created successfully, ID:', record.id);
 
-            setResult({ ...record, ...frameAnalysis });
-            
+            // Keep local video URL for display
+            setResult({ 
+              ...record, 
+              ...frameAnalysis, 
+              file_url: uploadedFile, // Use local video URL for playback
+              isLocalVideo: true
+            });
+
             // Send notification
             sendNotification(
               'Assessment Complete',
               `Result: ${frameAnalysis.overall_result.replace('_', ' ')} (${frameAnalysis.overall_confidence}% confidence)`
             );
-            
+
             console.log('[VIDEO ANALYSIS] ✓ Video analysis completed successfully');
             return;
           } catch (error) {
