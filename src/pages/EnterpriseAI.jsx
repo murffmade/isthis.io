@@ -13,6 +13,7 @@ import { createPageUrl } from '@/utils';
 import CustomModelEditor from '@/components/enterprise/CustomModelEditor';
 import PolicyEditor from '@/components/enterprise/PolicyEditor';
 import ABTestDashboard from '@/components/enterprise/ABTestDashboard';
+import APIManagement from '@/components/enterprise/APIManagement';
 
 export default function EnterpriseAI() {
   const [activeTab, setActiveTab] = useState('models');
@@ -28,7 +29,8 @@ export default function EnterpriseAI() {
   const tabs = [
     { id: 'models', label: 'Custom Models', icon: Brain },
     { id: 'policies', label: 'Moderation Policies', icon: Shield },
-    { id: 'testing', label: 'A/B Testing', icon: TestTube2 }
+    { id: 'testing', label: 'A/B Testing', icon: TestTube2 },
+    { id: 'api', label: 'External API', icon: Settings }
   ];
 
   if (!isEnterprise) {
@@ -123,6 +125,7 @@ export default function EnterpriseAI() {
         {activeTab === 'models' && <CustomModelEditor />}
         {activeTab === 'policies' && <PolicyEditor />}
         {activeTab === 'testing' && <ABTestDashboard />}
+        {activeTab === 'api' && <APIManagement />}
       </main>
     </div>
   );
