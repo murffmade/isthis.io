@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { devConsoleStore } from './devConsoleStore';
 import { startConsoleInterceptor, stopConsoleInterceptor } from './consoleInterceptor';
 import { startWindowErrorListeners, stopWindowErrorListeners } from './errorListeners';
-import { X, Settings, Copy, Trash2, Download, ChevronDown, ChevronRight } from 'lucide-react';
+import { X, Settings, Copy, Trash2, Download, ChevronDown, ChevronRight, Moon, Sun } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DevConsoleOverlay() {
@@ -26,6 +26,7 @@ export default function DevConsoleOverlay() {
   const [showSettings, setShowSettings] = useState(false);
   const [buttonColor, setButtonColor] = useState(() => localStorage.getItem('DEV_CONSOLE_BUTTON_COLOR') || '#0f172a');
   const [transparency, setTransparency] = useState(() => parseInt(localStorage.getItem('DEV_CONSOLE_TRANSPARENCY') || '100'));
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('DEV_CONSOLE_DARK_MODE') === 'true');
   const dragRef = useRef(null);
   const hasAutoOpened = useRef(false);
 
@@ -245,30 +246,38 @@ export default function DevConsoleOverlay() {
         zIndex: 9999,
         opacity: transparency / 100
       }}
-      className="bg-white shadow-2xl border-l border-slate-300 flex flex-col overflow-hidden"
+      className={`shadow-2xl border-l flex flex-col overflow-hidden ${
+        darkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-300'
+      }`}
     >
       {/* Header */}
       <div
-        className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between select-none"
+        className={`px-4 py-3 flex items-center justify-between select-none ${
+          darkMode ? 'bg-slate-800 text-white' : 'bg-slate-900 text-white'
+        }`}
       >
         <div className="flex items-center gap-2">
           <span className="font-bold text-sm">Dev Console</span>
-          <span className="text-xs bg-slate-700 px-2 py-0.5 rounded">
+          <span className={`text-xs px-2 py-0.5 rounded ${
+            darkMode ? 'bg-slate-700' : 'bg-slate-700'
+          }`}>
             {events.filter(e => e.type === 'error' || e.type === 'rejection').length} errors
           </span>
         </div>
       </div>
 
       {/* Status bar */}
-      <div className="px-4 py-2 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 flex items-center gap-2">
+      <div className={`px-4 py-2 border-b text-xs flex items-center gap-2 ${
+        darkMode ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600'
+      }`}>
         <span className="font-semibold">Route:</span>
         <span className="font-mono truncate flex-1">{window.location.pathname}</span>
       </div>
 
       {/* Events list */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+      <div className={`flex-1 overflow-y-auto p-3 space-y-2 ${darkMode ? 'bg-slate-900' : ''}`}>
         {events.length === 0 ? (
-          <div className="text-center py-8 text-slate-400 text-sm">
+          <div className={`text-center py-8 text-sm ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
             No events captured yet
           </div>
         ) : (
@@ -406,15 +415,21 @@ export default function DevConsoleOverlay() {
       )}
 
       {/* Footer controls */}
-      <div className="border-t border-slate-200 p-3 bg-slate-50 space-y-2">
+      <div className={`border-t p-3 space-y-2 ${
+        darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'
+      }`}>
         {/* Action buttons */}
-        <div className="flex items-center gap-1 pb-2 border-b border-slate-200">
+        <div className={`flex items-center gap-1 pb-2 border-b ${
+          darkMode ? 'border-slate-700' : 'border-slate-200'
+        }`}>
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleCopy();
             }}
-            className="flex items-center gap-1 px-2 py-1 bg-slate-200 hover:bg-slate-300 rounded text-slate-700 text-xs"
+            className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
+              darkMode ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+            }`}
             title="Copy All"
           >
             <Copy className="w-3 h-3" />
@@ -425,7 +440,9 @@ export default function DevConsoleOverlay() {
               e.stopPropagation();
               handleClear();
             }}
-            className="flex items-center gap-1 px-2 py-1 bg-slate-200 hover:bg-slate-300 rounded text-slate-700 text-xs"
+            className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
+              darkMode ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+            }`}
             title="Clear"
           >
             <Trash2 className="w-3 h-3" />
@@ -434,13 +451,28 @@ export default function DevConsoleOverlay() {
           <button
             onClick={(e) => {
               e.stopPropagation();
+              const newDarkMode = !darkMode;
+              setDarkMode(newDarkMode);
+              localStorage.setItem('DEV_CONSOLE_DARK_MODE', newDarkMode.toString());
+            }}
+            className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
+              darkMode ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+            }`}
+            title="Toggle Dark Mode"
+          >
+            {darkMode ? <Sun className="w-3 h-3" /> : <Moon className="w-3 h-3" />}
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
               setShowSettings(!showSettings);
             }}
-            className="flex items-center gap-1 px-2 py-1 bg-slate-200 hover:bg-slate-300 rounded text-slate-700 text-xs"
+            className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
+              darkMode ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+            }`}
             title="Settings"
           >
             <Settings className="w-3 h-3" />
-            Settings
           </button>
           <button
             onClick={(e) => {
@@ -455,7 +487,7 @@ export default function DevConsoleOverlay() {
           </button>
         </div>
 
-        <div className="flex items-center justify-between text-xs">
+        <div className={`flex items-center justify-between text-xs ${darkMode ? 'text-slate-300' : ''}`}>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -484,7 +516,7 @@ export default function DevConsoleOverlay() {
             <span>Auto-open</span>
           </label>
         </div>
-        <div className="flex items-center justify-between text-xs">
+        <div className={`flex items-center justify-between text-xs ${darkMode ? 'text-slate-300' : ''}`}>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -496,7 +528,9 @@ export default function DevConsoleOverlay() {
           </label>
           <button
             onClick={handleExport}
-            className="flex items-center gap-1 px-2 py-1 bg-slate-200 hover:bg-slate-300 rounded text-slate-700"
+            className={`flex items-center gap-1 px-2 py-1 rounded ${
+              darkMode ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+            }`}
           >
             <Download className="w-3 h-3" />
             Export JSON
