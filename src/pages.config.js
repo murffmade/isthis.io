@@ -39,6 +39,7 @@ import TotalUsersDashboard from './pages/TotalUsersDashboard';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
 import AIHistory from './pages/AIHistory';
+import EnterpriseAI from './pages/EnterpriseAI';
 import __Layout from './Layout.jsx';
 
 
@@ -84,6 +85,7 @@ export const PAGES = {
     "TrainerDashboard": TrainerDashboard,
     "True": True,
     "AIHistory": AIHistory,
+    "EnterpriseAI": EnterpriseAI,
 }
 
 export const pagesConfig = {
