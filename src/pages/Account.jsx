@@ -457,7 +457,7 @@ export default function AccountPage() {
                   </ul>
 
                   <StripeCheckout
-                    plan={{ name: '1 Year Premium', price: 29, buttonText: 'Upgrade to Annual' }}
+                    plan={{ key: 'annual', name: 'Annual Premium', price: 29, buttonText: 'Upgrade to Annual' }}
                   />
                 </div>
               )}
@@ -487,7 +487,7 @@ export default function AccountPage() {
                 </ul>
 
                 <StripeCheckout
-                  plan={{ name: 'Lifetime Premium', price: 99, buttonText: 'Upgrade to Lifetime' }}
+                  plan={{ key: 'lifetime', name: 'Lifetime Premium', price: 99, buttonText: 'Upgrade to Lifetime' }}
                 />
               </div>
             </div>
