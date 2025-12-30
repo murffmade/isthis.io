@@ -264,10 +264,36 @@ export default function Home() {
         if (isVideo) {
           try {
             console.log('[VIDEO ANALYSIS] Starting video analysis for file:', uploadedFileObj.name, 'Type:', uploadedFileObj.type, 'Size:', uploadedFileObj.size);
-            // Extract frames from video (increased for better temporal analysis)
+            
+            // Extract frames from video (increased to 16 for better temporal analysis)
             console.log('[VIDEO ANALYSIS] Extracting frames...');
-            const { frames, metadata } = await extractFramesFromVideo(uploadedFileObj, 8);
+            const { frames, metadata } = await extractFramesFromVideo(uploadedFileObj, 16);
             console.log('[VIDEO ANALYSIS] Frames extracted successfully:', frames.length, 'frames. Metadata:', metadata);
+
+            // Extract audio for manipulation detection
+            console.log('[VIDEO ANALYSIS] Extracting audio track...');
+            let audioAnalysis = null;
+            if (metadata.hasAudio) {
+              try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const arrayBuffer = await uploadedFileObj.arrayBuffer();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                
+                audioAnalysis = {
+                  duration: audioBuffer.duration,
+                  sampleRate: audioBuffer.sampleRate,
+                  numberOfChannels: audioBuffer.numberOfChannels,
+                  hasAudio: true
+                };
+                console.log('[VIDEO ANALYSIS] Audio extracted:', audioAnalysis);
+              } catch (audioError) {
+                console.warn('[VIDEO ANALYSIS] Audio extraction failed:', audioError);
+                audioAnalysis = { hasAudio: false, error: audioError.message };
+              }
+            } else {
+              audioAnalysis = { hasAudio: false };
+              console.log('[VIDEO ANALYSIS] No audio track detected');
+            }
 
             // Upload frames
             console.log('[VIDEO ANALYSIS] Uploading frames to storage...');
@@ -281,10 +307,73 @@ export default function Home() {
             );
             console.log('[VIDEO ANALYSIS] All frames uploaded successfully');
 
+            // Perform frame-by-frame comparison analysis
+            console.log('[VIDEO ANALYSIS] Performing frame-by-frame comparison...');
+            const frameComparisons = [];
+            for (let i = 0; i < frameUrls.length - 1; i++) {
+              frameComparisons.push({
+                frame1: i,
+                frame2: i + 1,
+                timestamp1: frameUrls[i].timestamp,
+                timestamp2: frameUrls[i + 1].timestamp,
+                timeDelta: frameUrls[i + 1].timestamp - frameUrls[i].timestamp
+              });
+            }
+            console.log('[VIDEO ANALYSIS] Frame comparisons prepared:', frameComparisons.length, 'pairs');
+
             // State-of-the-art multi-model ensemble analysis for video
             console.log('[VIDEO ANALYSIS] Calling LLM for frame analysis with', frameUrls.length, 'frames');
             const frameAnalysis = await base44.integrations.Core.InvokeLLM({
               prompt: `You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM combining state-of-the-art detection techniques.
+
+CRITICAL: FRAME-BY-FRAME COMPARISON ANALYSIS REQUIRED
+
+You have been provided with ${frameUrls.length} frames extracted at precise intervals. You MUST perform detailed frame-by-frame comparison analysis:
+
+FRAME COMPARISON PAIRS:
+${frameComparisons.map(fc => `- Frame ${fc.frame1} (${fc.timestamp1.toFixed(2)}s) → Frame ${fc.frame2} (${fc.timestamp2.toFixed(2)}s): ${(fc.timeDelta * 1000).toFixed(0)}ms gap`).join('\n')}
+
+For EACH consecutive frame pair, analyze:
+1. IDENTITY CONSISTENCY: Does the same person/object maintain consistent identity?
+2. MORPHING ARTIFACTS: Any gradual shape changes or blending between frames?
+3. LIGHTING COHERENCE: Does lighting remain consistent or show unnatural jumps?
+4. MOTION CONTINUITY: Is motion natural or do objects teleport/jitter?
+5. TEXTURE STABILITY: Do textures morph or change pattern between frames?
+6. BACKGROUND STABILITY: Does the background remain coherent or show generation artifacts?
+7. QUALITY SHIFTS: Any sudden changes in image quality or detail level?
+
+SCENE CHANGE DETECTION REQUIREMENTS:
+- Identify ALL scene changes (cuts, fades, transitions)
+- For each scene change, note the frame number and type (hard cut, fade, dissolve)
+- Analyze consistency WITHIN each scene separately
+- Flag if different scenes show different generation characteristics
+
+AUDIO ANALYSIS INTEGRATION:
+Audio Track Status: ${audioAnalysis?.hasAudio ? 'PRESENT' : 'MISSING OR FAILED'}
+${audioAnalysis?.hasAudio ? `
+Audio Metadata:
+- Duration: ${audioAnalysis.duration?.toFixed(2)}s (Video: ${metadata.duration?.toFixed(2)}s)
+- Sample Rate: ${audioAnalysis.sampleRate}Hz
+- Channels: ${audioAnalysis.numberOfChannels}
+
+AUDIO MANIPULATION INDICATORS TO CHECK:
+1. AUDIO-VIDEO SYNC: Does audio duration match video duration exactly?
+2. VOICE SYNTHESIS: Listen for TTS-like qualities (too smooth, robotic cadence)
+3. AUDIO CLONING: Unnatural voice characteristics, missing breath sounds
+4. BACKGROUND AUDIO: Is background audio too clean or artificially generated?
+5. AUDIO ARTIFACTS: Digital glitches, unnatural silence, abrupt cuts
+6. DEEPFAKE VOICE: Voice doesn't match facial movements precisely
+7. AI TTS PATTERNS: Unnatural prosody, missing emotional variation
+` : `
+⚠️ NO AUDIO TRACK DETECTED
+This is HIGHLY SUSPICIOUS for authentic videos:
+- Real videos (phones, cameras) almost always have audio
+- Missing audio may indicate AI generation or heavy editing
+- Deepfakes often lack audio or have mismatched audio
+- Consider this a RED FLAG in your overall assessment
+`}
+
+You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM combining state-of-the-art detection techniques.
 
             ENSEMBLE APPROACH:
             You simulate multiple detection models working together:
@@ -428,9 +517,12 @@ export default function Home() {
                     items: {
                       type: "object",
                       properties: {
-                        frames: { type: "string" },
+                        frame1_index: { type: "number" },
+                        frame2_index: { type: "number" },
+                        comparison_type: { type: "string", enum: ["identity", "morphing", "lighting", "motion", "texture", "background", "quality"] },
                         anomaly: { type: "string" },
-                        severity: { type: "string", enum: ["low", "medium", "high"] }
+                        severity: { type: "string", enum: ["low", "medium", "high"] },
+                        confidence: { type: "number" }
                       }
                     }
                   },
@@ -464,6 +556,35 @@ export default function Home() {
                     type: "object",
                     properties: {
                       scene_changes_detected: { type: "number" },
+                      scene_cuts: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            frame_number: { type: "number" },
+                            timestamp: { type: "number" },
+                            cut_type: { type: "string", enum: ["hard_cut", "fade", "dissolve", "wipe"] },
+                            description: { type: "string" }
+                          }
+                        }
+                      },
+                      scenes: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            scene_number: { type: "number" },
+                            start_frame: { type: "number" },
+                            end_frame: { type: "number" },
+                            consistency_score: { type: "number" },
+                            generation_characteristics: { type: "string" },
+                            anomalies: {
+                              type: "array",
+                              items: { type: "string" }
+                            }
+                          }
+                        }
+                      },
                       style_shifts: {
                         type: "array",
                         items: {
@@ -475,7 +596,25 @@ export default function Home() {
                           }
                         }
                       },
-                      consistency_score: { type: "number" }
+                      overall_consistency_score: { type: "number" },
+                      cross_scene_anomalies: {
+                        type: "array",
+                        items: { type: "string" }
+                      }
+                    }
+                  },
+                  audio_analysis: {
+                    type: "object",
+                    properties: {
+                      has_audio: { type: "boolean" },
+                      audio_video_sync: { type: "string" },
+                      voice_synthesis_likelihood: { type: "number" },
+                      audio_manipulation_detected: { type: "boolean" },
+                      audio_artifacts: {
+                        type: "array",
+                        items: { type: "string" }
+                      },
+                      missing_audio_impact: { type: "string" }
                     }
                   },
                   temporal_inconsistencies: {
@@ -506,16 +645,82 @@ export default function Home() {
               }
             });
 
-            // Frame comparison anomalies
+            // Frame comparison anomalies (enhanced with frame-by-frame details)
             if (frameAnalysis.frame_comparisons && frameAnalysis.frame_comparisons.length > 0) {
               frameAnalysis.frame_comparisons.forEach(comparison => {
+                const frame1Time = frameUrls[comparison.frame1_index]?.timestamp || 0;
+                const frame2Time = frameUrls[comparison.frame2_index]?.timestamp || 0;
                 allSignals.push({
-                  signal_type: `Frame Comparison (${comparison.frames})`,
-                  description: comparison.anomaly,
+                  signal_type: `Frame-by-Frame ${comparison.comparison_type || 'Comparison'}`,
+                  description: `${comparison.anomaly} (Frame ${comparison.frame1_index}→${comparison.frame2_index} at ${frame1Time.toFixed(1)}s→${frame2Time.toFixed(1)}s)`,
                   severity: comparison.severity,
+                  detection_confidence: comparison.confidence || 75,
                   category: "temporal"
                 });
               });
+            }
+
+            // Scene analysis signals (enhanced with per-scene consistency)
+            if (frameAnalysis.scene_analysis?.scenes) {
+              frameAnalysis.scene_analysis.scenes.forEach(scene => {
+                if (scene.consistency_score < 70) {
+                  allSignals.push({
+                    signal_type: "Scene Inconsistency",
+                    description: `Scene ${scene.scene_number} (frames ${scene.start_frame}-${scene.end_frame}): ${scene.generation_characteristics}. Consistency: ${scene.consistency_score}%`,
+                    severity: scene.consistency_score < 50 ? "high" : "medium",
+                    category: "scene_change"
+                  });
+                }
+                scene.anomalies?.forEach(anomaly => {
+                  allSignals.push({
+                    signal_type: "Scene-Specific Anomaly",
+                    description: `Scene ${scene.scene_number}: ${anomaly}`,
+                    severity: "medium",
+                    category: "scene_change"
+                  });
+                });
+              });
+            }
+
+            // Cross-scene anomalies
+            if (frameAnalysis.scene_analysis?.cross_scene_anomalies) {
+              frameAnalysis.scene_analysis.cross_scene_anomalies.forEach(anomaly => {
+                allSignals.push({
+                  signal_type: "Cross-Scene Inconsistency",
+                  description: anomaly,
+                  severity: "high",
+                  category: "scene_change"
+                });
+              });
+            }
+
+            // Audio analysis signals
+            if (frameAnalysis.audio_analysis) {
+              if (!frameAnalysis.audio_analysis.has_audio) {
+                allSignals.push({
+                  signal_type: "Missing Audio Track",
+                  description: frameAnalysis.audio_analysis.missing_audio_impact || "No audio track detected - suspicious for authentic video",
+                  severity: "high",
+                  category: "audio"
+                });
+              } else {
+                if (frameAnalysis.audio_analysis.audio_manipulation_detected) {
+                  allSignals.push({
+                    signal_type: "Audio Manipulation Detected",
+                    description: `Voice synthesis likelihood: ${frameAnalysis.audio_analysis.voice_synthesis_likelihood}%`,
+                    severity: "high",
+                    category: "audio"
+                  });
+                }
+                frameAnalysis.audio_analysis.audio_artifacts?.forEach(artifact => {
+                  allSignals.push({
+                    signal_type: "Audio Artifact",
+                    description: artifact,
+                    severity: "medium",
+                    category: "audio"
+                  });
+                });
+              }
             }
 
             // Temporal inconsistencies
@@ -567,10 +772,13 @@ export default function Home() {
               forensics: { 
                 video_duration: metadata.duration,
                 frames_analyzed: frames.length,
+                frame_comparisons_analyzed: frameComparisons.length,
                 ai_influence_percentage: frameAnalysis.ai_influence_percentage,
                 deepfake_analysis: frameAnalysis.deepfake_analysis,
                 scene_analysis: frameAnalysis.scene_analysis,
                 frame_comparisons: frameAnalysis.frame_comparisons,
+                audio_analysis: frameAnalysis.audio_analysis,
+                audio_metadata: audioAnalysis,
                 metadata_analysis: frameAnalysis.metadata_analysis,
                 video_metadata: metadata
               }
