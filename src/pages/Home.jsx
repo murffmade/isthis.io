@@ -1733,66 +1733,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
 
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-16 pb-safe">
-        {/* Admin/Trainer Quick Access - At Top */}
-        {(isAdmin || isTrainer) && !result && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
-          >
-            <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border border-amber-200 p-2.5">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-600 to-yellow-600 flex items-center justify-center mb-2">
-                <Shield className="w-3.5 h-3.5 text-white" />
-              </div>
-              <h3 className="font-bold text-slate-900 text-xs mb-2">
-                {isAdmin ? 'Admin' : 'Trainer'}
-              </h3>
-              <div className="flex flex-wrap justify-center gap-2">
-                {isAdmin && (
-                  <>
-                    <Link
-                      to={createPageUrl('Admin')}
-                      className="px-3 py-1.5 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
-                    >
-                      <div className="font-semibold text-slate-900 text-xs group-hover:text-amber-600 transition-colors">
-                        Admin
-                      </div>
-                    </Link>
-                    <Link
-                      to={createPageUrl('FeedbackQueue')}
-                      className="px-3 py-1.5 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
-                    >
-                      <div className="font-semibold text-slate-900 text-xs group-hover:text-amber-600 transition-colors">
-                        Feedback
-                      </div>
-                    </Link>
-                  </>
-                )}
-                {isTrainer && !isAdmin && (
-                  <>
-                    <Link
-                      to={createPageUrl('TrainerDashboard')}
-                      className="px-3 py-1.5 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
-                    >
-                      <div className="font-semibold text-slate-900 text-xs group-hover:text-amber-600 transition-colors">
-                        Training
-                      </div>
-                    </Link>
-                    <Link
-                      to={createPageUrl('FeedbackQueue')}
-                      className="px-3 py-1.5 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
-                    >
-                      <div className="font-semibold text-slate-900 text-xs group-hover:text-amber-600 transition-colors">
-                        Assignments
-                      </div>
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-
         <AnimatePresence mode="wait">
           {analyzing ? (
             <motion.div
