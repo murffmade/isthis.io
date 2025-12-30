@@ -1742,7 +1742,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   </h3>
                 </div>
               </div>
-              <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+              <div className="flex flex-wrap justify-center gap-2">
                 {isAdmin && (
                   <>
                     <Link
