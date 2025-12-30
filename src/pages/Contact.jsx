@@ -75,26 +75,7 @@ export default function Contact() {
       {/* Contact Methods */}
       <section className="py-8 px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white rounded-2xl border border-slate-200 p-8"
-            >
-              <Mail className="w-10 h-10 text-slate-900 mb-4" />
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Email Us</h3>
-              <p className="text-slate-600 mb-4">
-                For general inquiries and support
-              </p>
-              <a
-                href="mailto:support@isthisreal.com"
-                className="text-slate-900 font-medium hover:underline"
-              >
-                support@isthisreal.com
-              </a>
-            </motion.div>
-
+          <div className="grid md:grid-cols-1 gap-8 mb-12 max-w-2xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
