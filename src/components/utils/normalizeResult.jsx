@@ -40,7 +40,7 @@ export function normalizeResult(rawResult) {
   const likelihood_min = clamp(baseScore - bandWidth);
   const likelihood_max = clamp(baseScore + bandWidth);
   
-  return {
+  const normalized = {
     ...rawResult,
     likelihood_min,
     likelihood_max,
@@ -49,6 +49,13 @@ export function normalizeResult(rawResult) {
     narrative_explanation: rawResult.summary || rawResult.narrative_explanation || 'Assessment complete based on observable signals.',
     signals: normalizeSignals(rawResult.signals || [])
   };
+
+  // Add enhanced video forensics if available
+  if (rawResult.content_type === 'video') {
+    normalized.videoForensics = extractVideoForensics(rawResult);
+  }
+
+  return normalized;
 }
 
 export function deriveRiskLevel(min, max) {
@@ -73,8 +80,63 @@ function normalizeSignals(signals) {
     direction: signal.severity === 'high' ? 'AI' : signal.severity === 'low' ? 'HUMAN' : 'NEUTRAL',
     explanation: signal.description || signal.explanation || '',
     falsePositiveNote: signal.false_positive_notes || '',
-    severity: signal.severity || 'medium'
+    severity: signal.severity || 'medium',
+    category: signal.category || 'general'
   }));
+}
+
+// Enhanced video forensics extraction
+export function extractVideoForensics(rawResult) {
+  if (rawResult.content_type !== 'video' || !rawResult.forensics) {
+    return null;
+  }
+
+  const forensics = rawResult.forensics;
+  
+  return {
+    // Deepfake voice detection
+    voiceAnalysis: forensics.audio_analysis ? {
+      hasAudio: forensics.audio_analysis.has_audio,
+      deepfakeVoiceLikelihood: forensics.audio_analysis.deepfake_voice_likelihood || 0,
+      voiceSynthesisDetected: forensics.audio_analysis.voice_synthesis_detected || false,
+      voiceCloningDetected: forensics.audio_analysis.voice_cloning_detected || false,
+      indicators: forensics.audio_analysis.deepfake_voice_indicators || [],
+      artifacts: forensics.audio_analysis.audio_artifacts || [],
+      spectralAnalysis: forensics.audio_analysis.spectral_analysis || null,
+      emotionalDisconnect: forensics.audio_analysis.emotional_disconnect || false
+    } : null,
+
+    // Background manipulation detection
+    backgroundAnalysis: forensics.background_analysis ? {
+      manipulationDetected: forensics.background_analysis.background_manipulation_detected || false,
+      manipulationLikelihood: forensics.background_analysis.background_manipulation_likelihood || 0,
+      aiGeneratedBackground: forensics.background_analysis.ai_generated_background || false,
+      morphingObjectsDetected: forensics.background_analysis.morphing_objects_detected || false,
+      generativeFillDetected: forensics.background_analysis.generative_fill_detected || false,
+      artifacts: forensics.background_analysis.background_artifacts || [],
+      consistency: forensics.background_analysis.foreground_background_consistency || null
+    } : null,
+
+    // Compression artifact analysis
+    compressionAnalysis: forensics.metadata_analysis ? {
+      reencodingDetected: forensics.metadata_analysis.reencoding_detected || false,
+      manipulationLikelihood: forensics.metadata_analysis.manipulation_likelihood || 0,
+      compressionArtifacts: forensics.metadata_analysis.compression_artifacts || [],
+      manipulationIndicators: forensics.metadata_analysis.manipulation_indicators || [],
+      bitrateAnalysis: forensics.metadata_analysis.bitrate_analysis || null,
+      technicalAssessment: forensics.metadata_analysis.technical_assessment || null
+    } : null,
+
+    // Frame comparison data
+    frameComparisons: forensics.frame_comparisons || [],
+    framesAnalyzed: forensics.frames_analyzed || 0,
+    
+    // Scene analysis
+    sceneAnalysis: forensics.scene_analysis || null,
+    
+    // Overall metadata
+    videoMetadata: forensics.video_metadata || null
+  };
 }
 
 // Helper to get risk color

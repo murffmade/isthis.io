@@ -505,6 +505,110 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
         </div>
       )}
 
+      {/* Enhanced Video Forensics Summary */}
+      {normalizedResult.videoForensics && (
+        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border-2 border-indigo-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-4 text-lg flex items-center gap-2">
+            <span>🔬</span> Advanced Video Forensics
+          </h3>
+          
+          <div className="grid md:grid-cols-3 gap-4">
+            {/* Deepfake Voice Detection */}
+            {normalizedResult.videoForensics.voiceAnalysis && (
+              <div className={`p-4 rounded-xl border-2 ${
+                normalizedResult.videoForensics.voiceAnalysis.deepfakeVoiceLikelihood > 70 
+                  ? 'bg-red-50 border-red-200' 
+                  : normalizedResult.videoForensics.voiceAnalysis.deepfakeVoiceLikelihood > 40
+                  ? 'bg-amber-50 border-amber-200'
+                  : 'bg-emerald-50 border-emerald-200'
+              }`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">🎤</span>
+                  <div className="font-bold text-slate-900 text-sm">Voice Analysis</div>
+                </div>
+                {normalizedResult.videoForensics.voiceAnalysis.hasAudio ? (
+                  <>
+                    <div className="text-2xl font-extrabold text-slate-900 mb-1">
+                      {normalizedResult.videoForensics.voiceAnalysis.deepfakeVoiceLikelihood}%
+                    </div>
+                    <div className="text-xs text-slate-600 mb-2">Deepfake Voice Likelihood</div>
+                    {normalizedResult.videoForensics.voiceAnalysis.voiceSynthesisDetected && (
+                      <div className="px-2 py-1 bg-red-100 text-red-800 text-xs font-bold rounded">
+                        AI Voice Synthesis
+                      </div>
+                    )}
+                    {normalizedResult.videoForensics.voiceAnalysis.voiceCloningDetected && (
+                      <div className="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-bold rounded mt-1">
+                        Voice Cloning
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-xs text-red-700 font-semibold">
+                    ⚠️ No audio track detected
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Background Manipulation */}
+            {normalizedResult.videoForensics.backgroundAnalysis && (
+              <div className={`p-4 rounded-xl border-2 ${
+                normalizedResult.videoForensics.backgroundAnalysis.manipulationLikelihood > 70 
+                  ? 'bg-red-50 border-red-200' 
+                  : normalizedResult.videoForensics.backgroundAnalysis.manipulationLikelihood > 40
+                  ? 'bg-amber-50 border-amber-200'
+                  : 'bg-emerald-50 border-emerald-200'
+              }`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">🌆</span>
+                  <div className="font-bold text-slate-900 text-sm">Background</div>
+                </div>
+                <div className="text-2xl font-extrabold text-slate-900 mb-1">
+                  {normalizedResult.videoForensics.backgroundAnalysis.manipulationLikelihood}%
+                </div>
+                <div className="text-xs text-slate-600 mb-2">AI Background Likelihood</div>
+                {normalizedResult.videoForensics.backgroundAnalysis.aiGeneratedBackground && (
+                  <div className="px-2 py-1 bg-red-100 text-red-800 text-xs font-bold rounded">
+                    AI-Generated BG
+                  </div>
+                )}
+                {normalizedResult.videoForensics.backgroundAnalysis.morphingObjectsDetected && (
+                  <div className="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-bold rounded mt-1">
+                    Morphing Objects
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Compression Artifacts */}
+            {normalizedResult.videoForensics.compressionAnalysis && (
+              <div className={`p-4 rounded-xl border-2 ${
+                normalizedResult.videoForensics.compressionAnalysis.manipulationLikelihood > 70 
+                  ? 'bg-red-50 border-red-200' 
+                  : normalizedResult.videoForensics.compressionAnalysis.manipulationLikelihood > 40
+                  ? 'bg-amber-50 border-amber-200'
+                  : 'bg-emerald-50 border-emerald-200'
+              }`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">🗜️</span>
+                  <div className="font-bold text-slate-900 text-sm">Compression</div>
+                </div>
+                <div className="text-2xl font-extrabold text-slate-900 mb-1">
+                  {normalizedResult.videoForensics.compressionAnalysis.manipulationLikelihood}%
+                </div>
+                <div className="text-xs text-slate-600 mb-2">Manipulation Likelihood</div>
+                {normalizedResult.videoForensics.compressionAnalysis.reencodingDetected && (
+                  <div className="px-2 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded">
+                    Re-encoding Detected
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Video-specific info */}
       {result.content_type === 'video' && result.forensics && (
         <div className="space-y-4 mb-6">
