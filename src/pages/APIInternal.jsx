@@ -193,9 +193,7 @@ export default function APIInternal() {
         )}
 
         {activeSection === 'keys' && (
-
-        {/* API Key Management */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-8 mb-12">
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 mb-12">
           <div className="flex items-center gap-3 mb-6">
             <Key className="w-6 h-6 text-indigo-600" />
             <h3 className="text-2xl font-bold text-slate-900">API Key Management</h3>
@@ -287,7 +285,7 @@ export default function APIInternal() {
               </div>
             </div>
           )}
-        </div>
+          </div>
         )}
 
         {activeSection === 'webhooks' && (
