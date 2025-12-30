@@ -1731,39 +1731,29 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
           >
-            <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border border-amber-200 p-3">
+            <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border border-amber-200 p-2.5">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-600 to-yellow-600 flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" />
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-600 to-yellow-600 flex items-center justify-center">
+                  <Shield className="w-3.5 h-3.5 text-white" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 text-sm">
-                    {isAdmin ? 'Admin Dashboard' : 'Trainer Dashboard'}
-                  </h3>
-                </div>
+                <h3 className="font-bold text-slate-900 text-xs">
+                  {isAdmin ? 'Admin' : 'Trainer'}
+                </h3>
               </div>
               <div className="flex flex-wrap justify-center gap-2">
                 {isAdmin && (
                   <>
                     <Link
                       to={createPageUrl('Admin')}
-                      className="p-2 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
+                      className="px-3 py-1.5 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
                     >
                       <div className="font-semibold text-slate-900 text-xs group-hover:text-amber-600 transition-colors">
                         Admin
                       </div>
                     </Link>
                     <Link
-                      to={createPageUrl('TrainerDashboard')}
-                      className="p-2 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
-                    >
-                      <div className="font-semibold text-slate-900 text-xs group-hover:text-amber-600 transition-colors">
-                        Training
-                      </div>
-                    </Link>
-                    <Link
                       to={createPageUrl('FeedbackQueue')}
-                      className="p-2 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
+                      className="px-3 py-1.5 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
                     >
                       <div className="font-semibold text-slate-900 text-xs group-hover:text-amber-600 transition-colors">
                         Feedback
@@ -1775,7 +1765,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   <>
                     <Link
                       to={createPageUrl('TrainerDashboard')}
-                      className="p-2 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
+                      className="px-3 py-1.5 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
                     >
                       <div className="font-semibold text-slate-900 text-xs group-hover:text-amber-600 transition-colors">
                         Training
@@ -1783,7 +1773,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     </Link>
                     <Link
                       to={createPageUrl('FeedbackQueue')}
-                      className="p-2 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
+                      className="px-3 py-1.5 bg-white rounded-lg border border-amber-200 hover:border-amber-400 hover:shadow transition-all group text-center"
                     >
                       <div className="font-semibold text-slate-900 text-xs group-hover:text-amber-600 transition-colors">
                         Assignments
