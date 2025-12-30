@@ -124,8 +124,8 @@ export default function DevConsoleOverlay() {
     if (!isDragging) return;
 
     const handleMouseMove = (e) => {
-      const newX = Math.max(0, Math.min(e.clientX - dragOffset.x, window.innerWidth - (isExpanded ? 360 : 60)));
-      const newY = Math.max(0, Math.min(e.clientY - dragOffset.y, window.innerHeight - (isExpanded ? 420 : 60)));
+      const newX = e.clientX - dragOffset.x;
+      const newY = e.clientY - dragOffset.y;
       
       const newPosition = { x: newX, y: newY };
       setPosition(newPosition);
@@ -143,7 +143,7 @@ export default function DevConsoleOverlay() {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dragOffset, isExpanded]);
+  }, [isDragging, dragOffset]);
 
   const handleCopy = async (eventId) => {
     const text = eventId ? devConsoleStore.copyEvent(eventId) : devConsoleStore.copyAll();
