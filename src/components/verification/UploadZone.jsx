@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
+import ContentModerator from '@/components/utils/ContentModerator';
 
 export default function UploadZone({ onAnalysisStart, onFileReady }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -11,6 +12,7 @@ export default function UploadZone({ onAnalysisStart, onFileReady }) {
   const [url, setUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
+  const [moderatingFile, setModeratingFile] = useState(null);
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
@@ -59,14 +61,16 @@ export default function UploadZone({ onAnalysisStart, onFileReady }) {
     setIsUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      onFileReady({
-        type: isImage ? 'image' : 'video',
+      
+      // Trigger moderation before proceeding
+      setModeratingFile({
         file_url,
+        content_type: isImage ? 'image' : 'video',
+        type: isImage ? 'image' : 'video',
         source: 'upload'
       });
     } catch (err) {
       setError('Failed to upload file. Please try again.');
-    } finally {
       setIsUploading(false);
     }
   };
@@ -235,6 +239,30 @@ export default function UploadZone({ onAnalysisStart, onFileReady }) {
         >
           {error}
         </motion.p>
+      )}
+
+      {/* Content Moderation Modal */}
+      {moderatingFile && (
+        <ContentModerator
+          file_url={moderatingFile.file_url}
+          content_type={moderatingFile.content_type}
+          onComplete={(moderationResult) => {
+            setIsUploading(false);
+            setModeratingFile(null);
+            
+            if (moderationResult.approved || moderationResult.flagged) {
+              onFileReady({
+                ...moderatingFile,
+                moderation: moderationResult.result
+              });
+            }
+          }}
+          onCancel={() => {
+            setIsUploading(false);
+            setModeratingFile(null);
+            setError('Upload cancelled due to content policy violation');
+          }}
+        />
       )}
     </div>
   );
