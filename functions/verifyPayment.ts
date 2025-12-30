@@ -39,7 +39,14 @@ Deno.serve(async (req) => {
     // Check if entitlement exists and is active
     let entitlementStatus = 'pending';
     if (user_email) {
-      const entitlements = await base44.asServiceRole.entities.UserEntitlement.filter({
+      // Create service role client for database access
+      const { createClient } = await import('npm:@base44/sdk@0.8.6');
+      const base44 = createClient({
+        appId: Deno.env.get('BASE44_APP_ID'),
+        serviceRoleKey: Deno.env.get('BASE44_SERVICE_ROLE_KEY')
+      });
+      
+      const entitlements = await base44.entities.UserEntitlement.filter({
         user_email: user_email
       });
       
