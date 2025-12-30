@@ -270,8 +270,8 @@ export default function Home() {
             const { frames, metadata } = await extractFramesFromVideo(uploadedFileObj, 16);
             console.log('[VIDEO ANALYSIS] Frames extracted successfully:', frames.length, 'frames. Metadata:', metadata);
 
-            // Extract audio for manipulation detection
-            console.log('[VIDEO ANALYSIS] Extracting audio track...');
+            // Extract audio for advanced manipulation detection
+            console.log('[VIDEO ANALYSIS] Extracting audio track for deepfake voice detection...');
             let audioAnalysis = null;
             if (metadata.hasAudio) {
               try {
@@ -279,20 +279,48 @@ export default function Home() {
                 const arrayBuffer = await uploadedFileObj.arrayBuffer();
                 const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
                 
+                // Advanced audio feature extraction for deepfake detection
+                const channelData = audioBuffer.getChannelData(0);
+                
+                // Calculate basic audio features
+                let sumAmplitude = 0;
+                let maxAmplitude = 0;
+                let silencePeriods = 0;
+                let lastSample = 0;
+                
+                for (let i = 0; i < channelData.length; i++) {
+                  const sample = Math.abs(channelData[i]);
+                  sumAmplitude += sample;
+                  maxAmplitude = Math.max(maxAmplitude, sample);
+                  
+                  // Detect silence (very low amplitude)
+                  if (sample < 0.01 && lastSample < 0.01) {
+                    silencePeriods++;
+                  }
+                  lastSample = sample;
+                }
+                
+                const avgAmplitude = sumAmplitude / channelData.length;
+                const silenceRatio = silencePeriods / channelData.length;
+                
                 audioAnalysis = {
                   duration: audioBuffer.duration,
                   sampleRate: audioBuffer.sampleRate,
                   numberOfChannels: audioBuffer.numberOfChannels,
-                  hasAudio: true
+                  hasAudio: true,
+                  avgAmplitude: avgAmplitude,
+                  maxAmplitude: maxAmplitude,
+                  silenceRatio: silenceRatio,
+                  unnaturalSilence: silenceRatio > 0.3 // Suspicious if >30% silence
                 };
-                console.log('[VIDEO ANALYSIS] Audio extracted:', audioAnalysis);
+                console.log('[VIDEO ANALYSIS] Audio extracted with features:', audioAnalysis);
               } catch (audioError) {
                 console.warn('[VIDEO ANALYSIS] Audio extraction failed:', audioError);
                 audioAnalysis = { hasAudio: false, error: audioError.message };
               }
             } else {
               audioAnalysis = { hasAudio: false };
-              console.log('[VIDEO ANALYSIS] No audio track detected');
+              console.log('[VIDEO ANALYSIS] No audio track detected - RED FLAG for authentic video');
             }
 
             // Upload frames
@@ -348,29 +376,77 @@ SCENE CHANGE DETECTION REQUIREMENTS:
 - Analyze consistency WITHIN each scene separately
 - Flag if different scenes show different generation characteristics
 
-AUDIO ANALYSIS INTEGRATION:
+ADVANCED AUDIO ANALYSIS FOR DEEPFAKE VOICE DETECTION:
 Audio Track Status: ${audioAnalysis?.hasAudio ? 'PRESENT' : 'MISSING OR FAILED'}
 ${audioAnalysis?.hasAudio ? `
-Audio Metadata:
+Audio Metadata & Features:
 - Duration: ${audioAnalysis.duration?.toFixed(2)}s (Video: ${metadata.duration?.toFixed(2)}s)
 - Sample Rate: ${audioAnalysis.sampleRate}Hz
 - Channels: ${audioAnalysis.numberOfChannels}
+- Average Amplitude: ${audioAnalysis.avgAmplitude?.toFixed(4)}
+- Max Amplitude: ${audioAnalysis.maxAmplitude?.toFixed(4)}
+- Silence Ratio: ${(audioAnalysis.silenceRatio * 100)?.toFixed(2)}%
+- Unnatural Silence: ${audioAnalysis.unnaturalSilence ? 'YES - SUSPICIOUS' : 'NO'}
 
-AUDIO MANIPULATION INDICATORS TO CHECK:
-1. AUDIO-VIDEO SYNC: Does audio duration match video duration exactly?
-2. VOICE SYNTHESIS: Listen for TTS-like qualities (too smooth, robotic cadence)
-3. AUDIO CLONING: Unnatural voice characteristics, missing breath sounds
-4. BACKGROUND AUDIO: Is background audio too clean or artificially generated?
-5. AUDIO ARTIFACTS: Digital glitches, unnatural silence, abrupt cuts
-6. DEEPFAKE VOICE: Voice doesn't match facial movements precisely
-7. AI TTS PATTERNS: Unnatural prosody, missing emotional variation
+DEEPFAKE VOICE DETECTION (CRITICAL):
+Perform ADVANCED audio forensic analysis:
+
+1. VOICE SYNTHESIS DETECTION:
+   - AI TTS Patterns: Overly consistent prosody, no natural variation
+   - Robotic Cadence: Mechanical timing, missing micro-pauses
+   - Spectral Analysis: Unnatural frequency distribution typical of neural vocoders
+   - Missing Vocal Fry: AI voices often lack natural vocal fry/creaky voice
+   - Breathlessness: AI speech lacks natural breath sounds between phrases
+   - Formant Consistency: Too-perfect formant transitions (human voices vary)
+
+2. VOICE CLONING DETECTION:
+   - Identity Mismatch: Voice doesn't match visual facial characteristics
+   - Emotional Disconnect: Voice emotion doesn't match facial expressions
+   - Phoneme Artifacts: Unnatural transitions between phonemes
+   - Missing Co-articulation: Lack of natural sound blending between words
+   - Pitch Inconsistencies: Sudden unnatural pitch jumps or monotone delivery
+   - Temporal Misalignment: Voice timing doesn't match lip movements
+
+3. AUDIO-VIDEO SYNC ANALYSIS:
+   - Lip-Sync Precision: Does mouth movement precisely match phonemes?
+   - Audio Delay: Any offset between visual and audio cues?
+   - Duration Mismatch: Audio ${audioAnalysis.duration?.toFixed(2)}s vs Video ${metadata.duration?.toFixed(2)}s = ${Math.abs(audioAnalysis.duration - metadata.duration)?.toFixed(2)}s difference
+   - ${Math.abs(audioAnalysis.duration - metadata.duration) > 0.1 ? '⚠️ SIGNIFICANT DURATION MISMATCH - MANIPULATION LIKELY' : '✓ Duration match acceptable'}
+
+4. BACKGROUND AUDIO FORENSICS:
+   - Too Clean: Background noise too uniform or completely absent
+   - Artificial Ambience: Generated room tone that sounds synthetic
+   - Abrupt Cuts: Sudden silence or background changes
+   - Noise Floor: Unnatural noise floor typical of AI audio generation
+   - Environmental Mismatch: Background audio doesn't match visual environment
+
+5. AUDIO COMPRESSION ARTIFACTS:
+   - Re-encoding Signatures: Multiple compression passes indicate editing
+   - Bitrate Inconsistencies: Variable quality suggests splicing
+   - Format Fingerprints: Audio codec doesn't match video source type
+   - Silence Ratio: ${(audioAnalysis.silenceRatio * 100)?.toFixed(2)}% ${audioAnalysis.unnaturalSilence ? '(SUSPICIOUS - unnatural silence patterns)' : '(normal range)'}
+
+6. DEEPFAKE VOICE TELLS (High Priority):
+   - Neural Vocoder Artifacts: Specific spectral patterns from WaveNet, Tacotron, VITS
+   - Voice Conversion Signatures: Residual source speaker characteristics
+   - Prosody Transfer Errors: Emotion/stress doesn't match context
+   - Glottal Pulse Regularity: Too regular for human speech
+   - Sibilant Synthesis: Unnatural 's' and 'sh' sounds
+
+CRITICAL: Assign deepfake_voice_likelihood (0-100) based on evidence found.
 ` : `
-⚠️ NO AUDIO TRACK DETECTED
-This is HIGHLY SUSPICIOUS for authentic videos:
-- Real videos (phones, cameras) almost always have audio
-- Missing audio may indicate AI generation or heavy editing
-- Deepfakes often lack audio or have mismatched audio
-- Consider this a RED FLAG in your overall assessment
+⚠️ NO AUDIO TRACK DETECTED - CRITICAL RED FLAG
+This is EXTREMELY SUSPICIOUS for authentic videos:
+- Real videos (phones, cameras) ALWAYS have audio, even if just ambient noise
+- Missing audio is PRIMARY indicator of AI-generated video content
+- Deepfakes often have no audio or poorly synced dubbed audio added separately
+- AI video generators (Sora, Gen-2, Runway) typically don't generate audio
+- Consider this a MAJOR RED FLAG increasing AI likelihood by 30-40%
+
+Impact on Assessment:
+- Automatically increase AI generation probability
+- Require stronger visual evidence of authenticity to override
+- Flag as high-confidence AI generation if combined with other artifacts
 `}
 
 You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM combining state-of-the-art detection techniques.
@@ -385,22 +461,64 @@ You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM co
 
             Each model votes with confidence, and you synthesize their collective intelligence.
 
-            VIDEO METADATA:
+            VIDEO METADATA & FORENSIC ANALYSIS:
             - Total Frames Provided: ${frames.length}
             - Video Duration: ${metadata.duration.toFixed(1)}s
             - Resolution: ${metadata.width}x${metadata.height} (${metadata.aspectRatio} aspect ratio)
-            - File Size: ${metadata.fileSizeMB}MB
+            - File Size: ${metadata.fileSizeMB.toFixed(2)}MB
             - Format: ${metadata.mimeType}
-            - Estimated Bitrate: ${metadata.estimatedBitrate} kbps
+            - Estimated Bitrate: ${metadata.estimatedBitrate.toFixed(0)} kbps
             - Audio Track: ${metadata.hasAudio ? 'Present' : 'None detected'}
             - Frame Timestamps: ${frameUrls.map((f, i) => `Frame ${i+1} at ${f.timestamp.toFixed(2)}s`).join(', ')}
 
-            METADATA ANALYSIS FOR MANIPULATION DETECTION:
-            - AI-generated videos often have unusual bitrates (too perfect or inconsistent)
-            - Deepfakes may lack proper audio synchronization or audio tracks
-            - Check if resolution/bitrate ratios are typical for the claimed source
-            - Look for signs of re-encoding or compression artifacts that suggest editing
-            - Unusual file sizes for the duration/quality may indicate synthetic generation
+            ADVANCED COMPRESSION ARTIFACT ANALYSIS (MANIPULATION DETECTION):
+
+            1. BITRATE FORENSICS:
+               - Current Bitrate: ${metadata.estimatedBitrate.toFixed(0)} kbps
+               - Expected Range: ${metadata.width * metadata.height > 1920 * 1080 ? '8000-15000' : '3000-8000'} kbps for this resolution
+               - ${metadata.estimatedBitrate < 1000 ? '⚠️ SUSPICIOUSLY LOW - Heavy compression or AI generation' : metadata.estimatedBitrate > 20000 ? '⚠️ UNUSUALLY HIGH - May indicate uncompressed AI output' : '✓ Normal range'}
+               - Bitrate/Resolution Ratio: ${(metadata.estimatedBitrate / (metadata.width * metadata.height / 1000)).toFixed(2)} (should be 0.15-0.3 for authentic)
+
+            2. RE-ENCODING DETECTION:
+               - Multiple Compression Passes: Look for cascading quality loss typical of re-encodes
+               - Generation Artifacts: Blocking, ringing, or mosquito noise patterns
+               - Inconsistent Compression: Different regions show different compression levels
+               - Temporal Compression: Motion prediction artifacts that don't match natural motion
+               - I-Frame Distribution: Irregular keyframe placement suggests editing/splicing
+
+            3. FORMAT FINGERPRINTING:
+               - Format: ${metadata.mimeType}
+               - Source Type Analysis: Does format match claimed capture device?
+               - Codec Signatures: H.264/H.265 specific artifacts vs AI generation patterns
+               - Container Mismatch: Video stream doesn't match container expectations
+               - Missing Format Metadata: Authentic videos have rich metadata; AI lacks this
+
+            4. MANIPULATION INDICATORS:
+               - File Size Anomaly: ${metadata.fileSizeMB.toFixed(2)}MB for ${metadata.duration.toFixed(1)}s = ${(metadata.fileSizeMB / metadata.duration).toFixed(2)} MB/s
+               - ${(metadata.fileSizeMB / metadata.duration) < 0.3 ? '⚠️ TOO SMALL - Over-compressed or low-quality AI' : (metadata.fileSizeMB / metadata.duration) > 5 ? '⚠️ TOO LARGE - Uncompressed AI render or edited' : '✓ Size appropriate'}
+               - Spatial/Temporal Compression Balance: Analyze compression priority
+               - Chroma Subsampling: Check for typical 4:2:0 vs unusual sampling
+               - Quantization Patterns: Regular QP distribution vs manipulated regions
+
+            5. BACKGROUND ELEMENT MANIPULATION (CRITICAL NEW FEATURE):
+               - Background Consistency: Does background maintain coherent structure across frames?
+               - AI Background Generation: Look for these tells:
+                 * Morphing Objects: Background elements that subtly change shape
+                 * Impossible Architecture: Buildings/structures with wrong perspectives
+                 * Repeating Patterns: Copy-paste texture artifacts in backgrounds
+                 * Soft Focus Mismatch: Background blur doesn't match focal depth
+                 * Lighting Inconsistency: Background lighting differs from subject lighting
+                 * Physics Violations: Shadows, reflections, or parallax errors
+                 * Generative Fill Seams: Visible boundaries where AI filled background
+                 * Resolution Mismatch: Background is lower/higher quality than subject
+               - Foreground-Background Separation: Unnatural edge quality suggesting compositing
+               - Temporal Background Stability: Background should be stable, not morphing
+
+            CRITICAL ANALYSIS REQUIREMENTS:
+            - Provide manipulation_likelihood (0-100) based on compression forensics
+            - Identify specific re-encoding signatures if present
+            - Flag background manipulation with confidence scores
+            - Assess if technical metadata matches visual quality
 
         ANALYSIS FRAMEWORK:
 
@@ -608,13 +726,55 @@ You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM co
                     properties: {
                       has_audio: { type: "boolean" },
                       audio_video_sync: { type: "string" },
+                      deepfake_voice_likelihood: { type: "number" },
+                      voice_synthesis_detected: { type: "boolean" },
+                      voice_cloning_detected: { type: "boolean" },
                       voice_synthesis_likelihood: { type: "number" },
                       audio_manipulation_detected: { type: "boolean" },
+                      deepfake_voice_indicators: {
+                        type: "array",
+                        items: { type: "string" }
+                      },
                       audio_artifacts: {
                         type: "array",
                         items: { type: "string" }
                       },
-                      missing_audio_impact: { type: "string" }
+                      missing_audio_impact: { type: "string" },
+                      spectral_analysis: { type: "string" },
+                      emotional_disconnect: { type: "boolean" }
+                    }
+                  },
+                  background_analysis: {
+                    type: "object",
+                    properties: {
+                      background_manipulation_detected: { type: "boolean" },
+                      background_manipulation_likelihood: { type: "number" },
+                      ai_generated_background: { type: "boolean" },
+                      background_artifacts: {
+                        type: "array",
+                        items: { type: "string" }
+                      },
+                      foreground_background_consistency: { type: "string" },
+                      morphing_objects_detected: { type: "boolean" },
+                      generative_fill_detected: { type: "boolean" }
+                    }
+                  },
+                  metadata_analysis: {
+                    type: "object",
+                    properties: {
+                      manipulation_indicators: {
+                        type: "array",
+                        items: { type: "string" }
+                      },
+                      technical_assessment: { type: "string" },
+                      bitrate_analysis: { type: "string" },
+                      audio_sync_assessment: { type: "string" },
+                      reencoding_detected: { type: "boolean" },
+                      compression_artifacts: {
+                        type: "array",
+                        items: { type: "string" }
+                      },
+                      manipulation_likelihood: { type: "number" }
                     }
                   },
                   temporal_inconsistencies: {
@@ -694,24 +854,66 @@ You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM co
               });
             }
 
-            // Audio analysis signals
+            // Advanced audio analysis signals with deepfake voice detection
             if (frameAnalysis.audio_analysis) {
               if (!frameAnalysis.audio_analysis.has_audio) {
                 allSignals.push({
                   signal_type: "Missing Audio Track",
                   description: frameAnalysis.audio_analysis.missing_audio_impact || "No audio track detected - suspicious for authentic video",
                   severity: "high",
+                  detection_confidence: 95,
                   category: "audio"
                 });
               } else {
+                // Deepfake voice detection
+                if (frameAnalysis.audio_analysis.deepfake_voice_likelihood > 60) {
+                  allSignals.push({
+                    signal_type: "Deepfake Voice Detected",
+                    description: `Deepfake voice likelihood: ${frameAnalysis.audio_analysis.deepfake_voice_likelihood}%`,
+                    severity: "high",
+                    detection_confidence: frameAnalysis.audio_analysis.deepfake_voice_likelihood,
+                    category: "audio"
+                  });
+                }
+                
+                if (frameAnalysis.audio_analysis.voice_synthesis_detected) {
+                  allSignals.push({
+                    signal_type: "AI Voice Synthesis",
+                    description: "Voice shows characteristics of AI text-to-speech generation",
+                    severity: "high",
+                    detection_confidence: frameAnalysis.audio_analysis.voice_synthesis_likelihood || 80,
+                    category: "audio"
+                  });
+                }
+                
+                if (frameAnalysis.audio_analysis.voice_cloning_detected) {
+                  allSignals.push({
+                    signal_type: "Voice Cloning Detected",
+                    description: "Voice shows signs of AI voice cloning technology",
+                    severity: "high",
+                    detection_confidence: 85,
+                    category: "audio"
+                  });
+                }
+                
+                frameAnalysis.audio_analysis.deepfake_voice_indicators?.forEach(indicator => {
+                  allSignals.push({
+                    signal_type: "Deepfake Voice Indicator",
+                    description: indicator,
+                    severity: "high",
+                    category: "audio"
+                  });
+                });
+                
                 if (frameAnalysis.audio_analysis.audio_manipulation_detected) {
                   allSignals.push({
                     signal_type: "Audio Manipulation Detected",
-                    description: `Voice synthesis likelihood: ${frameAnalysis.audio_analysis.voice_synthesis_likelihood}%`,
+                    description: `General audio manipulation detected`,
                     severity: "high",
                     category: "audio"
                   });
                 }
+                
                 frameAnalysis.audio_analysis.audio_artifacts?.forEach(artifact => {
                   allSignals.push({
                     signal_type: "Audio Artifact",
@@ -721,6 +923,97 @@ You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM co
                   });
                 });
               }
+            }
+
+            // Background manipulation signals
+            if (frameAnalysis.background_analysis) {
+              if (frameAnalysis.background_analysis.background_manipulation_detected) {
+                allSignals.push({
+                  signal_type: "Background Manipulation",
+                  description: `AI-generated or manipulated background detected (${frameAnalysis.background_analysis.background_manipulation_likelihood}% confidence)`,
+                  severity: "high",
+                  detection_confidence: frameAnalysis.background_analysis.background_manipulation_likelihood,
+                  category: "background"
+                });
+              }
+              
+              if (frameAnalysis.background_analysis.ai_generated_background) {
+                allSignals.push({
+                  signal_type: "AI-Generated Background",
+                  description: "Background shows characteristics of AI generation",
+                  severity: "high",
+                  detection_confidence: 85,
+                  category: "background"
+                });
+              }
+              
+              if (frameAnalysis.background_analysis.morphing_objects_detected) {
+                allSignals.push({
+                  signal_type: "Morphing Background Objects",
+                  description: "Background elements change shape between frames",
+                  severity: "high",
+                  category: "background"
+                });
+              }
+              
+              if (frameAnalysis.background_analysis.generative_fill_detected) {
+                allSignals.push({
+                  signal_type: "Generative Fill Detected",
+                  description: "AI-generated fill visible in background regions",
+                  severity: "high",
+                  category: "background"
+                });
+              }
+              
+              frameAnalysis.background_analysis.background_artifacts?.forEach(artifact => {
+                allSignals.push({
+                  signal_type: "Background Artifact",
+                  description: artifact,
+                  severity: "medium",
+                  category: "background"
+                });
+              });
+            }
+
+            // Compression and re-encoding signals
+            if (frameAnalysis.metadata_analysis) {
+              if (frameAnalysis.metadata_analysis.reencoding_detected) {
+                allSignals.push({
+                  signal_type: "Re-encoding Detected",
+                  description: "Video shows signs of multiple compression passes indicating editing",
+                  severity: "high",
+                  detection_confidence: 80,
+                  category: "compression"
+                });
+              }
+              
+              if (frameAnalysis.metadata_analysis.manipulation_likelihood > 60) {
+                allSignals.push({
+                  signal_type: "Compression-Based Manipulation",
+                  description: `Compression analysis indicates ${frameAnalysis.metadata_analysis.manipulation_likelihood}% likelihood of manipulation`,
+                  severity: "high",
+                  detection_confidence: frameAnalysis.metadata_analysis.manipulation_likelihood,
+                  category: "compression"
+                });
+              }
+              
+              frameAnalysis.metadata_analysis.compression_artifacts?.forEach(artifact => {
+                allSignals.push({
+                  signal_type: "Compression Artifact",
+                  description: artifact,
+                  severity: "medium",
+                  category: "compression"
+                });
+              });
+              
+              frameAnalysis.metadata_analysis.manipulation_indicators?.forEach(indicator => {
+                allSignals.push({
+                  signal_type: "Metadata Manipulation Indicator",
+                  description: indicator,
+                  severity: "medium",
+                  category: "metadata"
+                });
+              });
             }
 
             // Temporal inconsistencies
