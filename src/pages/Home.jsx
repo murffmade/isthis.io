@@ -254,7 +254,7 @@ export default function Home() {
 
       // Check usage limits for free tier
       if (tier.limit && usageCount >= tier.limit) {
-        toast.error(`You've reached your ${tier.limit} verifications for this ${tier.period}. Upgrade to continue.`);
+        toast.error(`You've reached your ${tier.limit} assessments for this ${tier.period}. Upgrade to continue.`);
         return;
       }
 

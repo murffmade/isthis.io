@@ -7,6 +7,9 @@ import { toast } from 'sonner';
 import html2canvas from 'html2canvas';
 import ShareCard from './ShareCard';
 import TrainerFeedback from './TrainerFeedback';
+import LikelihoodRangeBar from '@/components/assessment/LikelihoodRangeBar';
+import DisclaimerBanner from '@/components/assessment/DisclaimerBanner';
+import { normalizeResult, getRiskColor, getConfidenceColor } from '@/components/utils/normalizeResult';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 
@@ -177,6 +180,10 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
   const [user, setUser] = useState(null);
   const [affiliateCode, setAffiliateCode] = useState('');
   const [showAffiliatePrompt, setShowAffiliatePrompt] = useState(false);
+  
+  // Normalize result to likelihood range format
+  const normalizedResult = normalizeResult(result);
+  
   const config = resultConfig[result.result] || resultConfig.uncertain;
   const Icon = config.icon;
   const showActionButton = result.result === 'likely_ai' && result.claims_to_be_real;
@@ -207,20 +214,53 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       {/* Trainer Feedback */}
       <TrainerFeedback result={result} user={user} />
 
-      {/* Main Result Card - MOVED TO TOP */}
-      <div className={`rounded-3xl border-2 ${config.borderColor} ${config.bgColor} p-8 mb-6 shadow-soft`}>
-        <div className="flex items-start gap-5">
-          <div className={`w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-medium`}>
-            <Icon className={`w-10 h-10 ${config.color}`} />
+      {/* Disclaimer Banner - Top */}
+      <div className="mb-6">
+        <DisclaimerBanner variant="prominent" />
+      </div>
+
+      {/* Main Result Card with Likelihood Range */}
+      <div className={`rounded-3xl border-2 ${config.borderColor} ${config.bgColor} p-6 sm:p-8 mb-6 shadow-soft`}>
+        <div className="flex items-start gap-5 mb-6">
+          <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white flex items-center justify-center shadow-medium`}>
+            <Icon className={`w-8 h-8 sm:w-10 sm:h-10 ${config.color}`} />
           </div>
-          <div className="flex-1">
-            <h2 className={`text-3xl font-extrabold ${config.color} mb-2 tracking-tight`}>
+          <div className="flex-1 min-w-0">
+            <h2 className={`text-2xl sm:text-3xl font-extrabold ${config.color} mb-2 tracking-tight`}>
               {config.title}
             </h2>
-            <p className="text-slate-600 text-lg leading-relaxed">
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
               {config.description}
             </p>
           </div>
+        </div>
+
+        {/* Likelihood Range Visualization */}
+        <div className="space-y-4">
+          <LikelihoodRangeBar
+            min={normalizedResult.likelihood_min}
+            max={normalizedResult.likelihood_max}
+            riskLevel={normalizedResult.risk_level}
+          />
+          
+          {/* Confidence & Risk Badges */}
+          <div className="flex flex-wrap gap-3">
+            <div className={`px-4 py-2 rounded-lg font-semibold text-sm border-2 ${getRiskColor(normalizedResult.risk_level)}`}>
+              {normalizedResult.risk_level} Risk
+            </div>
+            <div className={`px-4 py-2 rounded-lg font-semibold text-sm ${getConfidenceColor(normalizedResult.meta_confidence)}`}>
+              {normalizedResult.meta_confidence} Confidence
+            </div>
+          </div>
+
+          {/* Narrative Explanation */}
+          {normalizedResult.narrative_explanation && (
+            <div className="pt-4 border-t border-slate-200">
+              <p className="text-sm text-slate-700 leading-relaxed">
+                {normalizedResult.narrative_explanation}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

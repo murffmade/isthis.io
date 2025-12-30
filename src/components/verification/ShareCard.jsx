@@ -187,7 +187,7 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
                   marginTop: '4px',
                   letterSpacing: '0.02em'
                 }}>
-                  AI Content Verification
+                  AI Content Assessment
                 </div>
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
               fontWeight: '600',
               letterSpacing: '0.02em'
             }}>
-              🆓 Free AI Detection Tool
+              🆓 Free AI Assessment Tool
             </div>
             <div style={{
               fontSize: hasImage ? '14px' : '17px',
