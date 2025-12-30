@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Shield, Key, Copy, Eye, EyeOff, Code, Terminal, CheckCircle2, AlertCircle, Lock, TrendingUp } from 'lucide-react';
+import { Shield, Key, Copy, Eye, EyeOff, Code, Terminal, CheckCircle2, AlertCircle, Lock, TrendingUp, Webhook, BarChart3, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -13,6 +13,7 @@ export default function APIInternal() {
   const [newKeyName, setNewKeyName] = useState('');
   const [generatedKey, setGeneratedKey] = useState(null);
   const [visibleKeys, setVisibleKeys] = useState({});
+  const [activeSection, setActiveSection] = useState('overview');
 
   const { data: currentUser, isLoading: userLoading } = useQuery({
     queryKey: ['currentUser'],
@@ -119,18 +120,79 @@ export default function APIInternal() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-12">
-        {/* Overview */}
-        <div className="mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm font-semibold mb-4">
-            <TrendingUp className="w-4 h-4" />
-            Internal Use Only
-          </div>
-          <h2 className="text-4xl font-bold text-slate-900 mb-4">API Documentation</h2>
-          <p className="text-lg text-slate-600 max-w-3xl">
-            Programmatic access to IsThis.io's AI-origin risk assessment engine. 
-            This API is currently for internal use only and requires authentication.
-          </p>
+        {/* Navigation Tabs */}
+        <div className="mb-8 flex gap-2 border-b border-slate-200 pb-px">
+          {[
+            { id: 'overview', label: 'Overview', icon: Code },
+            { id: 'keys', label: 'API Keys', icon: Key },
+            { id: 'webhooks', label: 'Webhooks', icon: Webhook },
+            { id: 'usage', label: 'Usage', icon: BarChart3 }
+          ].map(tab => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveSection(tab.id)}
+                className={`flex items-center gap-2 px-4 py-2 font-medium text-sm transition-colors ${
+                  activeSection === tab.id
+                    ? 'text-indigo-600 border-b-2 border-indigo-600'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
+
+        {activeSection === 'overview' && (
+          <>
+            {/* Overview */}
+            <div className="mb-12">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm font-semibold mb-4">
+                <TrendingUp className="w-4 h-4" />
+                Internal Use Only
+              </div>
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">API Documentation</h2>
+              <p className="text-lg text-slate-600 max-w-3xl">
+                Programmatic access to IsThis.io's AI-origin risk assessment engine. 
+                This API is currently for internal use only and requires authentication.
+              </p>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <Terminal className="w-8 h-8 text-indigo-600" />
+                </div>
+                <div className="text-3xl font-bold text-slate-900">{apiKeys.length}</div>
+                <div className="text-sm text-slate-600">Active API Keys</div>
+              </div>
+
+              <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl border border-emerald-200 p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <BarChart3 className="w-8 h-8 text-emerald-600" />
+                </div>
+                <div className="text-3xl font-bold text-slate-900">
+                  {apiKeys.reduce((sum, k) => sum + (k.usage_count || 0), 0)}
+                </div>
+                <div className="text-sm text-slate-600">Total API Calls</div>
+              </div>
+
+              <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border border-amber-200 p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <Webhook className="w-8 h-8 text-amber-600" />
+                </div>
+                <div className="text-3xl font-bold text-slate-900">60/min</div>
+                <div className="text-sm text-slate-600">Rate Limit</div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeSection === 'keys' && (
 
         {/* API Key Management */}
         <div className="bg-white rounded-2xl border border-slate-200 p-8 mb-12">
@@ -226,7 +288,18 @@ export default function APIInternal() {
             </div>
           )}
         </div>
+        )}
 
+        {activeSection === 'webhooks' && (
+          <WebhookManagement />
+        )}
+
+        {activeSection === 'usage' && (
+          <UsageTracking apiKeys={apiKeys} />
+        )}
+
+        {activeSection === 'overview' && (
+          <>
         {/* Endpoints */}
         <div className="space-y-8">
           <div>
@@ -453,7 +526,196 @@ Content-Type: application/json`}
             </div>
           </div>
         </div>
+
+        {/* Rate Limiting */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 mt-12">
+          <div className="flex items-center gap-3 mb-6">
+            <BarChart3 className="w-6 h-6 text-indigo-600" />
+            <h3 className="text-2xl font-bold text-slate-900">Rate Limiting</h3>
+          </div>
+          <p className="text-slate-600 mb-4">
+            All API endpoints are rate-limited to ensure fair usage and system stability.
+          </p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+              <span className="text-sm font-medium text-slate-700">Standard Rate Limit</span>
+              <code className="px-2 py-1 bg-slate-200 rounded font-mono text-sm">60 requests/minute</code>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+              <span className="text-sm font-medium text-slate-700">Rate Limit Headers</span>
+              <code className="px-2 py-1 bg-slate-200 rounded font-mono text-sm">X-RateLimit-*</code>
+            </div>
+          </div>
+        </div>
+
+        {/* Webhooks Section */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 mt-12">
+          <div className="flex items-center gap-3 mb-6">
+            <Webhook className="w-6 h-6 text-indigo-600" />
+            <h3 className="text-2xl font-bold text-slate-900">Webhook Notifications</h3>
+          </div>
+          <p className="text-slate-600 mb-4">
+            Subscribe to events and receive real-time notifications when assessments complete or batch jobs finish.
+          </p>
+          <div className="space-y-2 text-sm mb-6">
+            <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5" />
+              <div>
+                <div className="font-semibold text-slate-900">assessment.completed</div>
+                <div className="text-slate-600">Triggered when an individual assessment finishes</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5" />
+              <div>
+                <div className="font-semibold text-slate-900">batch.completed</div>
+                <div className="text-slate-600">Triggered when a batch job completes successfully</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
+              <AlertCircle className="w-4 h-4 text-red-600 mt-0.5" />
+              <div>
+                <div className="font-semibold text-slate-900">batch.failed</div>
+                <div className="text-slate-600">Triggered when a batch job fails</div>
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-slate-500">
+            Webhook payloads include an X-IsThis-Signature header for verification using HMAC-SHA256.
+          </p>
+        </div>
+          </>
+        )}
       </main>
+    </div>
+  );
+}
+
+// Webhook Management Component
+function WebhookManagement() {
+  const [newWebhookUrl, setNewWebhookUrl] = useState('');
+  const [selectedEvents, setSelectedEvents] = useState([]);
+  
+  const events = [
+    'assessment.completed',
+    'batch.completed',
+    'batch.failed'
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-8">
+        <h3 className="text-2xl font-bold text-slate-900 mb-4">Webhook Endpoints</h3>
+        <p className="text-slate-600 mb-6">
+          Configure webhook URLs to receive real-time notifications for API events.
+        </p>
+
+        <div className="space-y-4 mb-6">
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Endpoint URL</label>
+            <Input
+              placeholder="https://your-domain.com/webhooks/isthis"
+              value={newWebhookUrl}
+              onChange={(e) => setNewWebhookUrl(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Events to Subscribe</label>
+            <div className="space-y-2">
+              {events.map(event => (
+                <label key={event} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedEvents.includes(event)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedEvents([...selectedEvents, event]);
+                      } else {
+                        setSelectedEvents(selectedEvents.filter(ev => ev !== event));
+                      }
+                    }}
+                    className="rounded border-slate-300"
+                  />
+                  <span className="text-sm text-slate-700">{event}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <Button className="bg-indigo-600 hover:bg-indigo-700">
+            Create Webhook
+          </Button>
+        </div>
+
+        <div className="border-t border-slate-200 pt-6">
+          <h4 className="font-semibold text-slate-900 mb-3">Active Webhooks</h4>
+          <p className="text-sm text-slate-600">No webhooks configured yet.</p>
+        </div>
+      </div>
+
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+        <div className="flex items-start gap-3">
+          <Settings className="w-5 h-5 text-amber-600 mt-0.5" />
+          <div>
+            <h4 className="font-semibold text-amber-900 mb-2">Webhook Security</h4>
+            <p className="text-sm text-amber-700 mb-3">
+              All webhook payloads include an X-IsThis-Signature header for verification. 
+              Use HMAC-SHA256 with your webhook secret to validate authenticity.
+            </p>
+            <code className="block bg-white p-3 rounded border border-amber-300 text-xs font-mono">
+              {`const signature = crypto
+  .createHmac('sha256', webhookSecret)
+  .update(payloadBody)
+  .digest('hex');`}
+            </code>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Usage Tracking Component
+function UsageTracking({ apiKeys }) {
+  const totalCalls = apiKeys.reduce((sum, k) => sum + (k.usage_count || 0), 0);
+  const activeKeys = apiKeys.filter(k => k.is_active).length;
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 p-6">
+          <BarChart3 className="w-10 h-10 text-indigo-600 mb-3" />
+          <div className="text-4xl font-bold text-slate-900 mb-1">{totalCalls}</div>
+          <div className="text-sm text-slate-600">Total API Calls</div>
+        </div>
+
+        <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl border border-emerald-200 p-6">
+          <Key className="w-10 h-10 text-emerald-600 mb-3" />
+          <div className="text-4xl font-bold text-slate-900 mb-1">{activeKeys}</div>
+          <div className="text-sm text-slate-600">Active Keys</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 p-8">
+        <h3 className="text-xl font-bold text-slate-900 mb-4">Usage by API Key</h3>
+        <div className="space-y-3">
+          {apiKeys.map(key => (
+            <div key={key.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+              <div className="flex-1">
+                <div className="font-medium text-slate-900">{key.key_name}</div>
+                <div className="text-xs text-slate-500 mt-1">
+                  Last used: {key.last_used ? new Date(key.last_used).toLocaleString() : 'Never'}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-slate-900">{key.usage_count || 0}</div>
+                <div className="text-xs text-slate-500">requests</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

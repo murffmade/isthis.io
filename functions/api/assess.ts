@@ -57,6 +57,20 @@ Deno.serve(async (req) => {
       baselineText: baseline_text
     });
 
+    // Trigger webhook notification
+    try {
+      await base44.functions.invoke('triggerWebhook', {
+        event: 'assessment.completed',
+        data: {
+          assessment_id: assessment.id,
+          result: analysisResult.data
+        },
+        user_email: apiKeyRecord.created_by
+      });
+    } catch (webhookError) {
+      console.warn('Webhook trigger failed:', webhookError);
+    }
+
     return Response.json({
       success: true,
       assessment_id: assessment.id,

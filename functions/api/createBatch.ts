@@ -78,17 +78,34 @@ Deno.serve(async (req) => {
     }
 
     // Update batch job status
+    const finalStatus = batchItems.length === items.length ? 'completed' : 'failed';
     await base44.asServiceRole.entities.BatchJob.update(batchJob.id, {
-      status: 'completed',
+      status: finalStatus,
       completed_items: batchItems.length
     });
+
+    // Trigger webhook notification
+    try {
+      await base44.functions.invoke('triggerWebhook', {
+        event: finalStatus === 'completed' ? 'batch.completed' : 'batch.failed',
+        data: {
+          batch_id: batchJob.id,
+          total_items: items.length,
+          completed_items: batchItems.length,
+          status: finalStatus
+        },
+        user_email: apiKeyRecord.created_by
+      });
+    } catch (webhookError) {
+      console.warn('Webhook trigger failed:', webhookError);
+    }
 
     return Response.json({
       success: true,
       batch_id: batchJob.id,
       total_items: items.length,
       completed_items: batchItems.length,
-      status: 'completed'
+      status: finalStatus
     });
 
   } catch (error) {
