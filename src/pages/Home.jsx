@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, Upload, Link as LinkIcon, CheckCircle2, AlertTriangle, HelpCircle, ArrowRight, Zap } from 'lucide-react';
+import { Shield, Sparkles, Upload, Link as LinkIcon, CheckCircle2, AlertTriangle, HelpCircle, ArrowRight, Zap, LogIn } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -1702,7 +1702,20 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 <HelpButton />
               </div>
               <div className="hidden md:block ml-1">
-                <ProfileDropdown onOpenSettings={() => setShowPreferences(true)} />
+                {currentUser ? (
+                  <ProfileDropdown onOpenSettings={() => setShowPreferences(true)} />
+                ) : (
+                  <button
+                    onClick={() => {
+                      const { base44Auth } = require('@/components/api/base44ClientAuth');
+                      base44Auth.auth.redirectToLogin(window.location.pathname);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition-colors"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    Sign In
+                  </button>
+                )}
               </div>
             </div>
           </div>
