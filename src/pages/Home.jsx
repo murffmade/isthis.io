@@ -91,6 +91,11 @@ export default function Home() {
 
   // Determine user tier and limits
   const getUserTier = () => {
+    // Admins always get unlimited access
+    if (currentUser?.role === 'admin') {
+      return { name: 'Admin', limit: null, period: null };
+    }
+    
     if (!userSubscription || userSubscription.plan === 'free') {
       return { name: 'Free', limit: 5, period: 'month' };
     }
