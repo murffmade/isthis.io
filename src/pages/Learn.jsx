@@ -10,6 +10,9 @@ import Quiz from '@/components/learning/Quiz';
 import InteractiveGuide from '@/components/learning/InteractiveGuide';
 import AchievementBadge from '@/components/learning/AchievementBadge';
 import ProgressDashboard from '@/components/learning/ProgressDashboard';
+import SpotTheDeepfake from '@/components/learning/SpotTheDeepfake';
+import HowAIWorks from '@/components/learning/HowAIWorks';
+import DetectionSignals from '@/components/learning/DetectionSignals';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';
 
@@ -164,22 +167,24 @@ export default function Learn() {
                 <ArrowLeft className="w-4 h-4" />
                 Back to Modules
               </button>
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => setActiveTab('guide')}
-                  variant={activeTab === 'guide' ? 'default' : 'outline'}
-                  size="sm"
-                >
-                  📖 Guide
-                </Button>
-                <Button
-                  onClick={() => setActiveTab('quiz')}
-                  variant={activeTab === 'quiz' ? 'default' : 'outline'}
-                  size="sm"
-                >
-                  ❓ Quiz
-                </Button>
-              </div>
+              {selectedModule.content?.component ? null : (
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setActiveTab('guide')}
+                    variant={activeTab === 'guide' ? 'default' : 'outline'}
+                    size="sm"
+                  >
+                    📖 Guide
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab('quiz')}
+                    variant={activeTab === 'quiz' ? 'default' : 'outline'}
+                    size="sm"
+                  >
+                    ❓ Quiz
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -191,6 +196,41 @@ export default function Learn() {
           </div>
 
           <AnimatePresence mode="wait">
+            {/* Interactive Components */}
+            {selectedModule.content?.component === 'SpotTheDeepfake' && (
+              <motion.div
+                key="spot-deepfake"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <SpotTheDeepfake onComplete={handleQuizComplete} />
+              </motion.div>
+            )}
+
+            {selectedModule.content?.component === 'HowAIWorks' && (
+              <motion.div
+                key="how-ai-works"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <HowAIWorks onComplete={handleGuideComplete} />
+              </motion.div>
+            )}
+
+            {selectedModule.content?.component === 'DetectionSignals' && (
+              <motion.div
+                key="detection-signals"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <DetectionSignals onComplete={handleQuizComplete} />
+              </motion.div>
+            )}
+
+            {/* Original Guide & Quiz */}
             {activeTab === 'guide' && selectedModule.content?.steps && (
               <motion.div
                 key="guide"
