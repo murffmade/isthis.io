@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, History, Gift, MoreHorizontal, User, Settings, LogOut, BookOpen, Briefcase, Mail, BookText, Users as UsersIcon } from 'lucide-react';
+import { Home, History, Gift, MoreHorizontal, User, Settings, LogOut, BookOpen, Briefcase, Mail, BookText, Users as UsersIcon, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -47,6 +47,7 @@ export default function BottomNav({ currentPage = 'home' }) {
   ];
 
   const moreItems = [
+    { icon: Trophy, label: 'Achievements', page: 'Achievements' },
     { icon: History, label: 'History', page: 'History', premium: true },
     { icon: Gift, label: 'Gifts', page: 'MyGifts' },
     { icon: BookText, label: 'Blog', page: 'Blog' },
