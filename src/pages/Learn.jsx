@@ -111,7 +111,7 @@ export default function Learn() {
     }
   };
 
-  const handleGuideComplete = async ({ stepsCompleted }) => {
+  const handleGuideComplete = async ({ stepsCompleted, completedAll, techniquesLearned, score, categoriesCompleted }) => {
     const module = selectedModule;
     await saveProgressMutation.mutateAsync({
       module_id: module.id,
@@ -121,15 +121,17 @@ export default function Learn() {
       points_earned: module.points || 100
     });
 
+    // Award module-specific badge
     await unlockAchievementMutation.mutateAsync({
-      name: `Completed: ${module.title}`,
-      description: `Finished the ${module.title} interactive guide`,
+      name: module.title,
+      description: `Mastered ${module.title}`,
       icon: 'trophy',
       type: 'module_complete',
-      points: 25
+      module_slug: module.slug,
+      points: module.points || 100
     });
 
-    toast.success('Guide completed! Module unlocked.');
+    toast.success(`🎉 Badge earned: ${module.title}!`);
     setSelectedModule(null);
   };
 

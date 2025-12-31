@@ -41,6 +41,7 @@ import TermsOfService from './pages/TermsOfService';
 import TotalUsersDashboard from './pages/TotalUsersDashboard';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
+import Achievements from './pages/Achievements';
 import __Layout from './Layout.jsx';
 
 
@@ -88,6 +89,7 @@ export const PAGES = {
     "TotalUsersDashboard": TotalUsersDashboard,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
+    "Achievements": Achievements,
 }
 
 export const pagesConfig = {
