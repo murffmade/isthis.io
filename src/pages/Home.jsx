@@ -210,22 +210,27 @@ export default function Home() {
 
             // ALWAYS do visual analysis regardless of EXIF
             const classification = await base44.integrations.Core.InvokeLLM({
-              prompt: `Analyze this image and determine if it is:
-        1. PHOTO: A photograph taken with a camera of a real-world scene (not a screen)
-        2. SCREENSHOT: A screen capture showing UI elements, apps, websites, or digital content
-        3. DIGITAL_ART: Computer-generated art, 3D renders, vector graphics, or digitally created artwork
-        4. ILLUSTRATION: Hand-drawn art, paintings, sketches (traditional or digital drawing/painting)
+              prompt: `CRITICAL: You MUST classify this image into EXACTLY ONE of these 4 categories:
 
-        CRITICAL ANALYSIS REQUIREMENTS:
-        - EXIF Status: ${hasExif ? 'PRESENT (suggests camera, but verify visually)' : 'MISSING (rules out direct camera capture)'}
-        - SCREENSHOT indicators: UI elements, buttons, menus, status bars, browser chrome, app interfaces, text on digital backgrounds, pixel-perfect alignment, system fonts, window borders
-        - PHOTO indicators: Real-world scenes captured by camera, natural lighting, organic textures, camera perspective, physical objects/environments
-        - DIGITAL_ART indicators: 3D renders, vector graphics, computer-generated imagery, perfect gradients, no brush strokes
-        - ILLUSTRATION indicators: Artistic hand-drawn style, visible brush strokes, painting techniques, sketch lines, traditional art aesthetics
+            MANDATORY OPTIONS (choose ONE):
+            1. PHOTO - Photograph taken with a camera of real-world scene (not a screen)
+            2. SCREENSHOT - Screen capture showing UI elements, apps, websites, digital content
+            3. DIGITAL_ART - Computer-generated art, 3D renders, vector graphics, CGI
+            4. ILLUSTRATION - Hand-drawn art, paintings, sketches, artistic drawings
 
-        IMPORTANT: Even if EXIF is present, if the image shows a screen with UI elements, it's a SCREENSHOT, not a PHOTO.
+            SELECTION PRIORITY (check in order):
+            1. Does it show UI elements, menus, status bars, app interfaces? → SCREENSHOT
+            2. Is it a real-world scene captured by camera? → PHOTO
+            3. Is it computer-generated 3D/vector artwork? → DIGITAL_ART
+            4. Is it hand-drawn/painted artwork? → ILLUSTRATION
 
-        Respond with "photo", "screenshot", "digital_art", or "illustration".`,
+            CONTEXT:
+            - EXIF: ${hasExif ? 'Present (camera likely, but verify visually)' : 'Missing (no direct camera capture)'}
+
+            CRITICAL: Even if EXIF exists, if you see UI elements → it's a SCREENSHOT
+            If uncertain, pick the CLOSEST match. You MUST return one of the 4 values.
+
+            REQUIRED RESPONSE: "photo", "screenshot", "digital_art", or "illustration"`,
               file_urls: [file_url],
               response_json_schema: {
                 type: "object",
@@ -1236,18 +1241,26 @@ Provide a thorough but accessible analysis.`,
 
       // Step 4: Use pre-classification or re-classify
       const classificationResult = imageClassification || await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an image classifier. Determine if this image is:
-      1. PHOTO: A photograph taken with a camera of a real-world scene
-      2. SCREENSHOT: A screen capture showing UI elements, apps, or digital content
-      3. DIGITAL_ART: Computer-generated art, 3D renders, vector graphics
-      4. ILLUSTRATION: Hand-drawn art, paintings, sketches
+        prompt: `CRITICAL: You MUST classify this image into EXACTLY ONE of these 4 categories. No other options exist.
 
-      Consider:
-      - EXIF metadata: ${exifData ? 'EXIF present (suggests camera, verify visually)' : 'NO EXIF'}
-      - SCREENSHOT indicators: UI elements, menus, status bars, browser chrome
-      - Visual style: photorealistic vs digital UI vs CG vs hand-drawn
+      MANDATORY CLASSIFICATION OPTIONS (choose ONE):
+      1. PHOTO - A photograph taken with a camera of a real-world scene (people, places, objects in physical world)
+      2. SCREENSHOT - A screen capture showing UI elements, apps, websites, or any digital interface
+      3. DIGITAL_ART - Computer-generated art, 3D renders, vector graphics, CGI artwork
+      4. ILLUSTRATION - Hand-drawn art, paintings, sketches, or artistic drawings
 
-      Return "photo", "screenshot", "digital_art", or "illustration"`,
+      SELECTION RULES:
+      - If the image shows ANY UI elements, menus, status bars, app interfaces → SCREENSHOT
+      - If it's a photo of a real-world scene captured by camera → PHOTO  
+      - If it's computer-generated artwork or 3D render → DIGITAL_ART
+      - If it's hand-drawn, painted, or sketched artwork → ILLUSTRATION
+      - If uncertain between options, pick the CLOSEST match - you MUST choose one of the 4
+
+      METADATA CONTEXT:
+      - EXIF data: ${exifData ? 'Present (suggests camera photo)' : 'Not present'}
+
+      YOU MUST RETURN: "photo", "screenshot", "digital_art", or "illustration"
+      NO OTHER VALUES ARE PERMITTED.`,
         file_urls: [uploadedFile],
         response_json_schema: {
           type: "object",
