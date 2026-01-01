@@ -2883,8 +2883,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
           }}
         />
 
-        {/* Mobile Bottom Nav */}
-        <BottomNav currentPage="home" />
+
       </div>
     </>
   );
