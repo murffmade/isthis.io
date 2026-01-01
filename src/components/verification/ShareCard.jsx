@@ -271,5 +271,37 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
         )}
       </div>
     </div>
+    
+    {/* Social Share Buttons */}
+    <div className="mt-4 flex items-center justify-center gap-3">
+      <a
+        href={socialLinks.twitter}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 px-4 py-2 bg-[#1DA1F2] hover:bg-[#1a8cd8] text-white rounded-lg font-semibold transition-colors"
+      >
+        <Twitter className="w-4 h-4" />
+        <span className="hidden sm:inline">Twitter</span>
+      </a>
+      <a
+        href={socialLinks.facebook}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 px-4 py-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-lg font-semibold transition-colors"
+      >
+        <Facebook className="w-4 h-4" />
+        <span className="hidden sm:inline">Facebook</span>
+      </a>
+      <a
+        href={socialLinks.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 px-4 py-2 bg-[#0A66C2] hover:bg-[#095196] text-white rounded-lg font-semibold transition-colors"
+      >
+        <Linkedin className="w-4 h-4" />
+        <span className="hidden sm:inline">LinkedIn</span>
+      </a>
+    </div>
+  </>
   );
 }
