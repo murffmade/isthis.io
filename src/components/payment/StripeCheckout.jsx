@@ -25,8 +25,8 @@ export default function StripeCheckout({ plan, onSuccess, onCancel }) {
       });
 
       if (result.data.success && result.data.checkout_url) {
-        if (onSuccess && result.data.session_id) {
-          await onSuccess(result.data.session_id);
+        if (onSuccess) {
+          await onSuccess(plan.key);
         }
         window.location.href = result.data.checkout_url;
       } else {
