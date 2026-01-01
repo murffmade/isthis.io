@@ -68,7 +68,7 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
       style={{ 
         width: `${size.width}px`,
         height: `${size.height}px`,
-        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+        background: '#FF0000',
         position: 'relative',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
         overflow: 'hidden',
@@ -149,11 +149,11 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
           <div style={{
             fontSize: `${84 * scale}px`,
             fontWeight: '900',
-            color: '#FF0000',
+            color: '#00FF00',
             lineHeight: 0.95,
             letterSpacing: '-0.05em'
           }}>
-            THIS IS A TEST CHANGE
+            TESTING 123 BRIGHT GREEN
           </div>
         </div>
         
