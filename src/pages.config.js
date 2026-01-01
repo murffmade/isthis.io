@@ -3,6 +3,7 @@ import APIDocs from './pages/APIDocs';
 import APIInternal from './pages/APIInternal';
 import About from './pages/About';
 import Account from './pages/Account';
+import Achievements from './pages/Achievements';
 import Admin from './pages/Admin';
 import AffiliateDashboard from './pages/AffiliateDashboard';
 import AffiliateMarketing from './pages/AffiliateMarketing';
@@ -41,7 +42,6 @@ import TermsOfService from './pages/TermsOfService';
 import TotalUsersDashboard from './pages/TotalUsersDashboard';
 import TrainerDashboard from './pages/TrainerDashboard';
 import True from './pages/True';
-import Achievements from './pages/Achievements';
 import __Layout from './Layout.jsx';
 
 
@@ -51,6 +51,7 @@ export const PAGES = {
     "APIInternal": APIInternal,
     "About": About,
     "Account": Account,
+    "Achievements": Achievements,
     "Admin": Admin,
     "AffiliateDashboard": AffiliateDashboard,
     "AffiliateMarketing": AffiliateMarketing,
@@ -89,7 +90,6 @@ export const PAGES = {
     "TotalUsersDashboard": TotalUsersDashboard,
     "TrainerDashboard": TrainerDashboard,
     "True": True,
-    "Achievements": Achievements,
 }
 
 export const pagesConfig = {

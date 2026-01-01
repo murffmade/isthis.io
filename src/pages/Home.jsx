@@ -1273,7 +1273,9 @@ Provide a thorough but accessible analysis.`,
         }
       });
 
-      const isPhoto = classificationResult.type === "photo" || classificationResult.image_type === "photo";
+      // Normalize classification result
+      const normalizedType = classificationResult.type || classificationResult.image_type;
+      const isPhoto = normalizedType === "photo";
 
       // Step 5: Apply specialized analysis model based on image type
       const allImageUrls = [uploadedFile, ...patchUrls.map(p => p.url)];
@@ -1492,7 +1494,7 @@ Provide a thorough but accessible analysis.`,
 
       Analyze all patches for human imperfection markers vs AI perfection patterns.`;
 
-      const isScreenshot = classificationResult.type === "screenshot" || classificationResult.image_type === "screenshot";
+      const isScreenshot = normalizedType === "screenshot";
       const selectedPrompt = isPhoto ? photoAnalysisPrompt : isScreenshot ? screenshotAnalysisPrompt : illustrationAnalysisPrompt;
 
       const analysisResult = await base44.integrations.Core.InvokeLLM({
@@ -2116,7 +2118,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
 
       // Step 6: Save to database with classification info
       const record = await base44.entities.AnalysisRecord.create({
-        classification: classificationResult.image_type || classificationResult.type,
+        classification: normalizedType,
         classification_confidence: classificationResult.confidence,
         classification_reasoning: classificationResult.reasoning,
         content_type: 'image',
