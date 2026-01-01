@@ -43,6 +43,9 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
   const config = resultConfig[result.result] || resultConfig.uncertain;
   const Icon = config.icon;
   
+  // Calculate confidence from result
+  const confidence = result.confidence || result.score || 75;
+  
   const dimensions = {
     '1:1': { width: 1080, height: 1080, padding: 60, fontSize: 1 },
     '4:5': { width: 1080, height: 1350, padding: 70, fontSize: 1 },
@@ -157,7 +160,7 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
           fontWeight: '700',
           color: config.darkColor
         }}>
-          {getConfidenceLabel(result.confidence)} • {result.confidence}%
+          {getConfidenceLabel(confidence)} • {confidence}%
         </div>
       </div>
 
