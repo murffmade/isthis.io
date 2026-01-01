@@ -230,7 +230,7 @@ export default function Home() {
             4. Is it hand-drawn/painted artwork? → ILLUSTRATION
 
             CONTEXT:
-            - EXIF: ${hasExif ? 'Present (camera likely, but verify visually)' : 'Missing (no direct camera capture)'}
+            - EXIF: ${hasExif ? 'Present (camera likely, but review visually)' : 'Missing (no direct camera capture)'}
 
             CRITICAL: Even if EXIF exists, if you see UI elements → it's a SCREENSHOT
             If uncertain, pick the CLOSEST match. You MUST return one of the 4 values.
@@ -255,7 +255,7 @@ export default function Home() {
           }
           setClassifying(false);
         } else {
-          toast.success('File uploaded! Click "Verify Now" to analyze.');
+          toast.success('File uploaded! Click "Check Content" to analyze.');
         }
       }, 300);
     } catch (error) {
@@ -2293,7 +2293,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 <h1 className="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-[#2C3E50] via-[#3498DB] to-[#2C3E50] bg-clip-text text-transparent tracking-tight leading-tight">
                   IsThis.io
                 </h1>
-                <p className="text-xs text-slate-700 hidden sm:block font-semibold">AI Content Verification</p>
+                <p className="text-xs text-slate-700 hidden sm:block font-semibold">AI Content Assessment</p>
               </div>
             </button>
 
