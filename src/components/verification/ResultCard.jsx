@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, AlertTriangle, HelpCircle, ChevronRight, Info, Download, Copy, Loader2 } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, HelpCircle, ChevronRight, Info, Download, Copy, Loader2, Twitter, Facebook, Linkedin, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -394,6 +394,52 @@ Return scores for each category (0-100, where 100 = definitely inappropriate).`,
                   </>
                 )}
               </Button>
+            </div>
+
+            {/* Social Share Buttons */}
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out my AI content analysis! Get clarity on AI-generated content with IsThis.io`)}&url=${encodeURIComponent(`${window.location.origin}/report/${result.id}${affiliateCode ? `?ref=${affiliateCode}` : ''}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-6 py-3 bg-[#1DA1F2] hover:bg-[#1a8cd8] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
+              >
+                <Twitter className="w-5 h-5" />
+                <span>Twitter</span>
+              </a>
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${window.location.origin}/report/${result.id}${affiliateCode ? `?ref=${affiliateCode}` : ''}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-6 py-3 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
+              >
+                <Facebook className="w-5 h-5" />
+                <span>Facebook</span>
+              </a>
+              <a
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`${window.location.origin}/report/${result.id}${affiliateCode ? `?ref=${affiliateCode}` : ''}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-6 py-3 bg-[#0A66C2] hover:bg-[#095196] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
+              >
+                <Linkedin className="w-5 h-5" />
+                <span>LinkedIn</span>
+              </a>
+              <a
+                href={`https://www.instagram.com/`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-90 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigator.clipboard.writeText(`${window.location.origin}/report/${result.id}${affiliateCode ? `?ref=${affiliateCode}` : ''}`);
+                  toast.success('📋 Link copied! Open Instagram and paste in your story or bio');
+                  window.open('https://www.instagram.com/', '_blank');
+                }}
+              >
+                <Instagram className="w-5 h-5" />
+                <span>Instagram</span>
+              </a>
             </div>
           </div>
         </div>
