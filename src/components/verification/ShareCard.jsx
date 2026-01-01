@@ -166,34 +166,6 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
         textAlign: 'center',
         boxShadow: `0 12px 40px ${config.color}30`
       }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: `min(${24 * scale}px, 4vw)`,
-          marginBottom: `min(${28 * scale}px, 5vw)`,
-          flexWrap: 'wrap'
-        }}>
-          <Icon style={{ 
-            width: `min(${70 * scale}px, 12vw)`, 
-            height: `min(${70 * scale}px, 12vw)`,
-            minWidth: '40px',
-            minHeight: '40px',
-            color: config.color,
-            strokeWidth: 2.5,
-            flexShrink: 0
-          }} />
-          <div style={{
-            fontSize: `min(${64 * scale}px, 10vw)`,
-            fontWeight: '900',
-            color: config.darkColor,
-            lineHeight: 0.95,
-            letterSpacing: '-0.05em'
-          }}>
-            {config.title}
-          </div>
-        </div>
-        
         {/* Verdict Label */}
         <div style={{
           display: 'inline-block',
