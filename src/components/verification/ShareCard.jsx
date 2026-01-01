@@ -194,7 +194,7 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
           </div>
         </div>
         
-        {/* Confidence Indicator */}
+        {/* Verdict Label */}
         <div style={{
           display: 'inline-block',
           padding: `min(${14 * scale}px, 2vw) min(${28 * scale}px, 4vw)`,
@@ -205,7 +205,7 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
           fontWeight: '800',
           color: config.darkColor
         }}>
-          {getConfidenceLabel(confidence)} ({confidence}%)
+          {config.title}
         </div>
       </div>
 
