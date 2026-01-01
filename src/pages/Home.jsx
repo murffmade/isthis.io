@@ -2477,9 +2477,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     >
                       <Video className="w-5 h-5" />
                       Video
-                      {currentUser?.role !== 'admin' && (!userSubscription || userSubscription.plan === 'free') && (
-                        <span className="ml-2 text-xs opacity-60">Beta</span>
-                      )}
+                      <span className="ml-2 text-xs opacity-50">Beta</span>
                     </button>
                   </div>
 
