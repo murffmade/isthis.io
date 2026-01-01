@@ -181,6 +181,8 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
   const [user, setUser] = useState(null);
   const [affiliateCode, setAffiliateCode] = useState('');
   const [showAffiliatePrompt, setShowAffiliatePrompt] = useState(false);
+  const [imageRevealed, setImageRevealed] = useState(false);
+  const [isFlagged, setIsFlagged] = useState(false);
   
   // Normalize result to likelihood range format
   const normalizedResult = normalizeResult(result);
@@ -203,7 +205,33 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
     }).catch(() => {
       setUser(null);
     });
-  }, []);
+
+    // Check if content is flagged as inappropriate
+    const checkFlaggedStatus = async () => {
+      try {
+        const flaggedContent = await base44.entities.FlaggedContent.filter({
+          file_url: result.file_url || result.thumbnail_url
+        });
+        if (flaggedContent.length > 0) {
+          const flag = flaggedContent[0];
+          // Check if flagged for adult content
+          if (flag.flagged_reason && (
+            flag.flagged_reason.toLowerCase().includes('adult') ||
+            flag.flagged_reason.toLowerCase().includes('nudity') ||
+            flag.flagged_reason.toLowerCase().includes('sexual')
+          )) {
+            setIsFlagged(true);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking flagged status:', error);
+      }
+    };
+
+    if (result.file_url || result.thumbnail_url) {
+      checkFlaggedStatus();
+    }
+  }, [result]);
 
   return (
     <motion.div
@@ -267,19 +295,42 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
 
       {/* Analyzed Media */}
       {(result.file_url || result.thumbnail_url) && (
-        <div className="mb-6 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+        <div className="mb-6 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm relative">
           {result.content_type === 'video' ? (
             <video 
               src={result.file_url} 
               controls
-              className="w-full h-auto max-h-96 object-contain"
+              className={`w-full h-auto max-h-96 object-contain transition-all ${
+                isFlagged && !imageRevealed ? 'blur-3xl' : ''
+              }`}
             />
           ) : (
             <img 
               src={result.file_url || result.thumbnail_url} 
               alt="Analyzed content"
-              className="w-full h-auto max-h-96 object-contain"
+              className={`w-full h-auto max-h-96 object-contain transition-all ${
+                isFlagged && !imageRevealed ? 'blur-3xl' : ''
+              }`}
             />
+          )}
+          
+          {/* Blur overlay warning */}
+          {isFlagged && !imageRevealed && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+              <div className="text-center p-6 bg-white rounded-2xl shadow-xl max-w-sm mx-4">
+                <div className="text-4xl mb-3">⚠️</div>
+                <h3 className="font-bold text-slate-900 mb-2">Sensitive Content Warning</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  This image has been flagged as potentially inappropriate or adult content.
+                </p>
+                <Button
+                  onClick={() => setImageRevealed(true)}
+                  className="w-full bg-slate-900 hover:bg-slate-800"
+                >
+                  Show Content
+                </Button>
+              </div>
+            </div>
           )}
         </div>
       )}
