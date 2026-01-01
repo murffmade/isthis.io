@@ -1,316 +1,296 @@
 import React from 'react';
-import { Shield, CheckCircle2, AlertTriangle, HelpCircle, Sparkles } from 'lucide-react';
+import { Shield, CheckCircle2, AlertTriangle, HelpCircle } from 'lucide-react';
 
 const resultConfig = {
   likely_real: {
     icon: CheckCircle2,
-    title: 'Likely Real',
+    title: 'Likely Human-Created',
     emoji: '✓',
-    color: '#059669',
-    darkColor: '#047857',
-    lightColor: '#d1fae5',
-    bgGradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-    pattern: 'radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 50%)'
+    color: '#10b981',
+    bgColor: '#d1fae5',
+    textColor: '#065f46'
   },
   likely_ai: {
     icon: AlertTriangle,
     title: 'Likely AI-Generated',
     emoji: '⚠️',
     color: '#f59e0b',
-    darkColor: '#d97706',
-    lightColor: '#fef3c7',
-    bgGradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-    pattern: 'radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.15) 0%, transparent 50%)'
+    bgColor: '#fef3c7',
+    textColor: '#92400e'
   },
   uncertain: {
     icon: HelpCircle,
-    title: 'Uncertain',
+    title: 'Mixed/Uncertain',
     emoji: '❓',
     color: '#64748b',
-    darkColor: '#475569',
-    lightColor: '#f1f5f9',
-    bgGradient: 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)',
-    pattern: 'radial-gradient(circle at 50% 50%, rgba(148, 163, 184, 0.15) 0%, transparent 50%)'
+    bgColor: '#f1f5f9',
+    textColor: '#1e293b'
   }
 };
 
-export default function ShareCard({ result, cardRef, affiliateCode }) {
+const getConfidenceLabel = (confidence) => {
+  if (confidence >= 80) return 'High Confidence';
+  if (confidence >= 60) return 'Medium Confidence';
+  return 'Low Confidence';
+};
+
+const getOneLineSummary = (result) => {
+  if (result.summary && result.summary.length > 0) {
+    const firstSentence = result.summary.split('.')[0];
+    return firstSentence.length > 120 ? firstSentence.substring(0, 120) + '...' : firstSentence + '.';
+  }
+  return 'Analysis based on multiple AI detection signals and technical indicators.';
+};
+
+export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio = '1:1' }) {
   const config = resultConfig[result.result] || resultConfig.uncertain;
   const Icon = config.icon;
-  const hasImage = result.file_url || result.thumbnail_url;
+  
+  // Aspect ratio dimensions
+  const dimensions = {
+    '1:1': { width: 1080, height: 1080 },
+    '4:5': { width: 1080, height: 1350 },
+    '16:9': { width: 1920, height: 1080 }
+  };
+  
+  const size = dimensions[aspectRatio] || dimensions['1:1'];
+  const reportUrl = `isthis.io${affiliateCode ? `?ref=${affiliateCode}` : ''}`;
+  
+import React from 'react';
+import { Shield, CheckCircle2, AlertTriangle, HelpCircle } from 'lucide-react';
+
+const resultConfig = {
+  likely_real: {
+    icon: CheckCircle2,
+    title: 'Likely Human-Created',
+    color: '#10b981',
+    darkColor: '#065f46',
+    lightBg: '#ecfdf5'
+  },
+  likely_ai: {
+    icon: AlertTriangle,
+    title: 'Likely AI-Generated',
+    color: '#f59e0b',
+    darkColor: '#92400e',
+    lightBg: '#fffbeb'
+  },
+  uncertain: {
+    icon: HelpCircle,
+    title: 'Mixed/Uncertain',
+    color: '#64748b',
+    darkColor: '#1e293b',
+    lightBg: '#f8fafc'
+  }
+};
+
+const getConfidenceLabel = (confidence) => {
+  if (confidence >= 80) return 'High';
+  if (confidence >= 60) return 'Medium';
+  return 'Low';
+};
+
+const getOneLineSummary = (result) => {
+  if (result.summary) {
+    const firstSentence = result.summary.split('.')[0];
+    return firstSentence.length > 100 ? firstSentence.substring(0, 100) + '...' : firstSentence + '.';
+  }
+  return 'Multiple AI detection signals analyzed to determine content origin.';
+};
+
+export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio = '1:1' }) {
+  const config = resultConfig[result.result] || resultConfig.uncertain;
+  const Icon = config.icon;
+  
+  const dimensions = {
+    '1:1': { width: 1080, height: 1080, padding: 60, fontSize: 1 },
+    '4:5': { width: 1080, height: 1350, padding: 70, fontSize: 1 },
+    '16:9': { width: 1920, height: 1080, padding: 80, fontSize: 1.1 }
+  };
+  
+  const size = dimensions[aspectRatio] || dimensions['1:1'];
+  const scale = size.fontSize;
   
   return (
     <div 
       ref={cardRef}
       style={{ 
-        width: '1200px',
-        height: '630px',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+        width: `${size.width}px`,
+        height: `${size.height}px`,
+        background: '#ffffff',
         position: 'relative',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         overflow: 'hidden',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}
-    >
-      {/* Animated background pattern */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: `
-          radial-gradient(circle at 15% 25%, ${config.color}20 0%, transparent 45%),
-          radial-gradient(circle at 85% 75%, ${config.color}15 0%, transparent 45%),
-          radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 70%)
-        `,
-        opacity: 0.8
-      }} />
-
-      {/* Geometric decorations */}
-      <div style={{
-        position: 'absolute',
-        top: '-100px',
-        right: '-100px',
-        width: '400px',
-        height: '400px',
-        borderRadius: '50%',
-        border: `2px solid ${config.color}30`,
-        opacity: 0.3
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '-120px',
-        left: '-120px',
-        width: '450px',
-        height: '450px',
-        borderRadius: '50%',
-        border: `2px solid ${config.color}25`,
-        opacity: 0.25
-      }} />
-
-      {/* Main content container */}
-      <div style={{
-        position: 'relative',
-        zIndex: 1,
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: hasImage ? 'row' : 'column',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: hasImage ? '40px' : '60px',
-        gap: hasImage ? '40px' : '0'
+        padding: `${size.padding}px`
+      }}
+    >
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: `${14 * scale}px`,
+        marginBottom: `${40 * scale}px`
       }}>
-        {/* Left side: Image (if present) */}
-        {hasImage && (
-          <div style={{
-            flex: '0 0 520px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <div style={{
-              width: '100%',
-              height: '100%',
-              maxHeight: '550px',
-              borderRadius: '20px',
-              overflow: 'hidden',
-              boxShadow: `0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1), 0 0 60px ${config.color}35`,
-              position: 'relative'
-            }}>
-              <img 
-                src={result.file_url || result.thumbnail_url}
-                alt="Analyzed content"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block'
-                }}
-                crossOrigin="anonymous"
-              />
-              {/* Image overlay gradient */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: `linear-gradient(to top, ${config.color}20 0%, transparent 40%)`,
-                pointerEvents: 'none'
-              }} />
-            </div>
-          </div>
-        )}
-
-        {/* Right side: Content */}
         <div style={{
-          flex: 1,
+          width: `${48 * scale}px`,
+          height: `${48 * scale}px`,
+          borderRadius: `${12 * scale}px`,
+          background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
           display: 'flex',
-          flexDirection: 'column',
+          alignItems: 'center',
           justifyContent: 'center',
-          gap: hasImage ? '28px' : '48px',
-          paddingLeft: hasImage ? '10px' : '0'
+          boxShadow: '0 4px 16px rgba(52, 152, 219, 0.25)'
         }}>
-          {/* Logo & Branding */}
-          <div style={{ marginBottom: hasImage ? '0' : '20px' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              marginBottom: '12px'
-            }}>
-              <div style={{
-                width: '56px',
-                height: '56px',
-                borderRadius: '16px',
-                background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 8px 24px rgba(52, 152, 219, 0.35)'
-              }}>
-                <Shield style={{ width: '32px', height: '32px', color: 'white' }} />
-              </div>
-              <div>
-                <div style={{
-                  fontSize: hasImage ? '34px' : '52px',
-                  fontWeight: '900',
-                  background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  letterSpacing: '-0.04em',
-                  lineHeight: 1
-                }}>
-                  IsThis.io
-                </div>
-                <div style={{
-                  fontSize: hasImage ? '13px' : '18px',
-                  color: '#94a3b8',
-                  fontWeight: '600',
-                  marginTop: '4px',
-                  letterSpacing: '0.02em'
-                }}>
-                  AI Content Assessment
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Verdict Badge */}
+          <Shield style={{ width: `${28 * scale}px`, height: `${28 * scale}px`, color: 'white' }} />
+        </div>
+        <div>
           <div style={{
-            padding: hasImage ? '32px 36px' : '48px 56px',
-            background: config.bgGradient,
-            borderRadius: '20px',
-            boxShadow: `0 20px 40px ${config.color}55, 0 0 0 1px rgba(255,255,255,0.15)`,
-            position: 'relative',
-            overflow: 'hidden'
+            fontSize: `${28 * scale}px`,
+            fontWeight: '900',
+            color: '#0f172a',
+            letterSpacing: '-0.03em',
+            lineHeight: 1
           }}>
-            {/* Inner glow */}
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: `radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)`,
-              pointerEvents: 'none'
-            }} />
-            
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '16px',
-                marginBottom: '16px'
-              }}>
-                <Icon style={{ 
-                  width: hasImage ? '44px' : '64px', 
-                  height: hasImage ? '44px' : '64px',
-                  color: 'white',
-                  filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))'
-                }} />
-                <div style={{
-                  fontSize: hasImage ? '46px' : '68px',
-                  fontWeight: '900',
-                  color: 'white',
-                  lineHeight: 1,
-                  letterSpacing: '-0.05em',
-                  textShadow: '0 4px 16px rgba(0,0,0,0.25)'
-                }}>
-                  {config.title}
-                </div>
-              </div>
-              <div style={{
-                fontSize: hasImage ? '22px' : '32px',
-                color: 'rgba(255,255,255,0.95)',
-                fontWeight: '700',
-                letterSpacing: '-0.02em'
-              }}>
-                {result.confidence}% Confidence
-              </div>
-            </div>
+            IsThis.io
           </div>
-
-          {/* Summary Box */}
-          {result.summary && (
-            <div style={{
-              padding: hasImage ? '20px 24px' : '32px 40px',
-              background: 'rgba(255, 255, 255, 0.06)',
-              borderRadius: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(12px)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
-            }}>
-              <div style={{
-                fontSize: hasImage ? '15px' : '20px',
-                color: 'rgba(255, 255, 255, 0.92)',
-                lineHeight: 1.5,
-                fontWeight: '500',
-                letterSpacing: '-0.01em'
-              }}>
-                {result.summary.length > (hasImage ? 120 : 160) 
-                  ? result.summary.substring(0, hasImage ? 120 : 160) + '...' 
-                  : result.summary}
-              </div>
-            </div>
-          )}
-
-          {/* Footer */}
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingTop: hasImage ? '12px' : '20px',
-            borderTop: '1px solid rgba(255,255,255,0.08)'
+            fontSize: `${13 * scale}px`,
+            color: '#64748b',
+            fontWeight: '600',
+            marginTop: `${4 * scale}px`,
+            letterSpacing: '0.03em',
+            textTransform: 'uppercase'
           }}>
-            <div style={{
-              fontSize: hasImage ? '13px' : '16px',
-              color: '#64748b',
-              fontWeight: '600',
-              letterSpacing: '0.02em'
-            }}>
-              🆓 Free AI Content Assessment
-            </div>
-            <div style={{
-              fontSize: hasImage ? '14px' : '17px',
-              fontWeight: '700',
-              background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              isthis.io{affiliateCode ? `?ref=${affiliateCode}` : ''}
-            </div>
+            AI Content Analysis
           </div>
         </div>
       </div>
 
-      {/* Scan line animation effect */}
+      {/* Verdict Block - Primary Focal Point */}
       <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '2px',
-        background: `linear-gradient(90deg, transparent 0%, ${config.color} 50%, transparent 100%)`,
-        opacity: 0.4
-      }} />
+        width: '100%',
+        maxWidth: `${800 * scale}px`,
+        padding: `${48 * scale}px ${40 * scale}px`,
+        background: config.lightBg,
+        borderRadius: `${24 * scale}px`,
+        border: `3px solid ${config.color}`,
+        marginBottom: `${36 * scale}px`,
+        textAlign: 'center'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: `${20 * scale}px`,
+          marginBottom: `${20 * scale}px`
+        }}>
+          <Icon style={{ 
+            width: `${60 * scale}px`, 
+            height: `${60 * scale}px`,
+            color: config.color
+          }} />
+          <div style={{
+            fontSize: `${56 * scale}px`,
+            fontWeight: '900',
+            color: config.darkColor,
+            lineHeight: 1,
+            letterSpacing: '-0.04em'
+          }}>
+            {config.title}
+          </div>
+        </div>
+        
+        {/* Confidence Meter */}
+        <div style={{
+          display: 'inline-block',
+          padding: `${12 * scale}px ${24 * scale}px`,
+          background: 'white',
+          borderRadius: `${12 * scale}px`,
+          border: `2px solid ${config.color}`,
+          fontSize: `${20 * scale}px`,
+          fontWeight: '700',
+          color: config.darkColor
+        }}>
+          {getConfidenceLabel(result.confidence)} • {result.confidence}%
+        </div>
+      </div>
+
+      {/* Why This Verdict */}
+      <div style={{
+        width: '100%',
+        maxWidth: `${800 * scale}px`,
+        marginBottom: `${36 * scale}px`
+      }}>
+        <div style={{
+          fontSize: `${16 * scale}px`,
+          fontWeight: '700',
+          color: '#64748b',
+          marginBottom: `${12 * scale}px`,
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em'
+        }}>
+          Why This Verdict?
+        </div>
+        <div style={{
+          fontSize: `${22 * scale}px`,
+          color: '#1e293b',
+          lineHeight: 1.5,
+          fontWeight: '500'
+        }}>
+          {getOneLineSummary(result)}
+        </div>
+      </div>
+
+      {/* Trust Line */}
+      <div style={{
+        fontSize: `${15 * scale}px`,
+        color: '#94a3b8',
+        marginBottom: `${32 * scale}px`,
+        fontWeight: '500'
+      }}>
+        Analyzed using multiple AI detection signals
+      </div>
+
+      {/* CTA Button */}
+      <div style={{
+        padding: `${20 * scale}px ${48 * scale}px`,
+        background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
+        borderRadius: `${16 * scale}px`,
+        fontSize: `${24 * scale}px`,
+        fontWeight: '800',
+        color: 'white',
+        boxShadow: '0 8px 24px rgba(52, 152, 219, 0.4)',
+        marginBottom: `${24 * scale}px`,
+        letterSpacing: '-0.02em'
+      }}>
+        View Full Analysis
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        textAlign: 'center'
+      }}>
+        <div style={{
+          fontSize: `${20 * scale}px`,
+          fontWeight: '700',
+          color: '#3498DB',
+          marginBottom: `${8 * scale}px`
+        }}>
+          {reportUrl}
+        </div>
+        {affiliateCode && (
+          <div style={{
+            fontSize: `${11 * scale}px`,
+            color: '#94a3b8',
+            fontWeight: '500'
+          }}>
+            Creators may earn referral credit
+          </div>
+        )}
+      </div>
     </div>
   );
 }
