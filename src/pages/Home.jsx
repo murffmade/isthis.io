@@ -2466,22 +2466,15 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         }
                         setSelectedTab('video');
                       }}
-                      className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all flex flex-col items-center gap-1 ${
+                      className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
                         selectedTab === 'video'
                           ? 'bg-[#3498DB] text-white shadow-lg'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      } ${(!userSubscription || userSubscription.plan === 'free') ? 'opacity-60' : ''}`}
+                      }`}
                     >
-                      <div className="flex items-center gap-2">
-                        🎥 Video
-                        <span className="px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded-full">
-                          BETA
-                        </span>
-                      </div>
+                      🎥 Video
                       {(!userSubscription || userSubscription.plan === 'free') && (
-                        <span className="px-1.5 py-0.5 bg-purple-600 text-white text-xs font-bold rounded">
-                          Premium
-                        </span>
+                        <span className="ml-2 text-xs opacity-60">Premium</span>
                       )}
                     </button>
                   </div>
