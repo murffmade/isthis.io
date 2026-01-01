@@ -96,6 +96,8 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
         height: '100%',
         display: 'flex',
         flexDirection: hasImage ? 'row' : 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
         padding: hasImage ? '40px' : '60px',
         gap: hasImage ? '40px' : '0'
       }}>
