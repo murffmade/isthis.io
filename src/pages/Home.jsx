@@ -2571,7 +2571,10 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       </div>
 
                       <button
-                        onClick={() => setUserConfirmedType(true)}
+                        onClick={() => {
+                          setUserConfirmedType(true);
+                          handleAnalyze();
+                        }}
                         className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-colors"
                       >
                         ✓ Confirm & Continue
