@@ -256,7 +256,99 @@ Return scores for each category (0-100, where 100 = definitely inappropriate).`,
       {/* Trainer Feedback */}
       <TrainerFeedback result={result} user={user} />
 
-      {/* SHARE CARD - PRIMARY FOCUS AT TOP */}
+      {/* Disclaimer Banner */}
+      <div className="mb-6">
+        <DisclaimerBanner variant="prominent" />
+      </div>
+
+      {/* Main Result Card with Likelihood Range */}
+      <div className={`rounded-3xl border-2 ${config.borderColor} ${config.bgColor} p-6 sm:p-8 mb-6 shadow-soft`}>
+        <div className="flex items-start gap-5 mb-6">
+          <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white flex items-center justify-center shadow-medium`}>
+            <Icon className={`w-8 h-8 sm:w-10 sm:h-10 ${config.color}`} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className={`text-2xl sm:text-3xl font-extrabold ${config.color} mb-2 tracking-tight`}>
+              {config.title}
+            </h2>
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
+              {config.description}
+            </p>
+          </div>
+        </div>
+
+        {/* Likelihood Range Visualization */}
+        <div className="space-y-4">
+          <LikelihoodRangeBar
+            min={normalizedResult.likelihood_min}
+            max={normalizedResult.likelihood_max}
+            riskLevel={normalizedResult.risk_level}
+          />
+          
+          {/* Confidence & Risk Badges */}
+          <div className="flex flex-wrap gap-3">
+            <div className={`px-4 py-2 rounded-lg font-semibold text-sm border-2 ${getRiskColor(normalizedResult.risk_level)}`}>
+              {normalizedResult.risk_level} Risk
+            </div>
+            <div className={`px-4 py-2 rounded-lg font-semibold text-sm ${getConfidenceColor(normalizedResult.meta_confidence)}`}>
+              {normalizedResult.meta_confidence} Confidence
+            </div>
+          </div>
+
+          {/* Narrative Explanation */}
+          {normalizedResult.narrative_explanation && (
+            <div className="pt-4 border-t border-slate-200">
+              <p className="text-sm text-slate-700 leading-relaxed">
+                {normalizedResult.narrative_explanation}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Analyzed Media */}
+      {(result.file_url || result.thumbnail_url) && (
+        <div className="mb-6 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm relative">
+          {result.content_type === 'video' ? (
+            <video 
+              src={result.file_url} 
+              controls
+              className={`w-full h-auto max-h-96 object-contain transition-all ${
+                isFlagged && !imageRevealed ? 'blur-3xl' : ''
+              }`}
+            />
+          ) : (
+            <img 
+              src={result.file_url || result.thumbnail_url} 
+              alt="Analyzed content"
+              className={`w-full h-auto max-h-96 object-contain transition-all ${
+                isFlagged && !imageRevealed ? 'blur-3xl' : ''
+              }`}
+            />
+          )}
+          
+          {/* Blur overlay warning */}
+          {isFlagged && !imageRevealed && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+              <div className="text-center p-6 bg-white rounded-2xl shadow-xl max-w-sm mx-4">
+                <div className="text-4xl mb-3">⚠️</div>
+                <h3 className="font-bold text-slate-900 mb-2">Sensitive Content Warning</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  This image has been flagged as potentially inappropriate or adult content.
+                </p>
+                <Button
+                  onClick={() => setImageRevealed(true)}
+                  className="w-full bg-slate-900 hover:bg-slate-800"
+                >
+                  Show Content
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* SHARE CARD - PROMINENT PLACEMENT */}
       <div className="mb-8">
         <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl border-2 border-purple-200 p-6 shadow-xl">
           <div className="flex items-center justify-between mb-4">
@@ -390,98 +482,6 @@ Return scores for each category (0-100, where 100 = definitely inappropriate).`,
           </div>
         </div>
       </div>
-
-      {/* Disclaimer Banner */}
-      <div className="mb-6">
-        <DisclaimerBanner variant="prominent" />
-      </div>
-
-      {/* Main Result Card with Likelihood Range */}
-      <div className={`rounded-3xl border-2 ${config.borderColor} ${config.bgColor} p-6 sm:p-8 mb-6 shadow-soft`}>
-        <div className="flex items-start gap-5 mb-6">
-          <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white flex items-center justify-center shadow-medium`}>
-            <Icon className={`w-8 h-8 sm:w-10 sm:h-10 ${config.color}`} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h2 className={`text-2xl sm:text-3xl font-extrabold ${config.color} mb-2 tracking-tight`}>
-              {config.title}
-            </h2>
-            <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-              {config.description}
-            </p>
-          </div>
-        </div>
-
-        {/* Likelihood Range Visualization */}
-        <div className="space-y-4">
-          <LikelihoodRangeBar
-            min={normalizedResult.likelihood_min}
-            max={normalizedResult.likelihood_max}
-            riskLevel={normalizedResult.risk_level}
-          />
-          
-          {/* Confidence & Risk Badges */}
-          <div className="flex flex-wrap gap-3">
-            <div className={`px-4 py-2 rounded-lg font-semibold text-sm border-2 ${getRiskColor(normalizedResult.risk_level)}`}>
-              {normalizedResult.risk_level} Risk
-            </div>
-            <div className={`px-4 py-2 rounded-lg font-semibold text-sm ${getConfidenceColor(normalizedResult.meta_confidence)}`}>
-              {normalizedResult.meta_confidence} Confidence
-            </div>
-          </div>
-
-          {/* Narrative Explanation */}
-          {normalizedResult.narrative_explanation && (
-            <div className="pt-4 border-t border-slate-200">
-              <p className="text-sm text-slate-700 leading-relaxed">
-                {normalizedResult.narrative_explanation}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Analyzed Media */}
-      {(result.file_url || result.thumbnail_url) && (
-        <div className="mb-6 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm relative">
-          {result.content_type === 'video' ? (
-            <video 
-              src={result.file_url} 
-              controls
-              className={`w-full h-auto max-h-96 object-contain transition-all ${
-                isFlagged && !imageRevealed ? 'blur-3xl' : ''
-              }`}
-            />
-          ) : (
-            <img 
-              src={result.file_url || result.thumbnail_url} 
-              alt="Analyzed content"
-              className={`w-full h-auto max-h-96 object-contain transition-all ${
-                isFlagged && !imageRevealed ? 'blur-3xl' : ''
-              }`}
-            />
-          )}
-          
-          {/* Blur overlay warning */}
-          {isFlagged && !imageRevealed && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-              <div className="text-center p-6 bg-white rounded-2xl shadow-xl max-w-sm mx-4">
-                <div className="text-4xl mb-3">⚠️</div>
-                <h3 className="font-bold text-slate-900 mb-2">Sensitive Content Warning</h3>
-                <p className="text-sm text-slate-600 mb-4">
-                  This image has been flagged as potentially inappropriate or adult content.
-                </p>
-                <Button
-                  onClick={() => setImageRevealed(true)}
-                  className="w-full bg-slate-900 hover:bg-slate-800"
-                >
-                  Show Content
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* AI Model Detection */}
       {result.ai_model_detected && result.ai_model_detected !== 'none' && (
