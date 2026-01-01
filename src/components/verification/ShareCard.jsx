@@ -45,13 +45,13 @@ const getOneLineSummary = (result) => {
   
   if (result.result === 'likely_ai') {
     if (result.signals?.some(s => s.signal_type.toLowerCase().includes('hand') || s.signal_type.toLowerCase().includes('finger'))) {
-      return 'Impossible hand anatomy detected—a telltale sign of AI generation.';
+      return 'Impossible hand anatomy detected - a telltale sign of AI generation.';
     }
     if (result.signals?.some(s => s.signal_type.toLowerCase().includes('text') || s.signal_type.toLowerCase().includes('garbled'))) {
-      return 'Scrambled text detected—AI can't spell yet.';
+      return "Scrambled text detected - AI can't spell yet.";
     }
     if (!result.exif_summary && result.content_type === 'image') {
-      return 'Zero camera metadata found—real photos always have this.';
+      return 'Zero camera metadata found - real photos always have this.';
     }
     if (result.ai_model_detected && result.ai_model_detected !== 'none') {
       return `${result.ai_model_detected.replace(/_/g, ' ').toUpperCase()} fingerprint detected in visual analysis.`;
@@ -70,7 +70,7 @@ const getOneLineSummary = (result) => {
     return isHighConfidence ? 'Strong evidence of authentic photography found.' : 'Natural patterns suggest real-world capture.';
   }
   
-  return 'Mixed signals—unable to determine with confidence.';
+  return 'Mixed signals - unable to determine with confidence.';
 };
 
 export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio = '1:1' }) {
