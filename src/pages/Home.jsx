@@ -41,6 +41,7 @@ export default function Home() {
   const [classifying, setClassifying] = useState(false);
   const [imageClassification, setImageClassification] = useState(null);
   const [userConfirmedType, setUserConfirmedType] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('image'); // 'image' or 'video'
 
   // Fetch current user
   const { data: currentUser } = useQuery({
@@ -2445,11 +2446,49 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               {/* Upload Section */}
               <div className="max-w-3xl mx-auto mb-12 sm:mb-20" data-tour="upload-zone">
                 <div className="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-medium">
+                  {/* Tab Selector */}
+                  <div className="flex gap-3 mb-6">
+                    <button
+                      onClick={() => setSelectedTab('image')}
+                      className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all ${
+                        selectedTab === 'image'
+                          ? 'bg-[#3498DB] text-white shadow-lg'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      📷 Image
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!userSubscription || userSubscription.plan === 'free') {
+                          toast.error('Video analysis requires Premium or higher');
+                          return;
+                        }
+                        setSelectedTab('video');
+                      }}
+                      className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all relative ${
+                        selectedTab === 'video'
+                          ? 'bg-[#3498DB] text-white shadow-lg'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      } ${(!userSubscription || userSubscription.plan === 'free') ? 'opacity-60' : ''}`}
+                    >
+                      🎥 Video
+                      <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded-full">
+                        BETA
+                      </span>
+                      {(!userSubscription || userSubscription.plan === 'free') && (
+                        <span className="absolute -bottom-1 -right-1 px-1.5 py-0.5 bg-purple-600 text-white text-xs font-bold rounded">
+                          Premium
+                        </span>
+                      )}
+                    </button>
+                  </div>
+
                   <div className="mb-4 sm:mb-6">
                     <input
                       type="file"
                       id="file-upload"
-                      accept="image/*,video/*"
+                      accept={selectedTab === 'image' ? 'image/*' : 'video/*'}
                       onChange={handleFileUpload}
                       className="hidden"
                       disabled={uploading}
@@ -2486,7 +2525,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         <>
                           <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-slate-400 mx-auto mb-3 sm:mb-4" />
                           <p className="text-sm sm:text-base text-slate-700 font-medium mb-1 sm:mb-2">
-                            {uploadedFile ? '✓ File uploaded!' : 'Tap to upload an image or video'}
+                            {uploadedFile ? '✓ File uploaded!' : `Tap to upload ${selectedTab === 'image' ? 'an image' : 'a video'}`}
                           </p>
                           <p className="text-xs sm:text-sm text-slate-500">or drag and drop here</p>
                         </>
