@@ -400,85 +400,38 @@ Return scores for each category (0-100, where 100 = definitely inappropriate).`,
             <ShareCard result={result} cardRef={shareCardRef} affiliateCode={affiliateCode} aspectRatio={selectedAspectRatio} />
           </div>
 
-          {/* Download & Share Actions */}
-          <div className="mt-6 flex gap-3">
-            <Button
-              onClick={async () => {
-                setGenerating(true);
-                try {
-                  const cardElement = shareCardRef.current;
-                  const canvas = await html2canvas(cardElement, {
-                    backgroundColor: null,
-                    scale: 2,
-                    logging: false
-                  });
-                  const url = canvas.toDataURL('image/png');
-                  const link = document.createElement('a');
-                  link.download = `is-this-verification-${Date.now()}.png`;
-                  link.href = url;
-                  link.click();
-                  toast.success('🎉 Downloaded!');
-                } catch (error) {
-                  toast.error('Failed to download');
-                } finally {
-                  setGenerating(false);
-                }
-              }}
-              disabled={generating}
-              className="flex-1 h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-            >
-              {generating ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4 mr-2" />
-                  Download Card
-                </>
-              )}
-            </Button>
-            <Button
-              onClick={async () => {
-                setGenerating(true);
-                try {
-                  const cardElement = shareCardRef.current;
-                  const canvas = await html2canvas(cardElement, {
-                    backgroundColor: null,
-                    scale: 2,
-                    logging: false
-                  });
-                  const url = canvas.toDataURL('image/png');
-                  const blob = await (await fetch(url)).blob();
-                  await navigator.clipboard.write([
-                    new ClipboardItem({ 'image/png': blob })
-                  ]);
+          {/* Share Link */}
+          <div className="mt-6">
+            <div className="text-sm font-semibold text-slate-700 mb-2">Share this analysis:</div>
+            <div className="flex gap-2">
+              <Input
+                value={`${window.location.origin}/report/${result.id}${affiliateCode ? `?ref=${affiliateCode}` : ''}`}
+                readOnly
+                className="flex-1 bg-white"
+              />
+              <Button
+                onClick={() => {
+                  const shareUrl = `${window.location.origin}/report/${result.id}${affiliateCode ? `?ref=${affiliateCode}` : ''}`;
+                  navigator.clipboard.writeText(shareUrl);
                   setCopied(true);
-                  toast.success('📋 Copied!');
+                  toast.success('📋 Link copied!');
                   setTimeout(() => setCopied(false), 2000);
-                } catch (error) {
-                  toast.error('Failed to copy');
-                } finally {
-                  setGenerating(false);
-                }
-              }}
-              disabled={generating}
-              variant="outline"
-              className="flex-1 h-12"
-            >
-              {copied ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 mr-2 text-green-600" />
-                  Copied!
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Image
-                </>
-              )}
-            </Button>
+                }}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy Link
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
