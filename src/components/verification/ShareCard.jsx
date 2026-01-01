@@ -302,6 +302,6 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
         <span className="hidden sm:inline">LinkedIn</span>
       </a>
     </div>
-  </>
+    </>
   );
 }
