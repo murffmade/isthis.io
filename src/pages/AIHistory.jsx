@@ -17,7 +17,7 @@ export default function AIHistory() {
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me()
+    queryFn: () => base44.auth.me().catch(() => null)
   });
 
   const { data: subscription } = useQuery({
@@ -164,7 +164,7 @@ export default function AIHistory() {
               className="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm"
             >
               <option value="all">All Types</option>
-              <option value="bias">Bias Detection</option>
+              <option value="bias">Bias Analysis</option>
               <option value="sentiment">Sentiment Analysis</option>
               <option value="moderation">Content Moderation</option>
               <option value="summary">Summaries</option>
