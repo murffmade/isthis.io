@@ -155,6 +155,13 @@ export default function Home() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Scroll to top when analysis starts for native app feel
+  React.useEffect(() => {
+    if (analyzing) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [analyzing]);
+
   const queryClient = useQueryClient();
 
   const handleFileUpload = async (e) => {
