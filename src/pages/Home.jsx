@@ -2427,9 +2427,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 <p className="text-lg sm:text-2xl text-slate-600 max-w-3xl mx-auto mb-4 px-4 font-light leading-relaxed">
                   Get clarity on whether images and video were likely created by AI
                 </p>
-                <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto mb-2 px-4 leading-relaxed">
-                  IsThis.io analyzes patterns and signals in content to help you understand what you're seeing
-                </p>
                 <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto mb-8 px-4 italic">
                   No scare tactics. No false certainty. <br />Just helpful insight you can actually use.
                 </p>
