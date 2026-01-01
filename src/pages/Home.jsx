@@ -2415,7 +2415,12 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         <div className="flex items-center gap-2 mb-2">
                           <p className="font-bold text-slate-900">AI Classification</p>
                         </div>
-                        <p className="text-sm text-slate-600 mb-1">{imageClassification.reasoning}</p>
+                        <div className="mb-3 p-3 bg-white rounded-lg border-2 border-blue-300">
+                          <p className="text-sm font-semibold text-slate-900 mb-1">
+                            AI detected: <span className="text-blue-700">{imageClassification.type?.replace('_', ' ').toUpperCase()}</span>
+                          </p>
+                          <p className="text-xs text-slate-600">{imageClassification.reasoning}</p>
+                        </div>
                         <p className="text-xs text-slate-500">Confidence: {imageClassification.confidence}%</p>
                       </div>
 
