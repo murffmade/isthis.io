@@ -25,6 +25,7 @@ import { moderateImage, moderateVideo } from '@/components/utils/contentModerati
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import HelpButton from '@/components/onboarding/HelpButton';
 import SEO from '@/components/shared/SEO';
+import { track, getInputLengthBucket, getLatencyBucket } from '@/components/utils/analytics';
 
 export default function Home() {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -144,6 +145,10 @@ export default function Home() {
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
+    
+    // Track page view
+    track('page_view_home');
+    
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -269,10 +274,21 @@ export default function Home() {
       // Check usage limits for free tier
       if (tier.limit && usageCount >= tier.limit) {
         toast.error(`You've reached your ${tier.limit} assessments for this ${tier.period}. Upgrade to continue.`);
+        track('assessment_blocked_limit_reached', { tier: tier.name, limit: tier.limit });
         return;
       }
 
+      const startTime = Date.now();
       setAnalyzing(true);
+
+      // Track assessment started
+      const contentType = uploadedFileObj ? (uploadedFileObj.type.startsWith('video/') ? 'video' : 'image') : 'url';
+      const inputLength = urlInput ? urlInput.length : 0;
+      track('assessment_started', { 
+        content_type: contentType,
+        input_length_bucket: getInputLengthBucket(inputLength)
+      });
+
       try {
         // Check if uploaded file is a video
         const isVideo = uploadedFileObj && uploadedFileObj.type.startsWith('video/');
@@ -1115,6 +1131,15 @@ You are an ADVANCED MULTI-MODEL ENSEMBLE VIDEO DEEPFAKE & AI DETECTION SYSTEM co
               `Result: ${frameAnalysis.overall_result.replace('_', ' ')} (${frameAnalysis.overall_confidence}% confidence)`
             );
 
+            // Track successful completion
+            const latency = Date.now() - startTime;
+            track('assessment_completed', {
+              content_type: 'video',
+              result: frameAnalysis.overall_result,
+              confidence: frameAnalysis.overall_confidence,
+              latency_bucket: getLatencyBucket(latency)
+            });
+
             console.log('[VIDEO ANALYSIS] ✓ Video analysis completed successfully');
             return;
           } catch (error) {
@@ -1182,6 +1207,15 @@ Provide a thorough but accessible analysis.`,
           'Assessment Complete',
           `Result: ${analysisResult.result.replace('_', ' ')} (${analysisResult.confidence}% confidence)`
         );
+
+        // Track URL analysis completion
+        const latency = Date.now() - startTime;
+        track('assessment_completed', {
+          content_type: 'url',
+          result: analysisResult.result,
+          confidence: analysisResult.confidence,
+          latency_bucket: getLatencyBucket(latency)
+        });
 
         return;
         }
@@ -2158,9 +2192,25 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
         'Assessment Complete',
         `Result: ${finalResult.result.replace('_', ' ')} (${finalResult.confidence}% confidence)`
       );
+
+      // Track image analysis completion
+      const latency = Date.now() - startTime;
+      track('assessment_completed', {
+        content_type: 'image',
+        result: finalResult.result,
+        confidence: finalResult.confidence,
+        latency_bucket: getLatencyBucket(latency),
+        classification: normalizedType
+      });
       } catch (error) {
       console.error('Analysis error:', error);
       toast.error('Analysis failed. Please try again.');
+      
+      // Track error
+      track('assessment_error', {
+        error_message: error.message || 'Unknown error',
+        content_type: uploadedFileObj ? (uploadedFileObj.type.startsWith('video/') ? 'video' : 'image') : 'url'
+      });
     } finally {
       setAnalyzing(false);
     }
@@ -2175,8 +2225,9 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
     setUserConfirmedType(false);
   };
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (plan) => {
     toast.success('Payment successful! Premium features activated.');
+    track('purchase_completed', { plan: plan || 'unknown' });
   };
 
   const structuredData = {
@@ -2598,10 +2649,12 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         <span>Cancel anytime</span>
                       </li>
                     </ul>
-                    <StripeCheckout
-                      plan={{ key: 'monthly', name: 'Basic Monthly', price: 9.99, buttonText: 'Get Basic' }}
-                      onSuccess={handlePaymentSuccess}
-                    />
+                    <div onClick={() => track('pricing_upgrade_clicked', { plan: 'monthly' })}>
+                      <StripeCheckout
+                        plan={{ key: 'monthly', name: 'Basic Monthly', price: 9.99, buttonText: 'Get Basic' }}
+                        onSuccess={handlePaymentSuccess}
+                      />
+                    </div>
                   </div>
 
                   {/* Premium */}
@@ -2630,10 +2683,12 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         <span>Bulk analysis</span>
                       </li>
                     </ul>
-                    <StripeCheckout
-                      plan={{ key: 'annual', name: 'Premium Annual', price: 29, buttonText: 'Get Premium' }}
-                      onSuccess={handlePaymentSuccess}
-                    />
+                    <div onClick={() => track('pricing_upgrade_clicked', { plan: 'annual' })}>
+                      <StripeCheckout
+                        plan={{ key: 'annual', name: 'Premium Annual', price: 29, buttonText: 'Get Premium' }}
+                        onSuccess={handlePaymentSuccess}
+                      />
+                    </div>
                   </div>
 
                   {/* Lifetime */}
@@ -2688,10 +2743,12 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         </div>
                       </div>
 
-                      <StripeCheckout
-                        plan={{ key: 'lifetime', name: 'Lifetime Premium', price: 99, buttonText: 'Get Lifetime Access' }}
-                        onSuccess={handlePaymentSuccess}
-                      />
+                      <div onClick={() => track('pricing_upgrade_clicked', { plan: 'lifetime' })}>
+                        <StripeCheckout
+                          plan={{ key: 'lifetime', name: 'Lifetime Premium', price: 99, buttonText: 'Get Lifetime Access' }}
+                          onSuccess={handlePaymentSuccess}
+                        />
+                      </div>
                       </div>
                       )}
                       </div>
