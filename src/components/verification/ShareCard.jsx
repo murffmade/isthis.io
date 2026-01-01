@@ -16,6 +16,13 @@ const resultConfig = {
     darkColor: '#92400e',
     lightBg: '#fffbeb'
   },
+  likely_deepfake: {
+    icon: AlertTriangle,
+    title: 'Likely Deepfake',
+    color: '#dc2626',
+    darkColor: '#7f1d1d',
+    lightBg: '#fef2f2'
+  },
   uncertain: {
     icon: HelpCircle,
     title: 'Mixed/Uncertain',
@@ -43,7 +50,6 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
   const config = resultConfig[result.result] || resultConfig.uncertain;
   const Icon = config.icon;
   
-  // Calculate confidence from result
   const confidence = result.confidence || result.score || 75;
   
   const dimensions = {
@@ -160,7 +166,7 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
           fontWeight: '700',
           color: config.darkColor
         }}>
-          {getConfidenceLabel(confidence)} • {confidence}%
+          {getConfidenceLabel(confidence)} Confidence • {confidence}%
         </div>
       </div>
 
