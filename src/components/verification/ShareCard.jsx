@@ -147,13 +147,13 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
             strokeWidth: 2.5
           }} />
           <div style={{
-            fontSize: `${64 * scale}px`,
+            fontSize: `${84 * scale}px`,
             fontWeight: '900',
-            color: config.darkColor,
+            color: '#FF0000',
             lineHeight: 0.95,
             letterSpacing: '-0.05em'
           }}>
-            {config.title}
+            THIS IS A TEST CHANGE
           </div>
         </div>
         
