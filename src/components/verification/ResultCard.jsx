@@ -9,6 +9,7 @@ import ShareCard from './ShareCard';
 import TrainerFeedback from './TrainerFeedback';
 import LikelihoodRangeBar from '@/components/assessment/LikelihoodRangeBar';
 import DisclaimerBanner from '@/components/assessment/DisclaimerBanner';
+import ResultFeedback from '@/components/feedback/ResultFeedback';
 import { normalizeResult, getRiskColor, getConfidenceColor } from '@/components/utils/normalizeResult';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -1700,6 +1701,11 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       {/* Hidden ShareCard for image generation */}
       <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
         <ShareCard result={result} cardRef={shareCardRef} affiliateCode={affiliateCode} />
+      </div>
+
+      {/* Feedback Section */}
+      <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 mb-6">
+        <ResultFeedback resultId={result.id} />
       </div>
 
       {/* Action Buttons */}

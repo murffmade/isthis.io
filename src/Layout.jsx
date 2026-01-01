@@ -170,7 +170,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="md:col-span-1">
               <h3 className="font-bold text-lg mb-2">IsThis.io</h3>
               <p className="text-sm text-slate-400">
-                AI content verification for everyone
+                AI content assessment for everyone
               </p>
             </div>
 
