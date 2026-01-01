@@ -139,6 +139,9 @@ export default function Home() {
   });
 
   React.useEffect(() => {
+    // Scroll to top on mount
+    window.scrollTo(0, 0);
+    
     // Detect mobile device
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
