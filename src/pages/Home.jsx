@@ -2430,9 +2430,6 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto mb-8 px-4 italic">
                   No scare tactics. No false certainty. <br />Just helpful insight you can actually use.
                 </p>
-                <p className="text-xs text-slate-400 max-w-xl mx-auto mb-8 px-4">
-                  This tool offers likelihood-based assessments, not definitive answers.
-                </p>
               </div>
 
               {/* Upload Section */}
