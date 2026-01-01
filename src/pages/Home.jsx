@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, Upload, Link as LinkIcon, CheckCircle2, AlertTriangle, HelpCircle, ArrowRight, Zap, LogIn } from 'lucide-react';
+import { Shield, Sparkles, Upload, Link as LinkIcon, CheckCircle2, AlertTriangle, HelpCircle, ArrowRight, Zap, LogIn, Image as ImageIcon, Video } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -2450,13 +2450,14 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   <div className="flex gap-3 mb-6">
                     <button
                       onClick={() => setSelectedTab('image')}
-                      className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all ${
+                      className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
                         selectedTab === 'image'
                           ? 'bg-[#3498DB] text-white shadow-lg'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
-                      📷 Image
+                      <ImageIcon className="w-5 h-5" />
+                      Image
                     </button>
                     <button
                       onClick={() => {
@@ -2468,13 +2469,14 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                         }
                         setSelectedTab('video');
                       }}
-                      className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
+                      className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                         selectedTab === 'video'
                           ? 'bg-[#3498DB] text-white shadow-lg'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
-                      🎥 Video
+                      <Video className="w-5 h-5" />
+                      Video
                       {currentUser?.role !== 'admin' && (!userSubscription || userSubscription.plan === 'free') && (
                         <span className="ml-2 text-xs opacity-60">Beta</span>
                       )}
