@@ -256,6 +256,141 @@ Return scores for each category (0-100, where 100 = definitely inappropriate).`,
       {/* Trainer Feedback */}
       <TrainerFeedback result={result} user={user} />
 
+      {/* SHARE CARD - PRIMARY FOCUS AT TOP */}
+      <div className="mb-8">
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl border-2 border-purple-200 p-6 shadow-xl">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="text-3xl">🎨</div>
+              <h3 className="font-bold text-slate-800 text-xl">Shareable Analysis Card</h3>
+            </div>
+          </div>
+
+          {/* Aspect Ratio Selector */}
+          <div className="mb-4">
+            <div className="text-sm font-semibold text-slate-700 mb-2">Select Format:</div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSelectedAspectRatio('1:1')}
+                className={`flex-1 py-2 px-4 rounded-lg border-2 font-semibold text-sm transition-all ${
+                  selectedAspectRatio === '1:1'
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-purple-300'
+                }`}
+              >
+                📱 Square (1:1)
+              </button>
+              <button
+                onClick={() => setSelectedAspectRatio('4:5')}
+                className={`flex-1 py-2 px-4 rounded-lg border-2 font-semibold text-sm transition-all ${
+                  selectedAspectRatio === '4:5'
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-purple-300'
+                }`}
+              >
+                📸 Instagram (4:5)
+              </button>
+              <button
+                onClick={() => setSelectedAspectRatio('16:9')}
+                className={`flex-1 py-2 px-4 rounded-lg border-2 font-semibold text-sm transition-all ${
+                  selectedAspectRatio === '16:9'
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-purple-300'
+                }`}
+              >
+                🖥️ Wide (16:9)
+              </button>
+            </div>
+          </div>
+          
+          {/* LARGE SHARE CARD DISPLAY */}
+          <div className="flex justify-center overflow-hidden rounded-xl">
+            <ShareCard result={result} cardRef={shareCardRef} affiliateCode={affiliateCode} aspectRatio={selectedAspectRatio} />
+          </div>
+
+          {/* Download & Share Actions */}
+          <div className="mt-6 flex gap-3">
+            <Button
+              onClick={async () => {
+                setGenerating(true);
+                try {
+                  const cardElement = shareCardRef.current;
+                  const canvas = await html2canvas(cardElement, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false
+                  });
+                  const url = canvas.toDataURL('image/png');
+                  const link = document.createElement('a');
+                  link.download = `is-this-verification-${Date.now()}.png`;
+                  link.href = url;
+                  link.click();
+                  toast.success('🎉 Downloaded!');
+                } catch (error) {
+                  toast.error('Failed to download');
+                } finally {
+                  setGenerating(false);
+                }
+              }}
+              disabled={generating}
+              className="flex-1 h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              {generating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Card
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={async () => {
+                setGenerating(true);
+                try {
+                  const cardElement = shareCardRef.current;
+                  const canvas = await html2canvas(cardElement, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false
+                  });
+                  const url = canvas.toDataURL('image/png');
+                  const blob = await (await fetch(url)).blob();
+                  await navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': blob })
+                  ]);
+                  setCopied(true);
+                  toast.success('📋 Copied!');
+                  setTimeout(() => setCopied(false), 2000);
+                } catch (error) {
+                  toast.error('Failed to copy');
+                } finally {
+                  setGenerating(false);
+                }
+              }}
+              disabled={generating}
+              variant="outline"
+              className="flex-1 h-12"
+            >
+              {copied ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 mr-2 text-green-600" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Image
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Disclaimer Banner */}
       <div className="mb-6">
         <DisclaimerBanner variant="prominent" />
