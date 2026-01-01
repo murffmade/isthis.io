@@ -215,27 +215,51 @@ export default function Home() {
 
             // ALWAYS do visual analysis regardless of EXIF
             const classification = await base44.integrations.Core.InvokeLLM({
-              prompt: `CRITICAL: You MUST classify this image into EXACTLY ONE of these 4 categories:
+              prompt: `IMAGE TYPE CLASSIFICATION - STRICT 4-CATEGORY SYSTEM
 
-            MANDATORY OPTIONS (choose ONE):
-            1. PHOTO - Photograph taken with a camera of real-world scene (not a screen)
-            2. SCREENSHOT - Screen capture showing UI elements, apps, websites, digital content
-            3. DIGITAL_ART - Computer-generated art, 3D renders, vector graphics, CGI
-            4. ILLUSTRATION - Hand-drawn art, paintings, sketches, artistic drawings
+YOU MUST OUTPUT EXACTLY ONE OF THESE 4 VALUES:
+• "screenshot"
+• "photo"  
+• "digital_art"
+• "illustration"
 
-            SELECTION PRIORITY (check in order):
-            1. Does it show UI elements, menus, status bars, app interfaces? → SCREENSHOT
-            2. Is it a real-world scene captured by camera? → PHOTO
-            3. Is it computer-generated 3D/vector artwork? → DIGITAL_ART
-            4. Is it hand-drawn/painted artwork? → ILLUSTRATION
+NO OTHER VALUES ARE ALLOWED. NOT "object", NOT "image", NOT anything else.
 
-            CONTEXT:
-            - EXIF: ${hasExif ? 'Present (camera likely, but review visually)' : 'Missing (no direct camera capture)'}
+DECISION TREE (follow in exact order):
 
-            CRITICAL: Even if EXIF exists, if you see UI elements → it's a SCREENSHOT
-            If uncertain, pick the CLOSEST match. You MUST return one of the 4 values.
+STEP 1: Look for UI elements
+→ Do you see: bottom nav bars, status bars, app icons, menus, buttons, website elements, mobile/desktop UI?
+→ YES = SCREENSHOT (even if it's a photo OF a screen)
+→ NO = Continue to Step 2
 
-            REQUIRED RESPONSE: "photo", "screenshot", "digital_art", or "illustration"`,
+STEP 2: Look for real-world photography
+→ Is this a photo of physical reality (people, places, objects in the real world)?
+→ Does it have photographic qualities (camera perspective, real lighting, physical scene)?
+→ YES = PHOTO
+→ NO = Continue to Step 3
+
+STEP 3: Look for computer-generated 3D/CGI
+→ Is this a 3D render, CGI, vector graphic, or computer-generated artwork?
+→ Does it look like it came from 3D software (Blender, Cinema4D) or vector tools?
+→ YES = DIGITAL_ART
+→ NO = Continue to Step 4
+
+STEP 4: Default to illustration
+→ Hand-drawn, painted, sketched, or any other artistic content
+→ ILLUSTRATION
+
+CRITICAL EXAMPLES:
+• Phone screen with apps visible = "screenshot"
+• Social media interface = "screenshot"  
+• Website on a screen = "screenshot"
+• Person outdoors = "photo"
+• AI-generated realistic portrait = "photo" (still photo-style)
+• 3D rendered car = "digital_art"
+• Drawing of a cat = "illustration"
+
+METADATA: EXIF ${hasExif ? 'exists' : 'missing'}
+
+OUTPUT EXACTLY: {"type": "screenshot"} or {"type": "photo"} or {"type": "digital_art"} or {"type": "illustration"}`,
               file_urls: [file_url],
               response_json_schema: {
                 type: "object",
@@ -243,9 +267,16 @@ export default function Home() {
                   type: { type: "string", enum: ["photo", "screenshot", "digital_art", "illustration"] },
                   confidence: { type: "number" },
                   reasoning: { type: "string" }
-                }
+                },
+                required: ["type"]
               }
             });
+
+            // Validate and force correct value
+            if (!["photo", "screenshot", "digital_art", "illustration"].includes(classification.type)) {
+              console.warn('Invalid classification received:', classification.type, '- forcing to photo');
+              classification.type = "photo";
+            }
 
             setImageClassification(classification);
             setUserConfirmedType(false);
@@ -1275,26 +1306,40 @@ Provide a thorough but accessible analysis.`,
 
       // Step 4: Use pre-classification or re-classify
       const classificationResult = imageClassification || await base44.integrations.Core.InvokeLLM({
-        prompt: `CRITICAL: You MUST classify this image into EXACTLY ONE of these 4 categories. No other options exist.
+        prompt: `IMAGE TYPE CLASSIFICATION - STRICT 4-CATEGORY SYSTEM
 
-      MANDATORY CLASSIFICATION OPTIONS (choose ONE):
-      1. PHOTO - A photograph taken with a camera of a real-world scene (people, places, objects in physical world)
-      2. SCREENSHOT - A screen capture showing UI elements, apps, websites, or any digital interface
-      3. DIGITAL_ART - Computer-generated art, 3D renders, vector graphics, CGI artwork
-      4. ILLUSTRATION - Hand-drawn art, paintings, sketches, or artistic drawings
+YOU MUST OUTPUT EXACTLY ONE OF THESE 4 VALUES:
+• "screenshot"
+• "photo"
+• "digital_art"
+• "illustration"
 
-      SELECTION RULES:
-      - If the image shows ANY UI elements, menus, status bars, app interfaces → SCREENSHOT
-      - If it's a photo of a real-world scene captured by camera → PHOTO  
-      - If it's computer-generated artwork or 3D render → DIGITAL_ART
-      - If it's hand-drawn, painted, or sketched artwork → ILLUSTRATION
-      - If uncertain between options, pick the CLOSEST match - you MUST choose one of the 4
+NO OTHER VALUES ALLOWED. NOT "object", NOT "image", NOT anything else.
 
-      METADATA CONTEXT:
-      - EXIF data: ${exifData ? 'Present (suggests camera photo)' : 'Not present'}
+DECISION TREE (follow in exact order):
 
-      YOU MUST RETURN: "photo", "screenshot", "digital_art", or "illustration"
-      NO OTHER VALUES ARE PERMITTED.`,
+STEP 1: UI elements check
+→ Bottom nav bars, status bars, app icons, menus, buttons, website UI visible?
+→ YES = "screenshot"
+→ NO = Step 2
+
+STEP 2: Real-world photography check
+→ Photo of physical reality (people, places, real objects)?
+→ Camera perspective, real lighting, physical scene?
+→ YES = "photo"
+→ NO = Step 3
+
+STEP 3: 3D/CGI check
+→ 3D render, CGI, vector graphic, computer artwork?
+→ YES = "digital_art"
+→ NO = Step 4
+
+STEP 4: Default
+→ "illustration"
+
+METADATA: EXIF ${exifData ? 'present' : 'missing'}
+
+OUTPUT ONE OF: "screenshot", "photo", "digital_art", "illustration"`,
         file_urls: [uploadedFile],
         response_json_schema: {
           type: "object",
@@ -1306,6 +1351,12 @@ Provide a thorough but accessible analysis.`,
           required: ["image_type", "confidence", "reasoning"]
         }
       });
+
+      // Validate classification
+      if (!["photo", "screenshot", "digital_art", "illustration"].includes(classificationResult.image_type)) {
+        console.warn('Invalid classification:', classificationResult.image_type, '- defaulting to photo');
+        classificationResult.image_type = "photo";
+      }
 
       // Normalize classification result
       const normalizedType = classificationResult.type || classificationResult.image_type;
