@@ -66,8 +66,9 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
     <div 
       ref={cardRef}
       style={{ 
-        width: `${size.width}px`,
-        height: `${size.height}px`,
+        width: '100%',
+        maxWidth: `${size.width}px`,
+        aspectRatio: aspectRatio === '16:9' ? '16/9' : aspectRatio === '4:5' ? '4/5' : '1/1',
         background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
         position: 'relative',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
@@ -76,31 +77,36 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: `${size.padding}px`
+        padding: `min(${size.padding}px, 8vw)`
       }}
     >
       {/* Header - IsThis.io branding */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: `${16 * scale}px`,
-        marginBottom: `${50 * scale}px`
+        gap: `min(${16 * scale}px, 3vw)`,
+        marginBottom: `min(${50 * scale}px, 8vw)`,
+        flexWrap: 'wrap',
+        justifyContent: 'center'
       }}>
         <div style={{
-          width: `${56 * scale}px`,
-          height: `${56 * scale}px`,
-          borderRadius: `${14 * scale}px`,
+          width: `min(${56 * scale}px, 12vw)`,
+          height: `min(${56 * scale}px, 12vw)`,
+          minWidth: '40px',
+          minHeight: '40px',
+          borderRadius: `min(${14 * scale}px, 3vw)`,
           background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(52, 152, 219, 0.3)'
+          boxShadow: '0 8px 24px rgba(52, 152, 219, 0.3)',
+          flexShrink: 0
         }}>
-          <Shield style={{ width: `${32 * scale}px`, height: `${32 * scale}px`, color: 'white' }} />
+          <Shield style={{ width: `min(${32 * scale}px, 7vw)`, height: `min(${32 * scale}px, 7vw)`, minWidth: '24px', minHeight: '24px', color: 'white' }} />
         </div>
-        <div>
+        <div style={{ textAlign: 'center' }}>
           <div style={{
-            fontSize: `${32 * scale}px`,
+            fontSize: `min(${32 * scale}px, 7vw)`,
             fontWeight: '900',
             color: '#0f172a',
             letterSpacing: '-0.04em',
@@ -109,10 +115,10 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
             IsThis.io
           </div>
           <div style={{
-            fontSize: `${14 * scale}px`,
+            fontSize: `min(${14 * scale}px, 3vw)`,
             color: '#64748b',
             fontWeight: '700',
-            marginTop: `${6 * scale}px`,
+            marginTop: `min(${6 * scale}px, 1vw)`,
             letterSpacing: '0.05em',
             textTransform: 'uppercase'
           }}>
@@ -125,11 +131,11 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
       <div style={{
         width: '100%',
         maxWidth: `${850 * scale}px`,
-        padding: `${56 * scale}px ${48 * scale}px`,
+        padding: `min(${56 * scale}px, 8vw) min(${48 * scale}px, 6vw)`,
         background: config.lightBg,
-        borderRadius: `${28 * scale}px`,
-        border: `4px solid ${config.color}`,
-        marginBottom: `${44 * scale}px`,
+        borderRadius: `min(${28 * scale}px, 5vw)`,
+        border: `min(4px, 0.5vw) solid ${config.color}`,
+        marginBottom: `min(${44 * scale}px, 6vw)`,
         textAlign: 'center',
         boxShadow: `0 12px 40px ${config.color}30`
       }}>
@@ -137,17 +143,21 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: `${24 * scale}px`,
-          marginBottom: `${28 * scale}px`
+          gap: `min(${24 * scale}px, 4vw)`,
+          marginBottom: `min(${28 * scale}px, 5vw)`,
+          flexWrap: 'wrap'
         }}>
           <Icon style={{ 
-            width: `${70 * scale}px`, 
-            height: `${70 * scale}px`,
+            width: `min(${70 * scale}px, 12vw)`, 
+            height: `min(${70 * scale}px, 12vw)`,
+            minWidth: '40px',
+            minHeight: '40px',
             color: config.color,
-            strokeWidth: 2.5
+            strokeWidth: 2.5,
+            flexShrink: 0
           }} />
           <div style={{
-            fontSize: `${64 * scale}px`,
+            fontSize: `min(${64 * scale}px, 10vw)`,
             fontWeight: '900',
             color: config.darkColor,
             lineHeight: 0.95,
@@ -160,11 +170,11 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
         {/* Confidence Indicator */}
         <div style={{
           display: 'inline-block',
-          padding: `${14 * scale}px ${28 * scale}px`,
+          padding: `min(${14 * scale}px, 2vw) min(${28 * scale}px, 4vw)`,
           background: 'white',
-          borderRadius: `${14 * scale}px`,
-          border: `3px solid ${config.color}`,
-          fontSize: `${22 * scale}px`,
+          borderRadius: `min(${14 * scale}px, 2vw)`,
+          border: `min(3px, 0.4vw) solid ${config.color}`,
+          fontSize: `min(${22 * scale}px, 4vw)`,
           fontWeight: '800',
           color: config.darkColor
         }}>
@@ -176,13 +186,14 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
       <div style={{
         width: '100%',
         maxWidth: `${850 * scale}px`,
-        marginBottom: `${40 * scale}px`
+        marginBottom: `min(${40 * scale}px, 6vw)`,
+        padding: '0 2vw'
       }}>
         <div style={{
-          fontSize: `${17 * scale}px`,
+          fontSize: `min(${17 * scale}px, 3.5vw)`,
           fontWeight: '800',
           color: '#64748b',
-          marginBottom: `${14 * scale}px`,
+          marginBottom: `min(${14 * scale}px, 2vw)`,
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
           textAlign: 'center'
@@ -190,7 +201,7 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
           Why This Verdict?
         </div>
         <div style={{
-          fontSize: `${24 * scale}px`,
+          fontSize: `min(${24 * scale}px, 4.5vw)`,
           color: '#1e293b',
           lineHeight: 1.4,
           fontWeight: '600',
@@ -202,25 +213,26 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
 
       {/* Trust Line */}
       <div style={{
-        fontSize: `${16 * scale}px`,
+        fontSize: `min(${16 * scale}px, 3.2vw)`,
         color: '#94a3b8',
-        marginBottom: `${36 * scale}px`,
+        marginBottom: `min(${36 * scale}px, 5vw)`,
         fontWeight: '600',
-        textAlign: 'center'
+        textAlign: 'center',
+        padding: '0 2vw'
       }}>
         Analyzed using multiple AI detection signals
       </div>
 
       {/* CTA Button */}
       <div style={{
-        padding: `${22 * scale}px ${56 * scale}px`,
+        padding: `min(${22 * scale}px, 3vw) min(${56 * scale}px, 8vw)`,
         background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
-        borderRadius: `${18 * scale}px`,
-        fontSize: `${26 * scale}px`,
+        borderRadius: `min(${18 * scale}px, 3vw)`,
+        fontSize: `min(${26 * scale}px, 4.5vw)`,
         fontWeight: '900',
         color: 'white',
         boxShadow: '0 10px 30px rgba(52, 152, 219, 0.5)',
-        marginBottom: `${28 * scale}px`,
+        marginBottom: `min(${28 * scale}px, 4vw)`,
         letterSpacing: '-0.02em'
       }}>
         View Full Analysis
@@ -228,19 +240,20 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
 
       {/* Footer */}
       <div style={{
-        textAlign: 'center'
+        textAlign: 'center',
+        padding: '0 2vw'
       }}>
         <div style={{
-          fontSize: `${22 * scale}px`,
+          fontSize: `min(${22 * scale}px, 4vw)`,
           fontWeight: '800',
           color: '#3498DB',
-          marginBottom: `${10 * scale}px`
+          marginBottom: `min(${10 * scale}px, 1.5vw)`
         }}>
           {reportUrl}
         </div>
         {affiliateCode && (
           <div style={{
-            fontSize: `${12 * scale}px`,
+            fontSize: `min(${12 * scale}px, 2.5vw)`,
             color: '#94a3b8',
             fontWeight: '600'
           }}>
