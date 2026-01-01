@@ -2460,7 +2460,8 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     </button>
                     <button
                       onClick={() => {
-                        if (!userSubscription || userSubscription.plan === 'free') {
+                        const isPremium = userSubscription && (userSubscription.plan === 'annual' || userSubscription.plan === 'lifetime');
+                        if (!isPremium) {
                           toast.error('Premium Subscribers get early access to Beta features');
                           return;
                         }
