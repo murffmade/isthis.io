@@ -39,11 +39,38 @@ const getConfidenceLabel = (confidence) => {
 };
 
 const getOneLineSummary = (result) => {
-  if (result.summary) {
-    const firstSentence = result.summary.split('.')[0];
-    return firstSentence.length > 100 ? firstSentence.substring(0, 100) + '...' : firstSentence + '.';
+  // Dynamic, impactful one-liners based on result type and key findings
+  const confidence = result.confidence || result.score || 75;
+  const isHighConfidence = confidence >= 80;
+  
+  if (result.result === 'likely_ai') {
+    if (result.signals?.some(s => s.signal_type.toLowerCase().includes('hand') || s.signal_type.toLowerCase().includes('finger'))) {
+      return 'Impossible hand anatomy detected—a telltale sign of AI generation.';
+    }
+    if (result.signals?.some(s => s.signal_type.toLowerCase().includes('text') || s.signal_type.toLowerCase().includes('garbled'))) {
+      return 'Scrambled text detected—AI can't spell yet.';
+    }
+    if (!result.exif_summary && result.content_type === 'image') {
+      return 'Zero camera metadata found—real photos always have this.';
+    }
+    if (result.ai_model_detected && result.ai_model_detected !== 'none') {
+      return `${result.ai_model_detected.replace(/_/g, ' ').toUpperCase()} fingerprint detected in visual analysis.`;
+    }
+    return isHighConfidence ? 'Multiple strong AI generation patterns detected.' : 'Several AI indicators suggest synthetic origin.';
   }
-  return 'Multiple AI detection signals analyzed to determine content origin.';
+  
+  if (result.result === 'likely_deepfake') {
+    return 'Facial manipulation and deepfake artifacts detected in video.';
+  }
+  
+  if (result.result === 'likely_real') {
+    if (result.exif_summary) {
+      return 'Camera metadata present with natural imperfections throughout.';
+    }
+    return isHighConfidence ? 'Strong evidence of authentic photography found.' : 'Natural patterns suggest real-world capture.';
+  }
+  
+  return 'Mixed signals—unable to determine with confidence.';
 };
 
 export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio = '1:1' }) {
@@ -60,7 +87,7 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
   
   const size = dimensions[aspectRatio] || dimensions['1:1'];
   const scale = size.fontSize;
-  const reportUrl = `isthis.io${affiliateCode ? `?ref=${affiliateCode}` : ''}`;
+  const reportUrl = `isthis.io/report/${result.id}${affiliateCode ? `?ref=${affiliateCode}` : ''}`;
   
   return (
     <div 

@@ -183,6 +183,7 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
   const [showAffiliatePrompt, setShowAffiliatePrompt] = useState(false);
   const [imageRevealed, setImageRevealed] = useState(false);
   const [isFlagged, setIsFlagged] = useState(false);
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState('1:1');
   
   // Normalize result to likelihood range format
   const normalizedResult = normalizeResult(result);
@@ -264,10 +265,47 @@ Return scores for each category (0-100, where 100 = definitely inappropriate).`,
               <h3 className="font-bold text-slate-800 text-xl">Shareable Analysis Card</h3>
             </div>
           </div>
+
+          {/* Aspect Ratio Selector */}
+          <div className="mb-4">
+            <div className="text-sm font-semibold text-slate-700 mb-2">Select Format:</div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSelectedAspectRatio('1:1')}
+                className={`flex-1 py-2 px-4 rounded-lg border-2 font-semibold text-sm transition-all ${
+                  selectedAspectRatio === '1:1'
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-purple-300'
+                }`}
+              >
+                📱 Square (1:1)
+              </button>
+              <button
+                onClick={() => setSelectedAspectRatio('4:5')}
+                className={`flex-1 py-2 px-4 rounded-lg border-2 font-semibold text-sm transition-all ${
+                  selectedAspectRatio === '4:5'
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-purple-300'
+                }`}
+              >
+                📸 Instagram (4:5)
+              </button>
+              <button
+                onClick={() => setSelectedAspectRatio('16:9')}
+                className={`flex-1 py-2 px-4 rounded-lg border-2 font-semibold text-sm transition-all ${
+                  selectedAspectRatio === '16:9'
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-purple-300'
+                }`}
+              >
+                🖥️ Wide (16:9)
+              </button>
+            </div>
+          </div>
           
           {/* LARGE SHARE CARD DISPLAY */}
-          <div className="flex justify-center">
-            <ShareCard result={result} cardRef={shareCardRef} affiliateCode={affiliateCode} aspectRatio="square" />
+          <div className="flex justify-center overflow-hidden rounded-xl">
+            <ShareCard result={result} cardRef={shareCardRef} affiliateCode={affiliateCode} aspectRatio={selectedAspectRatio} />
           </div>
 
           {/* Download & Share Actions */}
