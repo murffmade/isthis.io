@@ -2460,8 +2460,9 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     </button>
                     <button
                       onClick={() => {
+                        const isAdmin = user?.role === 'admin';
                         const isPremium = userSubscription && (userSubscription.plan === 'annual' || userSubscription.plan === 'lifetime');
-                        if (!isPremium) {
+                        if (!isAdmin && !isPremium) {
                           toast.error('Premium Subscribers get early access to Beta features');
                           return;
                         }
@@ -2474,7 +2475,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       }`}
                     >
                       🎥 Video
-                      {(!userSubscription || userSubscription.plan === 'free') && (
+                      {user?.role !== 'admin' && (!userSubscription || userSubscription.plan === 'free') && (
                         <span className="ml-2 text-xs opacity-60">Beta</span>
                       )}
                     </button>
