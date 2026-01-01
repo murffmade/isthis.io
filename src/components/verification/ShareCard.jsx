@@ -283,7 +283,7 @@ export default function ShareCard({ result, cardRef, affiliateCode }) {
               fontWeight: '600',
               letterSpacing: '0.02em'
             }}>
-              🆓 Free AI Assessment Tool
+              🆓 Free AI Content Assessment
             </div>
             <div style={{
               fontSize: hasImage ? '14px' : '17px',
