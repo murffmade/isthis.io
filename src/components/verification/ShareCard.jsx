@@ -33,9 +33,9 @@ const resultConfig = {
 };
 
 const getConfidenceLabel = (confidence) => {
-  if (confidence >= 80) return 'High';
-  if (confidence >= 60) return 'Medium';
-  return 'Low';
+  if (confidence >= 80) return 'High Confidence';
+  if (confidence >= 60) return 'Medium Confidence';
+  return 'Low Confidence';
 };
 
 const getOneLineSummary = (result) => {
@@ -53,9 +53,9 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
   const confidence = result.confidence || result.score || 75;
   
   const dimensions = {
-    '1:1': { width: 1080, height: 1080, padding: 60, fontSize: 1 },
-    '4:5': { width: 1080, height: 1350, padding: 70, fontSize: 1 },
-    '16:9': { width: 1920, height: 1080, padding: 80, fontSize: 1.1 }
+    '1:1': { width: 1080, height: 1080, padding: 80, fontSize: 1 },
+    '4:5': { width: 1080, height: 1350, padding: 90, fontSize: 1 },
+    '16:9': { width: 1920, height: 1080, padding: 100, fontSize: 1.1 }
   };
   
   const size = dimensions[aspectRatio] || dimensions['1:1'];
@@ -68,9 +68,9 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
       style={{ 
         width: `${size.width}px`,
         height: `${size.height}px`,
-        background: '#ffffff',
+        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
         position: 'relative',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -79,41 +79,41 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
         padding: `${size.padding}px`
       }}
     >
-      {/* Header */}
+      {/* Header - IsThis.io branding */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: `${14 * scale}px`,
-        marginBottom: `${40 * scale}px`
+        gap: `${16 * scale}px`,
+        marginBottom: `${50 * scale}px`
       }}>
         <div style={{
-          width: `${48 * scale}px`,
-          height: `${48 * scale}px`,
-          borderRadius: `${12 * scale}px`,
+          width: `${56 * scale}px`,
+          height: `${56 * scale}px`,
+          borderRadius: `${14 * scale}px`,
           background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 4px 16px rgba(52, 152, 219, 0.25)'
+          boxShadow: '0 8px 24px rgba(52, 152, 219, 0.3)'
         }}>
-          <Shield style={{ width: `${28 * scale}px`, height: `${28 * scale}px`, color: 'white' }} />
+          <Shield style={{ width: `${32 * scale}px`, height: `${32 * scale}px`, color: 'white' }} />
         </div>
         <div>
           <div style={{
-            fontSize: `${28 * scale}px`,
+            fontSize: `${32 * scale}px`,
             fontWeight: '900',
             color: '#0f172a',
-            letterSpacing: '-0.03em',
+            letterSpacing: '-0.04em',
             lineHeight: 1
           }}>
             IsThis.io
           </div>
           <div style={{
-            fontSize: `${13 * scale}px`,
+            fontSize: `${14 * scale}px`,
             color: '#64748b',
-            fontWeight: '600',
-            marginTop: `${4 * scale}px`,
-            letterSpacing: '0.03em',
+            fontWeight: '700',
+            marginTop: `${6 * scale}px`,
+            letterSpacing: '0.05em',
             textTransform: 'uppercase'
           }}>
             AI Content Analysis
@@ -121,76 +121,80 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
         </div>
       </div>
 
-      {/* Verdict Block - Primary Focal Point */}
+      {/* Verdict Block - PRIMARY FOCAL POINT */}
       <div style={{
         width: '100%',
-        maxWidth: `${800 * scale}px`,
-        padding: `${48 * scale}px ${40 * scale}px`,
+        maxWidth: `${850 * scale}px`,
+        padding: `${56 * scale}px ${48 * scale}px`,
         background: config.lightBg,
-        borderRadius: `${24 * scale}px`,
-        border: `3px solid ${config.color}`,
-        marginBottom: `${36 * scale}px`,
-        textAlign: 'center'
+        borderRadius: `${28 * scale}px`,
+        border: `4px solid ${config.color}`,
+        marginBottom: `${44 * scale}px`,
+        textAlign: 'center',
+        boxShadow: `0 12px 40px ${config.color}30`
       }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: `${20 * scale}px`,
-          marginBottom: `${20 * scale}px`
+          gap: `${24 * scale}px`,
+          marginBottom: `${28 * scale}px`
         }}>
           <Icon style={{ 
-            width: `${60 * scale}px`, 
-            height: `${60 * scale}px`,
-            color: config.color
+            width: `${70 * scale}px`, 
+            height: `${70 * scale}px`,
+            color: config.color,
+            strokeWidth: 2.5
           }} />
           <div style={{
-            fontSize: `${56 * scale}px`,
+            fontSize: `${64 * scale}px`,
             fontWeight: '900',
             color: config.darkColor,
-            lineHeight: 1,
-            letterSpacing: '-0.04em'
+            lineHeight: 0.95,
+            letterSpacing: '-0.05em'
           }}>
             {config.title}
           </div>
         </div>
         
-        {/* Confidence Meter */}
+        {/* Confidence Indicator */}
         <div style={{
           display: 'inline-block',
-          padding: `${12 * scale}px ${24 * scale}px`,
+          padding: `${14 * scale}px ${28 * scale}px`,
           background: 'white',
-          borderRadius: `${12 * scale}px`,
-          border: `2px solid ${config.color}`,
-          fontSize: `${20 * scale}px`,
-          fontWeight: '700',
+          borderRadius: `${14 * scale}px`,
+          border: `3px solid ${config.color}`,
+          fontSize: `${22 * scale}px`,
+          fontWeight: '800',
           color: config.darkColor
         }}>
-          {getConfidenceLabel(confidence)} Confidence • {confidence}%
+          {getConfidenceLabel(confidence)} ({confidence}%)
         </div>
       </div>
 
-      {/* Why This Verdict */}
+      {/* Why This Verdict - Single sentence */}
       <div style={{
         width: '100%',
-        maxWidth: `${800 * scale}px`,
-        marginBottom: `${36 * scale}px`
+        maxWidth: `${850 * scale}px`,
+        marginBottom: `${40 * scale}px`
       }}>
         <div style={{
-          fontSize: `${16 * scale}px`,
-          fontWeight: '700',
+          fontSize: `${17 * scale}px`,
+          fontWeight: '800',
           color: '#64748b',
-          marginBottom: `${12 * scale}px`,
+          marginBottom: `${14 * scale}px`,
           textTransform: 'uppercase',
-          letterSpacing: '0.08em'
+          letterSpacing: '0.1em',
+          textAlign: 'center'
         }}>
           Why This Verdict?
         </div>
         <div style={{
-          fontSize: `${22 * scale}px`,
+          fontSize: `${24 * scale}px`,
           color: '#1e293b',
-          lineHeight: 1.5,
-          fontWeight: '500'
+          lineHeight: 1.4,
+          fontWeight: '600',
+          textAlign: 'center'
         }}>
           {getOneLineSummary(result)}
         </div>
@@ -198,24 +202,25 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
 
       {/* Trust Line */}
       <div style={{
-        fontSize: `${15 * scale}px`,
+        fontSize: `${16 * scale}px`,
         color: '#94a3b8',
-        marginBottom: `${32 * scale}px`,
-        fontWeight: '500'
+        marginBottom: `${36 * scale}px`,
+        fontWeight: '600',
+        textAlign: 'center'
       }}>
         Analyzed using multiple AI detection signals
       </div>
 
       {/* CTA Button */}
       <div style={{
-        padding: `${20 * scale}px ${48 * scale}px`,
+        padding: `${22 * scale}px ${56 * scale}px`,
         background: 'linear-gradient(135deg, #3498DB 0%, #2C3E50 100%)',
-        borderRadius: `${16 * scale}px`,
-        fontSize: `${24 * scale}px`,
-        fontWeight: '800',
+        borderRadius: `${18 * scale}px`,
+        fontSize: `${26 * scale}px`,
+        fontWeight: '900',
         color: 'white',
-        boxShadow: '0 8px 24px rgba(52, 152, 219, 0.4)',
-        marginBottom: `${24 * scale}px`,
+        boxShadow: '0 10px 30px rgba(52, 152, 219, 0.5)',
+        marginBottom: `${28 * scale}px`,
         letterSpacing: '-0.02em'
       }}>
         View Full Analysis
@@ -226,18 +231,18 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
         textAlign: 'center'
       }}>
         <div style={{
-          fontSize: `${20 * scale}px`,
-          fontWeight: '700',
+          fontSize: `${22 * scale}px`,
+          fontWeight: '800',
           color: '#3498DB',
-          marginBottom: `${8 * scale}px`
+          marginBottom: `${10 * scale}px`
         }}>
           {reportUrl}
         </div>
         {affiliateCode && (
           <div style={{
-            fontSize: `${11 * scale}px`,
+            fontSize: `${12 * scale}px`,
             color: '#94a3b8',
-            fontWeight: '500'
+            fontWeight: '600'
           }}>
             Creators may earn referral credit
           </div>
