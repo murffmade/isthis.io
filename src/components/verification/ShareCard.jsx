@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, CheckCircle2, AlertTriangle, HelpCircle } from 'lucide-react';
+import { Shield, CheckCircle2, AlertTriangle, HelpCircle, Twitter, Facebook, Linkedin } from 'lucide-react';
 
 const resultConfig = {
   likely_real: {
@@ -88,25 +88,35 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
   const size = dimensions[aspectRatio] || dimensions['1:1'];
   const scale = size.fontSize;
   const reportUrl = `isthis.io/report/${result.id}${affiliateCode ? `?ref=${affiliateCode}` : ''}`;
+  const fullUrl = `https://${reportUrl}`;
+  
+  const shareText = `Check out my AI content analysis - ${config.title}! Get clarity on AI-generated content with IsThis.io`;
+  
+  const socialLinks = {
+    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(fullUrl)}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(fullUrl)}`
+  };
   
   return (
-    <div 
-      ref={cardRef}
-      style={{ 
-        width: '100%',
-        maxWidth: `${size.width}px`,
-        aspectRatio: aspectRatio === '16:9' ? '16/9' : aspectRatio === '4:5' ? '4/5' : '1/1',
-        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-        position: 'relative',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: `min(${size.padding}px, 8vw)`
-      }}
-    >
+    <>
+      <div 
+        ref={cardRef}
+        style={{ 
+          width: '100%',
+          maxWidth: `${size.width}px`,
+          aspectRatio: aspectRatio === '16:9' ? '16/9' : aspectRatio === '4:5' ? '4/5' : '1/1',
+          background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+          position: 'relative',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: `min(${size.padding}px, 8vw)`
+        }}
+      >
       {/* Header - IsThis.io branding */}
       <div style={{
         display: 'flex',
