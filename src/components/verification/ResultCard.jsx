@@ -206,31 +206,43 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
       setUser(null);
     });
 
-    // Check if content is flagged as inappropriate
-    const checkFlaggedStatus = async () => {
+    // Immediate moderation check for images
+    const moderateContent = async () => {
+      if (result.content_type !== 'image' || !result.file_url) return;
+      
       try {
-        const flaggedContent = await base44.entities.FlaggedContent.filter({
-          file_url: result.file_url || result.thumbnail_url
-        });
-        if (flaggedContent.length > 0) {
-          const flag = flaggedContent[0];
-          // Check if flagged for adult content
-          if (flag.flagged_reason && (
-            flag.flagged_reason.toLowerCase().includes('adult') ||
-            flag.flagged_reason.toLowerCase().includes('nudity') ||
-            flag.flagged_reason.toLowerCase().includes('sexual')
-          )) {
-            setIsFlagged(true);
+        const moderationResult = await base44.integrations.Core.InvokeLLM({
+          prompt: `Analyze this image for inappropriate content. Check for:
+- Nudity or sexual content
+- Violence or gore
+- Hate speech or offensive symbols
+- Other NSFW content
+
+Return scores for each category (0-100, where 100 = definitely inappropriate).`,
+          file_urls: [result.file_url],
+          response_json_schema: {
+            type: "object",
+            properties: {
+              nudity_score: { type: "number" },
+              violence_score: { type: "number" },
+              hate_speech_score: { type: "number" },
+              overall_inappropriate: { type: "boolean" },
+              primary_concern: { type: "string" }
+            }
           }
+        });
+
+        if (moderationResult.overall_inappropriate || 
+            moderationResult.nudity_score > 50 ||
+            moderationResult.violence_score > 60) {
+          setIsFlagged(true);
         }
       } catch (error) {
-        console.error('Error checking flagged status:', error);
+        console.error('Moderation check failed:', error);
       }
     };
 
-    if (result.file_url || result.thumbnail_url) {
-      checkFlaggedStatus();
-    }
+    moderateContent();
   }, [result]);
 
   return (
