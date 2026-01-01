@@ -2461,7 +2461,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     <button
                       onClick={() => {
                         if (!userSubscription || userSubscription.plan === 'free') {
-                          toast.error('Video analysis requires Premium or higher');
+                          toast.error('Premium Subscribers get early access to Beta features');
                           return;
                         }
                         setSelectedTab('video');
@@ -2474,7 +2474,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     >
                       🎥 Video
                       {(!userSubscription || userSubscription.plan === 'free') && (
-                        <span className="ml-2 text-xs opacity-60">Premium</span>
+                        <span className="ml-2 text-xs opacity-60">Beta</span>
                       )}
                     </button>
                   </div>
