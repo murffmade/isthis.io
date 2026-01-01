@@ -2,12 +2,12 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 
 export default function SEO({
-  title = 'IsThis.io - AI Content Verification',
-  description = 'Verify if images and videos are real or AI-generated with our free detection tool. Advanced AI analysis for content authenticity.',
+  title = 'IsThis.io - AI Content Assessment',
+  description = 'Get clarity on whether images and videos were likely created by AI with our free assessment tool. Advanced AI analysis for content understanding.',
   image = 'https://isthis.io/og-image.jpg',
   url,
   type = 'website',
-  keywords = 'AI detection, deepfake detection, image verification, video verification, AI-generated content, content authenticity',
+  keywords = 'AI detection, deepfake detection, image assessment, video assessment, AI-generated content, content authenticity',
   author = 'IsThis.io',
   language = 'en',
   region = 'US',
@@ -21,7 +21,7 @@ export default function SEO({
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "IsThis.io",
-    "description": "AI Content Verification Platform",
+    "description": "AI Content Assessment Platform",
     "url": "https://isthis.io",
     "applicationCategory": "SecurityApplication",
     "operatingSystem": "Web",

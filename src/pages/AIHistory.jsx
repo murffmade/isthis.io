@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import BottomNav from '@/components/mobile/BottomNav';
 
 export default function AIHistory() {
@@ -19,6 +19,11 @@ export default function AIHistory() {
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me().catch(() => null)
   });
+
+  // If visitor is not logged in, send them to the public Home experience.
+  if (currentUser === null) {
+    return <Navigate to={createPageUrl("Home")} replace />;
+  }
 
   const { data: subscription } = useQuery({
     queryKey: ['userSubscription'],

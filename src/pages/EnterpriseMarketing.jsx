@@ -91,10 +91,10 @@ ${formData.message}
               Early Access Program
             </div>
             <h2 className="text-5xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-              Enterprise-Grade<br />AI Verification
+              Enterprise-Grade<br />AI Assessment
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
-              Scale content verification across your organization with batch processing, 
+              Scale content assessment across your organization with batch processing, 
               API access, and dedicated support. Join our early access program.
             </p>
           </motion.div>
@@ -153,7 +153,7 @@ ${formData.message}
             </h3>
             <div className="grid md:grid-cols-2 gap-8">
               {[
-                'Process millions of verifications per day',
+                'Process millions of assessments per day',
                 'White-label solutions with custom branding',
                 'Dedicated account manager and priority support',
                 'Custom integrations and workflow automation',

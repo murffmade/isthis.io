@@ -284,7 +284,7 @@ export default function Learn() {
               </div>
               <div>
                 <h1 className="text-lg font-bold text-slate-800 leading-tight">Interactive Learning</h1>
-                <p className="text-xs text-slate-500">Master AI Detection</p>
+                <p className="text-xs text-slate-500">Master AI Assessment</p>
               </div>
             </a>
             <a
@@ -309,7 +309,7 @@ export default function Learn() {
               Learn by Doing 🎯
             </h2>
             <p className="text-xl text-slate-600">
-              Interactive modules, quizzes, and achievements to master AI content verification
+              Interactive modules, quizzes, and achievements to master AI content assessment
             </p>
           </motion.div>
 
