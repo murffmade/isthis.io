@@ -63,7 +63,7 @@ export default function PricingPage() {
         </div>
 
         <div className="mt-16 text-center text-slate-600 text-sm">
-          <p>All plans include our AI detection technology.</p>
+          <p>All plans include our likelihood-based assessment technology.</p>
           <p>Cancel anytime. No hidden fees.</p>
         </div>
       </div>
