@@ -39,10 +39,23 @@ export default function OnboardingTour({ onComplete }) {
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    const hasSeenTour = localStorage.getItem('onboarding-completed');
-    if (!hasSeenTour) {
-      setTimeout(() => setIsActive(true), 1000);
-    }
+    // Check if user has seen onboarding from their profile
+    const checkOnboardingStatus = async () => {
+      try {
+        const { base44 } = await import('@/api/base44Client');
+        const user = await base44.auth.me();
+        
+        // Only show for logged-in users who haven't seen it
+        if (user && !user.has_seen_onboarding) {
+          setTimeout(() => setIsActive(true), 1000);
+        }
+      } catch (error) {
+        // User not logged in, don't show tour
+        console.log('User not authenticated, skipping onboarding tour');
+      }
+    };
+    
+    checkOnboardingStatus();
   }, []);
 
   const handleNext = () => {
@@ -53,9 +66,17 @@ export default function OnboardingTour({ onComplete }) {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     setIsActive(false);
-    localStorage.setItem('onboarding-completed', 'true');
+    
+    // Mark as completed in user profile
+    try {
+      const { base44 } = await import('@/api/base44Client');
+      await base44.auth.updateMe({ has_seen_onboarding: true });
+    } catch (error) {
+      console.error('Failed to update onboarding status:', error);
+    }
+    
     if (onComplete) onComplete();
   };
 
