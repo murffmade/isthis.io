@@ -2800,19 +2800,19 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                           onSuccess={handlePaymentSuccess}
                         />
                       </div>
-                      </div>
-                      )}
-                      </div>
+                    </div>
+                  )}
+                </div>
 
-                      {/* Footer Disclaimer */}
-                      <div className="max-w-4xl mx-auto mt-12 px-4">
-                      <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                        IsThis.io provides likelihood-based assessments using observable signals and heuristic analysis. Results are meant to support informed decisions and should not be treated as factual verification.
-                      </p>
-                      </div>
-                      </div>
-                      </section>
+                {/* Footer Disclaimer */}
+                <div className="max-w-4xl mx-auto mt-12 px-4">
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                      IsThis.io provides likelihood-based assessments using observable signals and heuristic analysis. Results are meant to support informed decisions and should not be treated as factual verification.
+                    </p>
+                  </div>
+                </div>
+              </section>
                   </motion.div>
           ) : (
             <motion.div
