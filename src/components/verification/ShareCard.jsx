@@ -5,64 +5,6 @@ const resultConfig = {
   likely_real: {
     icon: CheckCircle2,
     title: 'Likely Human-Created',
-    emoji: '✓',
-    color: '#10b981',
-    bgColor: '#d1fae5',
-    textColor: '#065f46'
-  },
-  likely_ai: {
-    icon: AlertTriangle,
-    title: 'Likely AI-Generated',
-    emoji: '⚠️',
-    color: '#f59e0b',
-    bgColor: '#fef3c7',
-    textColor: '#92400e'
-  },
-  uncertain: {
-    icon: HelpCircle,
-    title: 'Mixed/Uncertain',
-    emoji: '❓',
-    color: '#64748b',
-    bgColor: '#f1f5f9',
-    textColor: '#1e293b'
-  }
-};
-
-const getConfidenceLabel = (confidence) => {
-  if (confidence >= 80) return 'High Confidence';
-  if (confidence >= 60) return 'Medium Confidence';
-  return 'Low Confidence';
-};
-
-const getOneLineSummary = (result) => {
-  if (result.summary && result.summary.length > 0) {
-    const firstSentence = result.summary.split('.')[0];
-    return firstSentence.length > 120 ? firstSentence.substring(0, 120) + '...' : firstSentence + '.';
-  }
-  return 'Analysis based on multiple AI detection signals and technical indicators.';
-};
-
-export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio = '1:1' }) {
-  const config = resultConfig[result.result] || resultConfig.uncertain;
-  const Icon = config.icon;
-  
-  // Aspect ratio dimensions
-  const dimensions = {
-    '1:1': { width: 1080, height: 1080 },
-    '4:5': { width: 1080, height: 1350 },
-    '16:9': { width: 1920, height: 1080 }
-  };
-  
-  const size = dimensions[aspectRatio] || dimensions['1:1'];
-  const reportUrl = `isthis.io${affiliateCode ? `?ref=${affiliateCode}` : ''}`;
-  
-import React from 'react';
-import { Shield, CheckCircle2, AlertTriangle, HelpCircle } from 'lucide-react';
-
-const resultConfig = {
-  likely_real: {
-    icon: CheckCircle2,
-    title: 'Likely Human-Created',
     color: '#10b981',
     darkColor: '#065f46',
     lightBg: '#ecfdf5'
@@ -109,6 +51,7 @@ export default function ShareCard({ result, cardRef, affiliateCode, aspectRatio 
   
   const size = dimensions[aspectRatio] || dimensions['1:1'];
   const scale = size.fontSize;
+  const reportUrl = `isthis.io${affiliateCode ? `?ref=${affiliateCode}` : ''}`;
   
   return (
     <div 
