@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Gift, Send, Inbox, Shield, ArrowLeft } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -9,7 +9,18 @@ import ReceivedGiftsList from '@/components/gifts/ReceivedGiftsList';
 import BottomNav from '@/components/mobile/BottomNav';
 
 export default function MyGifts() {
-  const [activeTab, setActiveTab] = useState('sent'); // sent, received
+  const [highlightId, setHighlightId] = useState(null);
+  const [activeTab, setActiveTab] = useState('sent');
+
+  // Check for highlight parameter
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const highlight = params.get('highlight');
+    if (highlight) {
+      setHighlightId(highlight);
+      setActiveTab('sent');
+    }
+  }, []); // sent, received
   const [currentUser, setCurrentUser] = React.useState(null);
 
   React.useEffect(() => {
