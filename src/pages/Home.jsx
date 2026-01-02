@@ -2013,12 +2013,39 @@ SECTION 4: ADVANCED FORENSIC TECHNIQUES (Subtle Manipulation Detection):
    - Gravity-defying hair/clothing (78-88% confidence)
    - Material properties violations (matte surface with specular highlight) (80-87% confidence)
 
-STEP 5. HYBRID CONTENT DETECTION:
-   - Identify areas that appear camera-native vs AI-generated
-   - Look for seams between real and synthetic content
-   - Detect AI inpainting (filling in areas with generated content)
-   - Check for AI upscaling (neural network super-resolution)
-   - Analyze noise patterns: camera sensor noise vs AI noise
+STEP 5. HYBRID CONTENT DETECTION (HIGHEST PRIORITY FOR COMPOSITES):
+   
+   CRITICAL: You are analyzing ${patchUrls.length} patches from different regions. This enables REGIONAL analysis.
+   
+   HYBRID CONTENT SIGNATURES:
+   - Patch Inconsistency: If SOME patches vote "likely_ai" and OTHERS vote "likely_real" = STRONG hybrid indicator
+   - Noise Pattern Divergence: Camera sensor noise in background patches, AI smoothness in subject patches
+   - Quality Bifurcation: High-res AI object on normal-res camera background (or vice versa)
+   - Edge Detection: Patches containing object boundaries show compositing artifacts
+   - Lighting Segregation: Different regions lit by incompatible light sources
+   
+   REGIONAL ANALYSIS REQUIREMENTS:
+   For each patch, explicitly state:
+   1. Region content (e.g., "center subject", "background left", "edge region")
+   2. Origin verdict for THIS patch: camera_native, traditionally_edited, ai_generated, or hybrid
+   3. Key evidence for patch-specific verdict
+   4. Inconsistencies with OTHER patches
+   
+   COMPOSITING DETECTION CHECKLIST:
+   - Boundary Analysis: Do patches near object edges show selection/masking artifacts?
+   - Cross-Patch Consistency: Do all patches share same noise signature? (NO = compositing likely)
+   - Shadow Verification: Does AI object have correct shadow in background patches?
+   - Reflection Check: Is AI object visible in reflective surfaces shown in other patches?
+   - Depth Coherence: Does blur/focus match across all patches?
+   
+   HYBRID VERDICT TRIGGERS:
+   - 3+ patches AI + 5+ patches camera-native = "hybrid" classification
+   - Localized AI artifacts (e.g., only in subject, not background) = "hybrid"
+   - Edge patches show compositing seams = "hybrid"
+   - Physics violations in one region but not others = "hybrid"
+   
+   OUTPUT REQUIREMENT: 
+   In your patch_votes, explicitly flag patches that appear to contain AI-inserted elements within real photos.
 
 STEP 6. CRITICAL DECISION FRAMEWORK:
 
