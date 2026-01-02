@@ -233,7 +233,7 @@ export default function Learn() {
             )}
 
             {/* Original Guide & Quiz */}
-            {activeTab === 'guide' && selectedModule.content?.steps && (
+            {activeTab === 'guide' && selectedModule.content?.steps && selectedModule.content.steps.length > 0 && (
               <motion.div
                 key="guide"
                 initial={{ opacity: 0 }}
@@ -241,7 +241,7 @@ export default function Learn() {
                 exit={{ opacity: 0 }}
               >
                 <InteractiveGuide
-                  steps={selectedModule.content.steps}
+                  steps={selectedModule.content.steps.filter(step => step && step.title)}
                   onComplete={handleGuideComplete}
                 />
               </motion.div>
