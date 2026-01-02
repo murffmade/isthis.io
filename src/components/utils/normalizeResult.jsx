@@ -30,11 +30,13 @@ export function normalizeResult(rawResult) {
     metaConfidence = 'HIGH';
   }
 
-  // Special handling for "likely_ai" vs "likely_real"
+  // Special handling for "likely_ai" vs "likely_real" vs "hybrid"
   if (rawResult.result === 'likely_ai') {
     baseScore = Math.max(baseScore, 60); // AI results should be >50%
   } else if (rawResult.result === 'likely_real') {
     baseScore = Math.min(baseScore, 40); // Real results should be <50%
+  } else if (rawResult.result === 'hybrid') {
+    baseScore = clamp(baseScore, 50, 75); // Hybrid: medium-high range
   }
 
   const likelihood_min = clamp(baseScore - bandWidth);
@@ -63,7 +65,8 @@ export function deriveRiskLevel(min, max) {
   
   if (max < 40) return 'LOW';
   if (min > 70) return 'HIGH';
-  if (midpoint >= 40 && midpoint <= 70) return 'MEDIUM';
+  if (midpoint >= 50 && midpoint <= 70) return 'MEDIUM-HIGH'; // Hybrid range
+  if (midpoint >= 40 && midpoint < 50) return 'MEDIUM';
   
   // Edge cases
   if (min < 40 && max > 40) return 'MEDIUM';
@@ -146,6 +149,8 @@ export function getRiskColor(riskLevel) {
       return 'text-emerald-600 bg-emerald-50 border-emerald-200';
     case 'MEDIUM':
       return 'text-amber-600 bg-amber-50 border-amber-200';
+    case 'MEDIUM-HIGH':
+      return 'text-orange-600 bg-orange-50 border-orange-200';
     case 'HIGH':
       return 'text-red-600 bg-red-50 border-red-200';
     default:
