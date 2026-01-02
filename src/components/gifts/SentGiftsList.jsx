@@ -26,8 +26,15 @@ const getGiftStatus = (gift) => {
   }
 };
 
-export default function SentGiftsList({ gifts, loading }) {
+export default function SentGiftsList({ gifts, loading, highlightId }) {
   const queryClient = useQueryClient();
+  const highlightRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (highlightId && highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [highlightId]);
 
   const extendExpirationMutation = useMutation({
     mutationFn: async (giftId) => {
@@ -102,14 +109,18 @@ export default function SentGiftsList({ gifts, loading }) {
       {gifts.map((gift, index) => {
         const statusInfo = getGiftStatus(gift);
         const StatusIcon = statusInfo.icon;
+        const isHighlighted = gift.id === highlightId;
         
         return (
           <motion.div
             key={gift.id}
+            ref={isHighlighted ? highlightRef : null}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-shadow"
+            className={`bg-white rounded-2xl border p-6 hover:shadow-lg transition-all ${
+              isHighlighted ? 'ring-2 ring-blue-500 shadow-xl border-blue-300' : 'border-slate-200'
+            }`}
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">

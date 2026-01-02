@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown, ToggleLeft, ToggleRight, BarChart3, FileText, TrendingUp, MessageSquare, Zap, BookOpen, ExternalLink, DollarSign, Activity, ChevronRight, Megaphone } from 'lucide-react';
+import { Shield, Users, CreditCard, Settings, Search, Check, X, Crown, ToggleLeft, ToggleRight, BarChart3, FileText, TrendingUp, MessageSquare, Zap, BookOpen, ExternalLink, DollarSign, Activity, ChevronRight, Megaphone, TicketPercent, Clock, Infinity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,6 +26,7 @@ import UserManagement from '@/components/admin/UserManagement';
 import SubscriptionOverview from '@/components/admin/SubscriptionOverview';
 import MetricsDashboard from '@/components/admin/MetricsDashboard';
 import ModerationReview from '@/components/admin/ModerationReview';
+import PromoCodesAdmin from '@/components/admin/PromoCodesAdmin';
 
 function AdminStats() {
   const { data: allUsers = [] } = useQuery({
@@ -397,6 +398,7 @@ export default function Admin() {
                 { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
                 { id: 'users', label: 'Users', icon: Users },
                 { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
+                { id: 'promos', label: 'Promo Codes', icon: TicketPercent },
                 { id: 'overview', label: 'Settings', icon: Settings },
                 { id: 'analytics', label: 'Analytics', icon: TrendingUp },
                 { id: 'moderation', label: 'Content Moderation', icon: Shield },
@@ -435,6 +437,8 @@ export default function Admin() {
         {activeTab === 'users' && <UserManagement />}
         
         {activeTab === 'subscriptions' && <SubscriptionOverview />}
+        
+        {activeTab === 'promos' && <PromoCodesAdmin />}
         
         {activeTab === 'overview' && (
           <div className="space-y-8">

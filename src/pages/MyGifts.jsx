@@ -118,7 +118,7 @@ export default function MyGifts() {
           transition={{ duration: 0.3 }}
         >
           {activeTab === 'sent' ? (
-            <SentGiftsList gifts={sentGifts} loading={loadingSent} />
+            <SentGiftsList gifts={sentGifts} loading={loadingSent} highlightId={highlightId} />
           ) : (
             <ReceivedGiftsList gifts={receivedGifts} loading={loadingReceived} />
           )}

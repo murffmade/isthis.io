@@ -16,6 +16,7 @@ import ProfileSettings from '@/components/account/ProfileSettings';
 import CommunicationSettings from '@/components/account/CommunicationSettings';
 import RecentActivity from '@/components/account/RecentActivity';
 import PrivacySettings from '@/components/account/PrivacySettings';
+import PromoCodeRedemptionCard from '@/components/account/PromoCodeRedemptionCard';
 
 const planConfig = {
   free: {
@@ -243,6 +244,9 @@ export default function AccountPage() {
 
         {activeTab === 'overview' && (
           <div className="space-y-8">
+
+        {/* Promo Code Redemption */}
+        <PromoCodeRedemptionCard />
 
         {/* Current Plan */}
         <motion.div
