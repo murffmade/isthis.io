@@ -203,7 +203,7 @@ export default function InteractiveGuide({ steps = [], onComplete }) {
           disabled={!taskCompleted && !completedSteps.includes(currentStep)}
           className="flex-1"
         >
-          {currentStep < steps.length - 1 ? (
+          {currentStep < validSteps.length - 1 ? (
             <>
               Next Step
               <ArrowRight className="w-4 h-4 ml-2" />
