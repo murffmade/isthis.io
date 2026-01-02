@@ -1473,6 +1473,54 @@ OUTPUT ONE OF: "screenshot", "photo", "digital_art", "illustration"`,
       - Selection artifacts: Jagged edges, unnatural boundaries
       - Frequency separation: Overly smooth skin
 
+      E) AI-GENERATED OBJECTS IN REAL PHOTOS (CRITICAL NEW DETECTION):
+      This is one of the MOST CHALLENGING scenarios: real camera photos with AI-generated subjects/objects composited in.
+
+      LOCALIZED AI INSERTION DETECTION:
+      - Regional Quality Mismatch: One region (e.g., rabbit, person) shows AI smoothness while background has camera sensor noise
+      - Noise Pattern Inconsistency: Different areas have incompatible noise signatures (AI has no sensor noise, cameras always do)
+      - Edge Artifact Analysis: Look for "cutout" edges, selection halos, or unnatural boundaries around specific subjects
+      - Compositing Seams: Visible blend lines where AI object meets real background
+      - Generative Fill Signatures: Diffusion model artifacts ONLY around specific objects
+      
+      PHYSICS & LIGHTING ANALYSIS PER REGION:
+      - Shadow Direction Mismatch: AI object's shadow doesn't match scene lighting direction
+      - Shadow Quality Difference: AI shadow is too soft/hard compared to real shadows in scene
+      - Missing Shadows: AI object casts no shadow when other objects in scene do
+      - Reflection Inconsistency: AI object missing from reflections (mirrors, windows, floors, water)
+      - Lighting Temperature: AI object lit with different color temperature than environment
+      - Specular Highlights: AI object highlights don't match real light sources in scene
+      - Occlusion Errors: AI object doesn't properly interact with real objects (floating, clipping through)
+      - Depth Inconsistency: AI object focus/blur doesn't match camera's depth of field
+      
+      TEXTURE & DETAIL FORENSICS:
+      - AI Perfection vs Real Imperfection: AI-added subject is too perfect (no skin pores, no fur texture variation) while real background shows natural imperfections
+      - Resolution Mismatch: AI object is higher/lower resolution than camera-native content
+      - Compression Artifact Mismatch: AI areas have different JPEG compression patterns
+      - Micro-detail Comparison: Zoom into edges - AI has characteristic smoothing, real has sensor noise
+      
+      PATCH-LEVEL HYBRID DETECTION (CRITICAL):
+      When analyzing the ${patchUrls.length} patches:
+      - Compare noise signatures BETWEEN patches - inconsistency = compositing
+      - Identify which patches contain primarily AI content vs camera content
+      - Look for patches that cross AI/real boundaries (will show edge artifacts)
+      - Flag if center patches show AI while edge patches show camera authenticity
+      - Analyze if SOME patches have AI signatures while OTHERS have camera signatures
+      
+      SPECIFIC REGIONAL ANALYSIS INSTRUCTIONS:
+      For EACH patch, answer:
+      1. Does THIS specific region show AI generation characteristics?
+      2. Does THIS specific region show camera sensor noise?
+      3. Are there visible boundaries/seams in this patch?
+      4. Does this region's lighting match neighboring regions?
+      5. Is this region's detail level consistent with the whole image?
+      
+      VERDICT RULES FOR HYBRID CONTENT:
+      - If 40%+ patches are AI but 60%+ patches are camera-native = CLASSIFY AS "hybrid" with confidence 75-90%
+      - If AI artifacts are LOCALIZED to specific subjects/objects = LIKELY compositing
+      - If background has EXIF+camera noise but foreground subject has AI smoothness = HIGH confidence hybrid
+      - Report WHICH regions appear AI-generated and WHICH appear authentic
+      
       FORENSICS: ${forensicsData ? JSON.stringify(forensicsData) : 'N/A'}
 
       SCORING RULES FOR PHOTOS:
