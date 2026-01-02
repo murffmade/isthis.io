@@ -42,7 +42,7 @@ export default function AIHistory() {
   const { data: history = [], isLoading } = useQuery({
     queryKey: ['aiAnalysisHistory'],
     queryFn: () => base44.entities.AIAnalysisHistory.list('-created_date', 100),
-    enabled: isPremium
+    enabled: !!currentUser && isPremium
   });
 
   const filteredHistory = history.filter(item => {
