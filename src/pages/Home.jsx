@@ -2201,6 +2201,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                 type: "object",
                 properties: {
                   patch_id: { type: "string" },
+                  patch_region: { type: "string", description: "Description of what this patch contains (e.g., 'center subject', 'background', 'left edge')" },
                   origin_classification: { 
                     type: "string",
                     enum: ["camera_native", "traditionally_edited", "ai_generated", "hybrid"]
@@ -2209,6 +2210,8 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   confidence: { type: "number" },
                   reasoning: { type: "string" },
                   detected_editing_type: { type: "string" },
+                  contains_ai_insertion: { type: "boolean", description: "True if this patch contains an AI-generated object within a real photo" },
+                  noise_signature: { type: "string", enum: ["camera_sensor_noise", "ai_smooth", "mixed", "unknown"] },
                   signals: {
                     type: "array",
                     items: {
@@ -2223,6 +2226,33 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   }
                 }
               }
+            },
+            regional_inconsistencies: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  inconsistency_type: { type: "string", enum: ["noise_pattern", "lighting", "shadow", "resolution", "compression", "physics"] },
+                  affected_regions: { type: "array", items: { type: "string" } },
+                  description: { type: "string" },
+                  severity: { type: "string", enum: ["low", "medium", "high"] },
+                  compositing_likelihood: { type: "number" }
+                }
+              },
+              description: "Inconsistencies between different regions suggesting compositing"
+            },
+            ai_inserted_elements: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  element_description: { type: "string" },
+                  location: { type: "string" },
+                  ai_confidence: { type: "number" },
+                  evidence: { type: "array", items: { type: "string" } }
+                }
+              },
+              description: "Specific AI-generated elements detected within the photo"
             },
             overall_assessment: { type: "string" },
             key_findings: {
