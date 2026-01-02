@@ -123,29 +123,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 px-6 bg-slate-900">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-12 text-center">
-            {[
-              { number: '100K+', label: 'Verifications Completed' },
-              { number: '95%', label: 'Accuracy Rate' },
-              { number: '24/7', label: 'Always Available' }
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div className="text-5xl font-bold text-white mb-2">{stat.number}</div>
-                <div className="text-slate-400">{stat.label}</div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <BottomNav />
     </div>
   );
