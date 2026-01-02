@@ -4,14 +4,25 @@ import { CheckCircle2, ArrowRight, ArrowLeft, Upload, Lightbulb } from 'lucide-r
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-export default function InteractiveGuide({ steps, onComplete }) {
+export default function InteractiveGuide({ steps = [], onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
   const [taskCompleted, setTaskCompleted] = useState(false);
   const [userInput, setUserInput] = useState('');
 
-  const step = steps[currentStep];
-  const progress = ((completedSteps.length) / steps.length) * 100;
+  // Filter out invalid steps
+  const validSteps = steps.filter(step => step && step.title && step.content);
+  const step = validSteps[currentStep];
+  const progress = ((completedSteps.length) / validSteps.length) * 100;
+  
+  // Handle case where no valid steps exist
+  if (validSteps.length === 0) {
+    return (
+      <div className="max-w-3xl mx-auto text-center p-12">
+        <p className="text-slate-600">No content available for this module yet.</p>
+      </div>
+    );
+  }
 
   const handleTaskComplete = () => {
     if (!completedSteps.includes(currentStep)) {
