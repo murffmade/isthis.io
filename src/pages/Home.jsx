@@ -2475,9 +2475,18 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
-                      <Video className="w-5 h-5" />
-                      Video
+                    {(() => {
+                    const isAdmin = currentUser?.role === 'admin';
+                    const isPremium = userSubscription && (userSubscription.plan === 'annual' || userSubscription.plan === 'lifetime');
+                    const hasAccess = isAdmin || isPremium;
+                    return (
+                    <>
+                      <Video className={`w-5 h-5 ${!hasAccess ? 'opacity-50' : ''}`} />
+                      <span className={!hasAccess ? 'opacity-50' : ''}>Video</span>
                       <span className="ml-2 text-xs opacity-50">Beta</span>
+                    </>
+                    );
+                    })()}
                     </button>
                   </div>
 
