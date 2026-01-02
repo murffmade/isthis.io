@@ -33,7 +33,7 @@ export default function InteractiveGuide({ steps = [], onComplete }) {
   };
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
+    if (currentStep < validSteps.length - 1) {
       setCurrentStep(currentStep + 1);
       setTaskCompleted(false);
       setUserInput('');
