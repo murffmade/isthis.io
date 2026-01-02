@@ -42,6 +42,7 @@ export default function Home() {
   const [imageClassification, setImageClassification] = useState(null);
   const [userConfirmedType, setUserConfirmedType] = useState(false);
   const [selectedTab, setSelectedTab] = useState('image'); // 'image' or 'video'
+  const [highlightUpload, setHighlightUpload] = useState(false);
 
   // Fetch current user
   const { data: currentUser } = useQuery({
@@ -2554,7 +2555,14 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                   {/* Tab Selector */}
                   <div className="flex gap-3 mb-6">
                     <button
-                      onClick={() => setSelectedTab('image')}
+                      onClick={() => {
+                        if (selectedTab === 'image') {
+                          setHighlightUpload(true);
+                          setTimeout(() => setHighlightUpload(false), 2000);
+                        } else {
+                          setSelectedTab('image');
+                        }
+                      }}
                       className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
                         selectedTab === 'image'
                           ? 'bg-[#3498DB] text-white shadow-lg'
@@ -2606,7 +2614,11 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     />
                     <label 
                       htmlFor="file-upload"
-                      className={`block border-2 border-dashed border-[#BDC3C7] rounded-2xl p-10 sm:p-14 text-center transition-all bg-slate-50 ${
+                      className={`block border-2 border-dashed rounded-2xl p-10 sm:p-14 text-center transition-all ${
+                        highlightUpload 
+                          ? 'border-[#3498DB] bg-blue-50 animate-pulse shadow-lg shadow-[#3498DB]/30' 
+                          : 'border-[#BDC3C7] bg-slate-50'
+                      } ${
                         uploading ? 'cursor-wait opacity-75' : 'cursor-pointer active:scale-[0.99] hover:border-[#3498DB] hover:bg-slate-100'
                       }`}
                     >
