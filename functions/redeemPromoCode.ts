@@ -194,6 +194,42 @@ Deno.serve(async (req) => {
       notes: `Redeemed by ${user.email}`
     });
 
+    // Update affiliate partner earnings if applicable
+    if (promoCode.affiliate_partner_id) {
+      try {
+        const affiliates = await base44.asServiceRole.entities.AffiliatePartner.filter({ 
+          id: promoCode.affiliate_partner_id 
+        });
+        
+        if (affiliates.length > 0) {
+          const affiliate = affiliates[0];
+          const commissionRate = affiliate.commission_rate || 30;
+          
+          // Calculate commission based on plan value
+          let conversionValue = 0;
+          if (appliedBenefits.subscription) {
+            if (appliedBenefits.subscription.plan === 'annual') {
+              conversionValue = 29;
+            } else if (appliedBenefits.subscription.plan === 'lifetime') {
+              conversionValue = 99;
+            }
+          }
+          
+          const commission = (conversionValue * commissionRate) / 100;
+          
+          // Update affiliate stats
+          await base44.asServiceRole.entities.AffiliatePartner.update(affiliate.id, {
+            total_conversions: (affiliate.total_conversions || 0) + 1,
+            total_earnings: (affiliate.total_earnings || 0) + commission,
+            pending_payout: (affiliate.pending_payout || 0) + commission
+          });
+        }
+      } catch (error) {
+        console.error('Failed to update affiliate earnings:', error);
+        // Don't fail the redemption if affiliate update fails
+      }
+    }
+
     return Response.json({
       success: true,
       message: 'Promo code applied successfully!',
