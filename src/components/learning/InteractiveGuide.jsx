@@ -130,8 +130,8 @@ export default function InteractiveGuide({ steps = [], onComplete }) {
       {/* Progress */}
       <div className="mb-8">
         <div className="flex justify-between text-sm text-slate-600 mb-2">
-          <span>Step {currentStep + 1} of {steps.length}</span>
-          <span>{completedSteps.length}/{steps.length} completed</span>
+          <span>Step {currentStep + 1} of {validSteps.length}</span>
+          <span>{completedSteps.length}/{validSteps.length} completed</span>
         </div>
         <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
           <motion.div
