@@ -196,7 +196,9 @@ export default function ResultCard({ result, onTakeAction, onStartOver }) {
   // Normalize result to likelihood range format
   const normalizedResult = normalizeResult(result);
   
-  const config = resultConfig[result.result] || resultConfig.uncertain;
+  // Use 'hybrid' config if hybrid is detected, otherwise use original result
+  const displayResultType = normalizedResult.isHybrid ? 'hybrid' : result.result;
+  const config = resultConfig[displayResultType] || resultConfig.uncertain;
   const Icon = config.icon;
   const showActionButton = result.result === 'likely_ai' && result.claims_to_be_real;
 
