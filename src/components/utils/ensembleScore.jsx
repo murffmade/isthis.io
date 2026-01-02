@@ -13,9 +13,12 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
   
   const totalVotes = patchVotes.length;
   
-  // Detect hybrid content: patches voting differently
+  // Calculate voting ratios
   const aiRatio = aiVotes / totalVotes;
   const realRatio = realVotes / totalVotes;
+  const uncertainRatio = uncertainVotes / totalVotes;
+  
+  // Detect hybrid content: patches voting differently
   const isHybrid = (aiVotes >= 2 && realVotes >= 2) || // Mixed votes
                    patchVotes.some(p => p.contains_ai_insertion) || // Explicit AI insertion flag
                    patchVotes.some(p => p.origin_classification === 'hybrid'); // Patch marked as hybrid
@@ -36,11 +39,6 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
     
     return sum + patchConfidence;
   }, 0) / totalVotes;
-  
-  // Calculate voting strength
-  const aiRatio = aiVotes / totalVotes;
-  const realRatio = realVotes / totalVotes;
-  const uncertainRatio = uncertainVotes / totalVotes;
   
   // Decisive scoring: reward strong consensus
   let score;
