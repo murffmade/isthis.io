@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { DollarSign, Link as LinkIcon, Copy, Users, TrendingUp, CheckCircle2, ExternalLink, BarChart3, Calendar, Mail } from 'lucide-react';
+import { DollarSign, Link as LinkIcon, Copy, Users, TrendingUp, CheckCircle2, ExternalLink, BarChart3, Calendar, Mail, TicketPercent } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import PromoRedemptionStats from '@/components/admin/PromoRedemptionStats';
 
 export default function AffiliateDashboard() {
+  const [activeTab, setActiveTab] = useState('overview');
   const [companyName, setCompanyName] = useState('');
   const [website, setWebsite] = useState('');
   const [paymentEmail, setPaymentEmail] = useState('');
@@ -193,6 +195,38 @@ export default function AffiliateDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-12">
+        {/* Tabs */}
+        <div className="mb-8 border-b border-slate-200">
+          <div className="flex gap-2">
+            {[
+              { id: 'overview', label: 'Overview', icon: BarChart3 },
+              { id: 'promos', label: 'Promo Codes', icon: TicketPercent }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 ${
+                    activeTab === tab.id
+                      ? 'border-indigo-600 text-indigo-600'
+                      : 'border-transparent text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {activeTab === 'promos' && (
+          <PromoRedemptionStats affiliateId={affiliate.id} />
+        )}
+
+        {activeTab === 'overview' && (
+          <>
         {/* Stats */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           <motion.div
@@ -444,6 +478,8 @@ export default function AffiliateDashboard() {
             </div>
           )}
         </motion.div>
+          </>
+        )}
       </main>
     </div>
   );
