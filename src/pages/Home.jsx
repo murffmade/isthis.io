@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, Upload, Link as LinkIcon, CheckCircle2, AlertTriangle, HelpCircle, ArrowRight, Zap, LogIn, Image as ImageIcon, Video } from 'lucide-react';
+import { Shield, Sparkles, Upload, Link as LinkIcon, CheckCircle2, AlertTriangle, HelpCircle, ArrowRight, Zap, LogIn, Image as ImageIcon, Video, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -2711,10 +2711,8 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                                 }`}
                               >
                                 {isAiPick && (
-                                  <span className={`absolute -top-2 -right-2 px-2 py-0.5 rounded-full text-xs font-bold ${
-                                    isSelected ? 'bg-emerald-500 text-white' : 'bg-blue-600 text-white'
-                                  }`}>
-                                    AI
+                                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shadow-md">
+                                    <Check className="w-4 h-4 text-white" />
                                   </span>
                                 )}
                                 {option.label}
