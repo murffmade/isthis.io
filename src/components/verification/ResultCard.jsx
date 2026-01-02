@@ -31,6 +31,14 @@ const resultConfig = {
     borderColor: 'border-amber-200',
     description: 'This content shows signs of being created or modified by AI.'
   },
+  hybrid: {
+    icon: AlertTriangle,
+    title: 'Hybrid Image - Likely Real Photo with A.I. Elements or Enhancements',
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-50',
+    borderColor: 'border-orange-200',
+    description: 'This appears to be a real photograph with AI-generated objects, subjects, or enhancements added.'
+  },
   likely_deepfake: {
     icon: AlertTriangle,
     title: 'Likely Deepfake',

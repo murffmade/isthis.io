@@ -4,7 +4,7 @@
 
 export function deriveLlmScoreFromPatchVotes(patchVotes) {
   if (!patchVotes || patchVotes.length === 0) {
-    return { score: 50, confidence: 20 };
+    return { score: 50, confidence: 20, isHybrid: false };
   }
 
   const aiVotes = patchVotes.filter(p => p.vote === 'likely_ai').length;
@@ -12,6 +12,13 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
   const uncertainVotes = patchVotes.filter(p => p.vote === 'uncertain').length;
   
   const totalVotes = patchVotes.length;
+  
+  // Detect hybrid content: patches voting differently
+  const aiRatio = aiVotes / totalVotes;
+  const realRatio = realVotes / totalVotes;
+  const isHybrid = (aiVotes >= 2 && realVotes >= 2) || // Mixed votes
+                   patchVotes.some(p => p.contains_ai_insertion) || // Explicit AI insertion flag
+                   patchVotes.some(p => p.origin_classification === 'hybrid'); // Patch marked as hybrid
   
   // Enhanced: Weight confidence by per-signal detection_confidence if available
   const avgConfidence = patchVotes.reduce((sum, p) => {
@@ -69,7 +76,10 @@ export function deriveLlmScoreFromPatchVotes(patchVotes) {
   return { 
     score: Math.round(score), 
     confidence: Math.round(confidence),
-    votingStrength: Math.abs(realRatio - aiRatio)
+    votingStrength: Math.abs(realRatio - aiRatio),
+    isHybrid: isHybrid,
+    aiVotes: aiVotes,
+    realVotes: realVotes
   };
 }
 
@@ -156,11 +166,20 @@ export function ensembleDecision({ llm, forensics, provenance, editingIndicators
   
   const finalScore = Math.round(weightedScore / totalWeight);
 
+  // Detect hybrid content first
+  const isHybrid = llm.isHybrid || false;
+  
   // Stricter thresholds - be more decisive
   let result;
   let confidence;
 
-  if (finalScore >= 58) {
+  // Check for hybrid classification
+  if (isHybrid && (llm.aiVotes >= 2 && llm.realVotes >= 2)) {
+    // Hybrid content detected
+    result = 'hybrid';
+    const hybridConfidence = 60 + (Math.min(llm.aiVotes, llm.realVotes) * 5);
+    confidence = Math.min(90, hybridConfidence * confidenceBoost);
+  } else if (finalScore >= 58) {
     // Likely AI
     result = 'likely_ai';
     const baseConfidence = 40 + (finalScore - 58) * 2.0;
