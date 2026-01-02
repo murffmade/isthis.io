@@ -594,6 +594,107 @@ Return scores for each category (0-100, where 100 = definitely inappropriate).`,
         </div>
       )}
 
+      {/* AI-Inserted Elements Display */}
+      {result.ai_inserted_elements && result.ai_inserted_elements.length > 0 && (
+        <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl border-2 border-orange-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-4 text-lg flex items-center gap-2">
+            <span>🔀</span> AI Elements Detected in Real Photo
+          </h3>
+          
+          <div className="space-y-3">
+            {result.ai_inserted_elements.map((element, idx) => (
+              <div key={idx} className="p-4 bg-white rounded-xl border-2 border-orange-300">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <div className="font-bold text-slate-900 mb-1">{element.element_description}</div>
+                    <div className="text-sm text-slate-600">📍 Location: {element.location}</div>
+                  </div>
+                  <div className="px-3 py-1 bg-orange-100 text-orange-800 font-bold text-sm rounded-full">
+                    {element.ai_confidence}% AI
+                  </div>
+                </div>
+                
+                {element.evidence && element.evidence.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-orange-200">
+                    <div className="text-xs font-semibold text-slate-700 mb-2">Evidence of AI insertion:</div>
+                    <ul className="space-y-1">
+                      {element.evidence.map((ev, i) => (
+                        <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
+                          <span className="text-orange-600 mt-0.5">•</span>
+                          <span>{ev}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-4 p-4 bg-orange-100 border border-orange-300 rounded-lg">
+            <p className="text-sm text-orange-900 font-semibold mb-2">
+              🎯 What This Means:
+            </p>
+            <p className="text-sm text-orange-800">
+              This image appears to be a genuine photograph taken with a camera, but specific objects or elements 
+              have been added using AI generation tools. The background and overall scene show authentic camera 
+              characteristics, while the identified elements display AI generation patterns.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Regional Inconsistencies */}
+      {result.regional_inconsistencies && result.regional_inconsistencies.length > 0 && (
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-4 text-lg flex items-center gap-2">
+            <span>⚠️</span> Regional Inconsistencies Detected
+          </h3>
+          
+          <div className="space-y-3">
+            {result.regional_inconsistencies.map((inconsistency, idx) => (
+              <div key={idx} className="p-4 bg-white rounded-xl border border-purple-200">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="font-semibold text-slate-900">{inconsistency.inconsistency_type.replace(/_/g, ' ').toUpperCase()}</div>
+                  <span className={`px-2 py-1 rounded text-xs font-bold ${
+                    inconsistency.severity === 'high' ? 'bg-red-100 text-red-700' :
+                    inconsistency.severity === 'medium' ? 'bg-amber-100 text-amber-700' :
+                    'bg-slate-100 text-slate-600'
+                  }`}>
+                    {inconsistency.severity.toUpperCase()}
+                  </span>
+                </div>
+                
+                <p className="text-sm text-slate-700 mb-2">{inconsistency.description}</p>
+                
+                {inconsistency.affected_regions && inconsistency.affected_regions.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {inconsistency.affected_regions.map((region, i) => (
+                      <span key={i} className="px-2 py-0.5 bg-purple-100 text-purple-800 text-xs rounded">
+                        {region}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                
+                <div className="mt-3 pt-3 border-t border-purple-100">
+                  <div className="text-xs text-slate-600">
+                    Compositing Likelihood: <span className="font-bold text-purple-700">{inconsistency.compositing_likelihood}%</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-4 p-3 bg-purple-100 border border-purple-300 rounded-lg">
+            <p className="text-xs text-purple-900">
+              <strong>Note:</strong> These inconsistencies between different regions suggest that parts of the image 
+              may have been generated separately and combined together, indicating compositing or AI insertion.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Advanced Detection Results */}
       {result.content_origin_confidence && (
         <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
