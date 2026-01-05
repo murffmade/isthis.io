@@ -75,16 +75,16 @@ Deno.serve(async (req) => {
       customer_email: user.email,
       payment_method_types: ['card'],
       line_items: [{
-        price: plan.stripe_price_id, // Server-trusted Stripe Price ID
+        price: plan.stripe_price_id, // Server-trusted Stripe Price ID from database
         quantity: 1,
       }],
-      mode: plan.mode, // 'payment' or 'subscription'
+      mode: plan.mode, // 'payment' or 'subscription' from database
       success_url: `${appUrl}/PaymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/pricing`,
       metadata: {
         user_email: user.email,
         user_id: user.id,
-        plan_key: plan_key,
+        plan_key: plan.plan_key,
         intent_id: intent.id
       }
     });
