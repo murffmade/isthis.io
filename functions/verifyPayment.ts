@@ -3,70 +3,73 @@ import Stripe from 'npm:stripe@14.0.0';
 
 Deno.serve(async (req) => {
   try {
+    const base44 = createClientFromRequest(req);
+    
     const { session_id } = await req.json();
     
     if (!session_id) {
       return Response.json({
         success: false,
-        error: 'session_id is required'
+        error: 'session_id required'
       }, { status: 400 });
     }
 
-    if (!Deno.env.get('STRIPE_SECRET_KEY')) {
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) {
       return Response.json({
         success: false,
         error: 'Payment system not configured'
       }, { status: 500 });
     }
 
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+    const stripe = new Stripe(stripeKey);
     
     // Retrieve session from Stripe
     const session = await stripe.checkout.sessions.retrieve(session_id);
     
-    const paid = session.payment_status === 'paid';
-    const user_email = session.metadata?.user_email;
-    const plan_key = session.metadata?.plan_key;
+    console.log('Verifying session:', {
+      session_id,
+      payment_status: session.payment_status,
+      customer_email: session.customer_email
+    });
     
-    if (!paid) {
+    if (session.payment_status !== 'paid') {
       return Response.json({
-        success: true,
+        success: false,
         paid: false,
-        status: 'unpaid'
+        error: 'Payment not completed'
       });
     }
     
     // Check if entitlement exists and is active
-    let entitlementStatus = 'pending';
-    if (user_email) {
-      // Create service role client for database access
-      const { createClient } = await import('npm:@base44/sdk@0.8.6');
-      const base44 = createClient({
-        appId: Deno.env.get('BASE44_APP_ID'),
-        serviceRoleKey: Deno.env.get('BASE44_SERVICE_ROLE_KEY')
+    const entitlements = await base44.asServiceRole.entities.UserEntitlement.filter({
+      user_email: session.customer_email
+    });
+    
+    if (entitlements.length > 0 && entitlements[0].status === 'active') {
+      return Response.json({
+        success: true,
+        paid: true,
+        status: 'active',
+        entitlement: {
+          plan_key: entitlements[0].plan_key,
+          started_at: entitlements[0].started_at
+        }
       });
-      
-      const entitlements = await base44.entities.UserEntitlement.filter({
-        user_email: user_email
-      });
-      
-      if (entitlements.length > 0 && entitlements[0].status === 'active') {
-        entitlementStatus = 'active';
-      }
     }
     
+    // Payment confirmed but entitlement not yet active
     return Response.json({
       success: true,
       paid: true,
-      status: entitlementStatus,
-      plan_key: plan_key,
-      user_email: user_email
+      status: 'pending',
+      message: 'Payment confirmed, activating subscription...'
     });
   } catch (error) {
-    console.error('verifyPayment error:', error);
+    console.error('Payment verification error:', error);
     return Response.json({
       success: false,
-      error: error.message || 'Failed to verify payment'
+      error: error.message
     }, { status: 500 });
   }
 });

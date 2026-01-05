@@ -5,7 +5,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
-    // REQUIRED: User must be authenticated
+    // Authenticate user
     const user = await base44.auth.me();
     if (!user) {
       return Response.json({ 
@@ -23,13 +23,24 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
 
-    // Fetch plan from database
+    // Verify Stripe configuration
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) {
+      console.error('STRIPE_SECRET_KEY not configured');
+      return Response.json({
+        success: false,
+        error: 'Payment system not configured'
+      }, { status: 500 });
+    }
+
+    // Fetch active plan from database
     const plans = await base44.asServiceRole.entities.PlanConfig.filter({
       plan_key: plan_key,
       active: true
     });
 
     if (plans.length === 0) {
+      console.error('Plan not found:', plan_key);
       return Response.json({
         success: false,
         error: 'Invalid or inactive plan'
@@ -39,46 +50,39 @@ Deno.serve(async (req) => {
     const plan = plans[0];
     
     if (!plan.stripe_price_id) {
+      console.error('Plan missing stripe_price_id:', plan_key);
       return Response.json({
         success: false,
-        error: 'Plan not configured for Stripe'
+        error: 'Plan not configured for payments'
       }, { status: 400 });
     }
-    
-    if (!Deno.env.get('STRIPE_SECRET_KEY')) {
-      return Response.json({
-        success: false,
-        error: 'Payment system not configured'
-      }, { status: 500 });
-    }
 
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+    console.log('Creating checkout for plan:', {
+      plan_key: plan.plan_key,
+      stripe_price_id: plan.stripe_price_id,
+      mode: plan.mode,
+      user_email: user.email
+    });
+
+    const stripe = new Stripe(stripeKey);
     const appUrl = new URL(req.url).origin;
     
-    // Create purchase intent
+    // Create purchase intent for tracking
     const intent = await base44.asServiceRole.entities.PurchaseIntent.create({
       user_email: user.email,
-      plan_key: plan_key,
-      status: 'created'
+      plan_key: plan.plan_key,
+      status: 'initiated'
     });
     
-    // Log billing event
-    await base44.asServiceRole.entities.BillingEventLog.create({
-      user_email: user.email,
-      event_type: 'purchase_initiated',
-      message: `User initiated purchase of ${plan.display_name}`,
-      metadata: { plan_key: plan.plan_key, intent_id: intent.id }
-    });
-    
-    // Create Stripe checkout session using ONLY server-side price
+    // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       customer_email: user.email,
       payment_method_types: ['card'],
       line_items: [{
-        price: plan.stripe_price_id, // Server-trusted Stripe Price ID from database
+        price: plan.stripe_price_id,
         quantity: 1,
       }],
-      mode: plan.mode, // 'payment' or 'subscription' from database
+      mode: plan.mode,
       success_url: `${appUrl}/PaymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/pricing`,
       metadata: {
@@ -92,20 +96,21 @@ Deno.serve(async (req) => {
     // Update intent with session ID
     await base44.asServiceRole.entities.PurchaseIntent.update(intent.id, {
       stripe_session_id: session.id,
-      status: 'redirected'
+      status: 'checkout_created'
     });
+    
+    console.log('Checkout session created:', session.id);
     
     return Response.json({
       success: true,
       checkout_url: session.url,
-      session_id: session.id,
-      intent_id: intent.id
+      session_id: session.id
     });
   } catch (error) {
-    console.error('createCheckoutSession error:', error);
+    console.error('Checkout creation failed:', error);
     return Response.json({
       success: false,
-      error: error.message || 'Failed to create checkout session'
+      error: error.message || 'Failed to create checkout'
     }, { status: 500 });
   }
 });

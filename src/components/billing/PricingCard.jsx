@@ -1,45 +1,8 @@
-import React, { useState } from 'react';
-import { base44Auth } from '@/components/api/base44ClientAuth';
-import { base44Public } from '@/components/api/base44ClientPublic';
-import { toast } from 'sonner';
-import { CheckCircle2, Loader2 } from 'lucide-react';
-import { useCurrentUser } from '@/components/hooks/useCurrentUser';
+import React from 'react';
+import { CheckCircle2 } from 'lucide-react';
+import StripeCheckout from '@/components/payment/StripeCheckout';
 
 export default function PricingCard({ plan, isPopular = false }) {
-  const [loading, setLoading] = useState(false);
-  const { isAuthenticated } = useCurrentUser();
-
-  const handleSubscribe = async () => {
-    setLoading(true);
-    
-    try {
-      // Check authentication
-      if (!isAuthenticated) {
-        toast.error('Please sign in to continue');
-        const returnUrl = `/pricing?plan=${plan.plan_key}`;
-        base44Auth.auth.redirectToLogin(returnUrl);
-        return;
-      }
-
-      // Call createCheckoutSession
-      const response = await base44Auth.functions.invoke('createCheckoutSession', {
-        plan_key: plan.plan_key
-      });
-
-      if (response.data.success && response.data.checkout_url) {
-        // Redirect to Stripe Checkout
-        window.location.href = response.data.checkout_url;
-      } else {
-        toast.error(response.data.error || 'Unable to start checkout');
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      toast.error('Unable to start checkout. Please try again.');
-      setLoading(false);
-    }
-  };
-
   const priceDisplay = (plan.price_cents / 100).toFixed(2);
   const intervalLabel = {
     month: '/month',
@@ -75,20 +38,7 @@ export default function PricingCard({ plan, isPopular = false }) {
         ))}
       </ul>
       
-      <button
-        onClick={handleSubscribe}
-        disabled={loading}
-        className="w-full py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-      >
-        {loading ? (
-          <>
-            <Loader2 className="w-4 h-4 animate-spin" />
-            Processing...
-          </>
-        ) : (
-          'Get Started'
-        )}
-      </button>
+      <StripeCheckout plan={plan} />
     </div>
   );
 }

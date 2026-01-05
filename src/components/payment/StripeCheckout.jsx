@@ -3,34 +3,36 @@ import { base44Auth } from '@/components/api/base44ClientAuth';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
-export default function StripeCheckout({ plan, onSuccess, onCancel }) {
+export default function StripeCheckout({ plan, children }) {
   const [loading, setLoading] = useState(false);
 
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      // Check authentication first
+      // Check authentication
+      let user;
       try {
-        await base44Auth.auth.me();
+        user = await base44Auth.auth.me();
       } catch (authError) {
         toast.error('Please sign in to continue');
-        const currentPath = window.location.pathname;
-        base44Auth.auth.redirectToLogin(currentPath);
+        base44Auth.auth.redirectToLogin(window.location.pathname);
         return;
       }
 
-      // Use plan_key only - server will determine pricing
-      const result = await base44Auth.functions.invoke('createCheckoutSession', {
-        plan_key: plan.key
+      console.log('Starting checkout for plan:', plan.plan_key);
+
+      // Create checkout session
+      const response = await base44Auth.functions.invoke('createCheckoutSession', {
+        plan_key: plan.plan_key
       });
 
-      if (result.data.success && result.data.checkout_url) {
-        if (onSuccess) {
-          await onSuccess(plan.key);
-        }
-        window.location.href = result.data.checkout_url;
+      console.log('Checkout response:', response.data);
+
+      if (response.data.success && response.data.checkout_url) {
+        // Redirect to Stripe Checkout
+        window.location.href = response.data.checkout_url;
       } else {
-        toast.error(result.data.error || 'Unable to start checkout');
+        toast.error(response.data.error || 'Unable to start checkout');
         setLoading(false);
       }
     } catch (error) {
@@ -40,11 +42,17 @@ export default function StripeCheckout({ plan, onSuccess, onCancel }) {
     }
   };
 
+  // If children provided, use render prop pattern
+  if (children) {
+    return children({ handleCheckout, loading });
+  }
+
+  // Default button
   return (
     <button
       onClick={handleCheckout}
       disabled={loading}
-      className="w-full py-2 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      className="w-full py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
     >
       {loading ? (
         <>
@@ -52,7 +60,7 @@ export default function StripeCheckout({ plan, onSuccess, onCancel }) {
           Processing...
         </>
       ) : (
-        plan.buttonText || 'Get Started'
+        'Get Started'
       )}
     </button>
   );
