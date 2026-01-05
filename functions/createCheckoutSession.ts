@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
       user_email: user.email,
       event_type: 'purchase_initiated',
       message: `User initiated purchase of ${plan.display_name}`,
-      metadata: { plan_key, intent_id: intent.id }
+      metadata: { plan_key: plan.plan_key, intent_id: intent.id }
     });
     
     // Create Stripe checkout session using ONLY server-side price
