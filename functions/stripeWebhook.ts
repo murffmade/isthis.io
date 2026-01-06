@@ -93,9 +93,12 @@ Deno.serve(async (req) => {
           user_email: user_email,
           plan_key: plan_key,
           status: 'active',
+          is_trial: false,
           stripe_customer_id: session.customer,
           started_at: new Date().toISOString(),
-          last_payment_at: new Date().toISOString()
+          last_payment_at: new Date().toISOString(),
+          renewal_notified: false,
+          expiry_notified: false
         };
         
         // Handle subscription vs one-time payment
