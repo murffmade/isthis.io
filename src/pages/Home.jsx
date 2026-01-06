@@ -2869,8 +2869,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     </ul>
                     <div onClick={() => track('pricing_upgrade_clicked', { plan: 'monthly' })}>
                       <StripeCheckout
-                        plan={{ key: 'monthly', name: 'Basic Monthly', price: 9.99, buttonText: 'Get Basic' }}
-                        onSuccess={handlePaymentSuccess}
+                        plan={{ plan_key: 'monthly' }}
                       />
                     </div>
                   </div>
@@ -2903,8 +2902,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     </ul>
                     <div onClick={() => track('pricing_upgrade_clicked', { plan: 'annual' })}>
                       <StripeCheckout
-                        plan={{ key: 'annual', name: 'Premium Annual', price: 29, buttonText: 'Get Premium' }}
-                        onSuccess={handlePaymentSuccess}
+                        plan={{ plan_key: 'annual' }}
                       />
                     </div>
                   </div>
@@ -2963,8 +2961,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
 
                       <div onClick={() => track('pricing_upgrade_clicked', { plan: 'lifetime' })}>
                         <StripeCheckout
-                          plan={{ key: 'lifetime', name: 'Lifetime Premium', price: 99, buttonText: 'Get Lifetime Access' }}
-                          onSuccess={handlePaymentSuccess}
+                          plan={{ plan_key: 'lifetime' }}
                         />
                       </div>
                     </div>
