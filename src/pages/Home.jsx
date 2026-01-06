@@ -2488,7 +2488,7 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               <div className="p-1.5 rounded-lg hover:bg-white/60 transition-colors">
                 <HelpButton />
               </div>
-              <div className="hidden md:block ml-1">
+              <div className="ml-1">
                 {currentUser ? (
                   <ProfileDropdown onOpenSettings={() => setShowPreferences(true)} />
                 ) : (
@@ -2497,10 +2497,10 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       const { base44Auth } = require('@/components/api/base44ClientAuth');
                       base44Auth.auth.redirectToLogin(window.location.pathname);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition-colors"
+                    className="flex items-center gap-2 px-3 md:px-4 py-2 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition-colors text-sm md:text-base"
                   >
                     <LogIn className="w-4 h-4" />
-                    Sign In
+                    <span className="hidden sm:inline">Sign In</span>
                   </button>
                 )}
               </div>
