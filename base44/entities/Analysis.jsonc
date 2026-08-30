@@ -1,0 +1,128 @@
+{
+  "name": "Analysis",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "real",
+        "true",
+        "scam",
+        "safe"
+      ],
+      "description": "Analysis mode"
+    },
+    "input_type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video",
+        "url",
+        "text"
+      ],
+      "description": "Type of input provided"
+    },
+    "input_value": {
+      "type": "string",
+      "description": "URL, text, or file reference"
+    },
+    "context": {
+      "type": "string",
+      "description": "Optional context about the content"
+    },
+    "score": {
+      "type": "number",
+      "description": "Confidence/likelihood score 0-100"
+    },
+    "score_label": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High"
+      ],
+      "description": "Readable score interpretation"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short verdict summary"
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        }
+      },
+      "description": "Key signals detected"
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Actions user should take"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Sources cited (for True mode)"
+    },
+    "method_explanation": {
+      "type": "string",
+      "description": "How the analysis was conducted"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "Uploaded file URL if applicable"
+    },
+    "thumbnail_url": {
+      "type": "string",
+      "description": "Thumbnail for display"
+    }
+  },
+  "required": [
+    "mode",
+    "input_type",
+    "score",
+    "summary"
+  ]
+}

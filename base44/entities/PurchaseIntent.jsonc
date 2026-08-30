@@ -1,0 +1,35 @@
+{
+  "name": "PurchaseIntent",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User email who initiated purchase"
+    },
+    "plan_key": {
+      "type": "string",
+      "description": "Plan being purchased"
+    },
+    "stripe_session_id": {
+      "type": "string",
+      "description": "Stripe checkout session ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "created",
+        "redirected",
+        "paid",
+        "failed",
+        "canceled"
+      ],
+      "default": "created",
+      "description": "Purchase intent status"
+    }
+  },
+  "required": [
+    "user_email",
+    "plan_key",
+    "status"
+  ]
+}

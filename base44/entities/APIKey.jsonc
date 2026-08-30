@@ -1,0 +1,33 @@
+{
+  "name": "APIKey",
+  "type": "object",
+  "properties": {
+    "key_name": {
+      "type": "string",
+      "description": "Friendly name for the API key"
+    },
+    "api_key": {
+      "type": "string",
+      "description": "The actual API key (hashed)"
+    },
+    "last_used": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time this key was used"
+    },
+    "usage_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of API calls made with this key"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this key is active"
+    }
+  },
+  "required": [
+    "key_name",
+    "api_key"
+  ]
+}

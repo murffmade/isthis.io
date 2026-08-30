@@ -1,0 +1,37 @@
+{
+  "name": "UserPreferences",
+  "type": "object",
+  "properties": {
+    "last_mode": {
+      "type": "string",
+      "enum": [
+        "real",
+        "true",
+        "scam",
+        "safe"
+      ],
+      "default": "real",
+      "description": "Last used mode"
+    },
+    "risk_tolerance": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium",
+      "description": "User's risk tolerance"
+    },
+    "region": {
+      "type": "string",
+      "description": "User region for localized guidance"
+    },
+    "save_history": {
+      "type": "boolean",
+      "default": false,
+      "description": "Allow saving analysis content"
+    }
+  },
+  "required": []
+}

@@ -1,0 +1,39 @@
+{
+  "name": "AnalyticsEvent",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Anonymous session identifier"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User ID if authenticated"
+    },
+    "event_name": {
+      "type": "string",
+      "description": "Event name"
+    },
+    "page": {
+      "type": "string",
+      "description": "Page where event occurred"
+    },
+    "metadata_json": {
+      "type": "object",
+      "description": "Event metadata (privacy-respecting)"
+    },
+    "app_version": {
+      "type": "string",
+      "description": "App version"
+    },
+    "referrer": {
+      "type": "string",
+      "description": "Referrer URL"
+    }
+  },
+  "required": [
+    "session_id",
+    "event_name",
+    "page"
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "name": "CustomAIModel",
+  "type": "object",
+  "properties": {
+    "model_name": {
+      "type": "string",
+      "description": "Name of the custom model configuration"
+    },
+    "organization_id": {
+      "type": "string",
+      "description": "Organization/user this model belongs to"
+    },
+    "base_model": {
+      "type": "string",
+      "enum": [
+        "gpt-4",
+        "gpt-3.5",
+        "claude"
+      ],
+      "default": "gpt-4",
+      "description": "Base model to customize"
+    },
+    "custom_instructions": {
+      "type": "string",
+      "description": "Custom system prompt and guidelines"
+    },
+    "training_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "expected_output": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Training examples for fine-tuning"
+    },
+    "detection_priorities": {
+      "type": "object",
+      "properties": {
+        "bias_weight": {
+          "type": "number",
+          "default": 1
+        },
+        "sentiment_weight": {
+          "type": "number",
+          "default": 1
+        },
+        "moderation_weight": {
+          "type": "number",
+          "default": 1
+        }
+      },
+      "description": "Weights for different detection types"
+    },
+    "industry_focus": {
+      "type": "string",
+      "enum": [
+        "general",
+        "healthcare",
+        "finance",
+        "education",
+        "legal",
+        "media"
+      ],
+      "description": "Industry-specific customization"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this model is active"
+    },
+    "performance_metrics": {
+      "type": "object",
+      "description": "Accuracy and performance data"
+    }
+  },
+  "required": [
+    "model_name",
+    "organization_id"
+  ]
+}

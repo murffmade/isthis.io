@@ -1,0 +1,97 @@
+{
+  "name": "Article",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Article title"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly slug"
+    },
+    "outline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "level": {
+            "type": "number"
+          },
+          "order": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Structured outline of the article"
+    },
+    "body": {
+      "type": "string",
+      "description": "Full article HTML content"
+    },
+    "topic": {
+      "type": "string",
+      "description": "Article topic or category"
+    },
+    "audience_level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "default": "intermediate",
+      "description": "Target audience expertise level"
+    },
+    "tone": {
+      "type": "string",
+      "enum": [
+        "neutral",
+        "educational",
+        "conversational",
+        "technical"
+      ],
+      "default": "educational",
+      "description": "Writing tone"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "in_review",
+        "published"
+      ],
+      "default": "draft",
+      "description": "Publication status"
+    },
+    "word_count": {
+      "type": "number",
+      "description": "Article word count"
+    },
+    "reading_time": {
+      "type": "number",
+      "description": "Estimated reading time in minutes"
+    },
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Version history snapshots"
+    },
+    "learning_mode": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether learning mode is enabled"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

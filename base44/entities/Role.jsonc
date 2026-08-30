@@ -1,0 +1,399 @@
+{
+  "name": "Role",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Role name (e.g., Content Moderator, Payout Manager)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Role description"
+    },
+    "hierarchy_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Role hierarchy level (higher = more authority). Admin=100, Manager=50, Regular=0"
+    },
+    "parent_role_id": {
+      "type": "string",
+      "description": "Parent role ID for inheritance"
+    },
+    "inherits_permissions": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this role inherits permissions from parent"
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "object",
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "view_own": {
+              "type": "boolean",
+              "default": false
+            },
+            "create": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit_own": {
+              "type": "boolean",
+              "default": false
+            },
+            "delete": {
+              "type": "boolean",
+              "default": false
+            },
+            "invite": {
+              "type": "boolean",
+              "default": false
+            },
+            "manage_roles": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "analyses": {
+          "type": "object",
+          "properties": {
+            "view_all": {
+              "type": "boolean",
+              "default": false
+            },
+            "view_own": {
+              "type": "boolean",
+              "default": false
+            },
+            "create": {
+              "type": "boolean",
+              "default": false
+            },
+            "delete": {
+              "type": "boolean",
+              "default": false
+            },
+            "export": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "content_moderation": {
+          "type": "object",
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "approve": {
+              "type": "boolean",
+              "default": false
+            },
+            "reject": {
+              "type": "boolean",
+              "default": false
+            },
+            "delete": {
+              "type": "boolean",
+              "default": false
+            },
+            "flag": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "training": {
+          "type": "object",
+          "properties": {
+            "view_feedback": {
+              "type": "boolean",
+              "default": false
+            },
+            "label_content": {
+              "type": "boolean",
+              "default": false
+            },
+            "review_feedback": {
+              "type": "boolean",
+              "default": false
+            },
+            "assign_tasks": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "payouts": {
+          "type": "object",
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "process": {
+              "type": "boolean",
+              "default": false
+            },
+            "approve": {
+              "type": "boolean",
+              "default": false
+            },
+            "reject": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "analytics": {
+          "type": "object",
+          "properties": {
+            "view_basic": {
+              "type": "boolean",
+              "default": false
+            },
+            "view_detailed": {
+              "type": "boolean",
+              "default": false
+            },
+            "view_financial": {
+              "type": "boolean",
+              "default": false
+            },
+            "export": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "subscriptions": {
+          "type": "object",
+          "properties": {
+            "view_all": {
+              "type": "boolean",
+              "default": false
+            },
+            "view_own": {
+              "type": "boolean",
+              "default": false
+            },
+            "grant": {
+              "type": "boolean",
+              "default": false
+            },
+            "cancel": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "influencers": {
+          "type": "object",
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            },
+            "manage_tiers": {
+              "type": "boolean",
+              "default": false
+            },
+            "approve": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "affiliates": {
+          "type": "object",
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            },
+            "approve": {
+              "type": "boolean",
+              "default": false
+            },
+            "manage_payouts": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "blog": {
+          "type": "object",
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "create": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit_own": {
+              "type": "boolean",
+              "default": false
+            },
+            "publish": {
+              "type": "boolean",
+              "default": false
+            },
+            "delete": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "learning": {
+          "type": "object",
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "create": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            },
+            "publish": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit_app": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit_features": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit_billing": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "roles": {
+          "type": "object",
+          "properties": {
+            "view": {
+              "type": "boolean",
+              "default": false
+            },
+            "create": {
+              "type": "boolean",
+              "default": false
+            },
+            "edit": {
+              "type": "boolean",
+              "default": false
+            },
+            "delete": {
+              "type": "boolean",
+              "default": false
+            },
+            "assign": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "audit": {
+          "type": "object",
+          "properties": {
+            "view_logs": {
+              "type": "boolean",
+              "default": false
+            },
+            "export_logs": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        }
+      },
+      "description": "Granular permissions for different modules"
+    },
+    "restrictions": {
+      "type": "object",
+      "properties": {
+        "max_analyses_per_day": {
+          "type": "number"
+        },
+        "max_users_managed": {
+          "type": "number"
+        },
+        "ip_whitelist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_restrictions": {
+          "type": "object",
+          "properties": {
+            "start_hour": {
+              "type": "number"
+            },
+            "end_hour": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "description": "Additional restrictions for this role"
+    },
+    "is_system_role": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a built-in system role (cannot be deleted)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this role is active"
+    }
+  },
+  "required": [
+    "name",
+    "permissions"
+  ]
+}

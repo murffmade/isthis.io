@@ -1,0 +1,31 @@
+{
+  "name": "UserRole",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User's email address"
+    },
+    "role_id": {
+      "type": "string",
+      "description": "Assigned role ID"
+    },
+    "assigned_by": {
+      "type": "string",
+      "description": "Email of admin who assigned this role"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional expiration date for temporary role assignments"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the assignment"
+    }
+  },
+  "required": [
+    "user_email",
+    "role_id"
+  ]
+}

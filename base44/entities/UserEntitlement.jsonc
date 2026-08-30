@@ -1,0 +1,80 @@
+{
+  "name": "UserEntitlement",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User email (primary key)"
+    },
+    "plan_key": {
+      "type": "string",
+      "description": "Active plan key"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "trial",
+        "active",
+        "past_due",
+        "canceled",
+        "refunded",
+        "expired"
+      ],
+      "default": "none",
+      "description": "Entitlement status"
+    },
+    "is_trial": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a trial period"
+    },
+    "trial_ends_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When trial period ends"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID (for recurring)"
+    },
+    "stripe_payment_intent_id": {
+      "type": "string",
+      "description": "Stripe payment intent ID (for one-time)"
+    },
+    "current_period_end": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When current period ends"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When entitlement started"
+    },
+    "last_payment_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last successful payment"
+    },
+    "renewal_notified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether user was notified about upcoming renewal"
+    },
+    "expiry_notified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether user was notified about upcoming expiry"
+    }
+  },
+  "required": [
+    "user_email",
+    "plan_key",
+    "status"
+  ]
+}

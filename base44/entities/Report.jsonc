@@ -1,0 +1,41 @@
+{
+  "name": "Report",
+  "type": "object",
+  "properties": {
+    "analysis_id": {
+      "type": "string",
+      "description": "Associated analysis ID"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "facebook",
+        "instagram",
+        "twitter",
+        "youtube",
+        "tiktok",
+        "reddit",
+        "marketplace",
+        "email",
+        "sms",
+        "whatsapp",
+        "telegram",
+        "web",
+        "other"
+      ],
+      "description": "Platform to report to"
+    },
+    "report_text": {
+      "type": "string",
+      "description": "Generated report text for user to copy"
+    },
+    "report_url": {
+      "type": "string",
+      "description": "Direct link to reporting page if known"
+    }
+  },
+  "required": [
+    "analysis_id",
+    "platform"
+  ]
+}

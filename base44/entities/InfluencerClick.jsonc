@@ -1,0 +1,31 @@
+{
+  "name": "InfluencerClick",
+  "type": "object",
+  "properties": {
+    "influencer_code": {
+      "type": "string",
+      "description": "Influencer code that was clicked"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User who clicked (if logged in)"
+    },
+    "converted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether click resulted in purchase"
+    },
+    "conversion_value": {
+      "type": "number",
+      "description": "Value of conversion in dollars"
+    },
+    "conversion_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When conversion occurred"
+    }
+  },
+  "required": [
+    "influencer_code"
+  ]
+}

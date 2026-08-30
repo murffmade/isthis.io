@@ -1,0 +1,31 @@
+{
+  "name": "BillingEventLog",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User email"
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Event type (e.g., purchase_initiated, payment_succeeded)"
+    },
+    "message": {
+      "type": "string",
+      "description": "Human-readable message"
+    },
+    "stripe_object_id": {
+      "type": "string",
+      "description": "Related Stripe object ID"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional event data"
+    }
+  },
+  "required": [
+    "user_email",
+    "event_type",
+    "message"
+  ]
+}

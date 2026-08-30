@@ -1,0 +1,92 @@
+{
+  "name": "PlanConfig",
+  "type": "object",
+  "properties": {
+    "plan_key": {
+      "type": "string",
+      "description": "Unique plan identifier"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Display name for the plan"
+    },
+    "description": {
+      "type": "string",
+      "description": "Plan description"
+    },
+    "stripe_price_id": {
+      "type": "string",
+      "description": "Stripe Price ID"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "subscription",
+        "payment"
+      ],
+      "description": "Stripe checkout mode"
+    },
+    "interval": {
+      "type": "string",
+      "enum": [
+        "month",
+        "year",
+        "one_time"
+      ],
+      "description": "Billing interval"
+    },
+    "price_cents": {
+      "type": "number",
+      "description": "Price in cents"
+    },
+    "currency": {
+      "type": "string",
+      "default": "usd",
+      "description": "Currency code"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this plan is active"
+    },
+    "display_order": {
+      "type": "number",
+      "default": 0,
+      "description": "Sort order for display"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of features"
+    },
+    "trial_days": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of trial days (0 = no trial)"
+    },
+    "allows_upgrade_from": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Plan keys that can upgrade to this plan"
+    },
+    "allows_downgrade_to": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Plan keys that can downgrade to from this plan"
+    }
+  },
+  "required": [
+    "plan_key",
+    "display_name",
+    "stripe_price_id",
+    "mode",
+    "interval",
+    "price_cents"
+  ]
+}

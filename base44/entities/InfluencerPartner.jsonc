@@ -1,0 +1,99 @@
+{
+  "name": "InfluencerPartner",
+  "type": "object",
+  "properties": {
+    "influencer_code": {
+      "type": "string",
+      "description": "Unique influencer code for tracking"
+    },
+    "link_name": {
+      "type": "string",
+      "description": "Custom name for the influencer link"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Company or individual name"
+    },
+    "website": {
+      "type": "string",
+      "description": "Influencer's website"
+    },
+    "payment_email": {
+      "type": "string",
+      "description": "Email for payments"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "suspended"
+      ],
+      "default": "pending",
+      "description": "Influencer status"
+    },
+    "commission_rate": {
+      "type": "number",
+      "default": 30,
+      "description": "Current commission percentage"
+    },
+    "current_tier": {
+      "type": "string",
+      "enum": [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum",
+        "diamond"
+      ],
+      "default": "bronze",
+      "description": "Current performance tier"
+    },
+    "total_referrals": {
+      "type": "number",
+      "default": 0,
+      "description": "Total referred users"
+    },
+    "total_conversions": {
+      "type": "number",
+      "default": 0,
+      "description": "Total paid conversions"
+    },
+    "total_earnings": {
+      "type": "number",
+      "default": 0,
+      "description": "Total earnings in dollars"
+    },
+    "pending_payout": {
+      "type": "number",
+      "default": 0,
+      "description": "Pending payout amount"
+    },
+    "tier_progress": {
+      "type": "object",
+      "properties": {
+        "next_tier": {
+          "type": "string"
+        },
+        "current_conversions": {
+          "type": "number"
+        },
+        "required_conversions": {
+          "type": "number"
+        },
+        "progress_percentage": {
+          "type": "number"
+        }
+      },
+      "description": "Progress toward next tier"
+    },
+    "bonus_earnings": {
+      "type": "number",
+      "default": 0,
+      "description": "Bonus earnings from tier upgrades"
+    }
+  },
+  "required": [
+    "influencer_code"
+  ]
+}

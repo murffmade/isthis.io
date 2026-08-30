@@ -1,0 +1,48 @@
+{
+  "name": "FeedbackNotification",
+  "type": "object",
+  "properties": {
+    "recipient_email": {
+      "type": "string",
+      "description": "Email of the trainer receiving the notification"
+    },
+    "notification_type": {
+      "type": "string",
+      "enum": [
+        "feedback_assigned",
+        "feedback_reviewed",
+        "feedback_approved",
+        "feedback_rejected",
+        "feedback_utilized"
+      ],
+      "description": "Type of notification"
+    },
+    "feedback_id": {
+      "type": "string",
+      "description": "ID of the related TrainingFeedback"
+    },
+    "title": {
+      "type": "string",
+      "description": "Notification title"
+    },
+    "message": {
+      "type": "string",
+      "description": "Notification message"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether notification has been read"
+    },
+    "action_url": {
+      "type": "string",
+      "description": "URL to navigate to when clicked"
+    }
+  },
+  "required": [
+    "recipient_email",
+    "notification_type",
+    "title",
+    "message"
+  ]
+}

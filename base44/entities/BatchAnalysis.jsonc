@@ -1,0 +1,75 @@
+{
+  "name": "BatchAnalysis",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "real",
+        "true",
+        "scam",
+        "safe"
+      ],
+      "description": "Verification mode for batch"
+    },
+    "name": {
+      "type": "string",
+      "description": "User-provided name for this batch"
+    },
+    "total_items": {
+      "type": "number",
+      "description": "Total number of items in batch"
+    },
+    "completed_items": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of completed analyses"
+    },
+    "failed_items": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of failed analyses"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "processing",
+        "completed",
+        "failed"
+      ],
+      "default": "queued",
+      "description": "Overall batch status"
+    },
+    "analysis_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of individual analyses in this batch"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Aggregated results summary",
+      "properties": {
+        "average_score": {
+          "type": "number"
+        },
+        "high_risk_count": {
+          "type": "number"
+        },
+        "medium_risk_count": {
+          "type": "number"
+        },
+        "low_risk_count": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "mode",
+    "name",
+    "total_items"
+  ]
+}

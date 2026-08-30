@@ -1,0 +1,65 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of user who owns this subscription"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "free",
+        "annual",
+        "lifetime"
+      ],
+      "default": "free",
+      "description": "Current subscription plan"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "expired",
+        "cancelled"
+      ],
+      "default": "active",
+      "description": "Subscription status"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID (for annual plans)"
+    },
+    "stripe_payment_intent_id": {
+      "type": "string",
+      "description": "Stripe payment intent ID"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When subscription expires (null for lifetime)"
+    },
+    "purchased_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When subscription was purchased"
+    },
+    "amount_paid": {
+      "type": "number",
+      "description": "Amount paid in cents"
+    },
+    "granted_by_admin": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this was granted by an admin"
+    }
+  },
+  "required": [
+    "plan",
+    "status"
+  ]
+}

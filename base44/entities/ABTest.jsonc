@@ -1,0 +1,137 @@
+{
+  "name": "ABTest",
+  "type": "object",
+  "properties": {
+    "test_name": {
+      "type": "string",
+      "description": "Name of the A/B test"
+    },
+    "organization_id": {
+      "type": "string",
+      "description": "Organization running the test"
+    },
+    "description": {
+      "type": "string",
+      "description": "What is being tested"
+    },
+    "variant_a": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "policy_id": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        }
+      },
+      "description": "Control variant configuration"
+    },
+    "variant_b": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "policy_id": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        }
+      },
+      "description": "Test variant configuration"
+    },
+    "traffic_split": {
+      "type": "number",
+      "default": 50,
+      "description": "Percentage of traffic to variant B (0-100)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "running",
+        "paused",
+        "completed"
+      ],
+      "default": "draft",
+      "description": "Test status"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When test started"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When test ended"
+    },
+    "results": {
+      "type": "object",
+      "properties": {
+        "variant_a_samples": {
+          "type": "number"
+        },
+        "variant_b_samples": {
+          "type": "number"
+        },
+        "variant_a_accuracy": {
+          "type": "number"
+        },
+        "variant_b_accuracy": {
+          "type": "number"
+        },
+        "variant_a_avg_confidence": {
+          "type": "number"
+        },
+        "variant_b_avg_confidence": {
+          "type": "number"
+        },
+        "winner": {
+          "type": "string"
+        },
+        "statistical_significance": {
+          "type": "number"
+        }
+      },
+      "description": "Test results and metrics"
+    },
+    "sample_analyses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string"
+          },
+          "analysis_id": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object"
+          },
+          "user_feedback": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Sample analyses for comparison"
+    }
+  },
+  "required": [
+    "test_name",
+    "organization_id",
+    "variant_a",
+    "variant_b"
+  ]
+}

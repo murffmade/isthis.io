@@ -1,0 +1,66 @@
+{
+  "name": "GiftCode",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Unique gift code identifier"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "annual",
+        "lifetime"
+      ],
+      "description": "Subscription plan being gifted"
+    },
+    "sender_email": {
+      "type": "string",
+      "description": "Email of the person who sent the gift"
+    },
+    "sender_name": {
+      "type": "string",
+      "description": "Name of the person who sent the gift"
+    },
+    "recipient_name": {
+      "type": "string",
+      "description": "Name of the intended recipient"
+    },
+    "message": {
+      "type": "string",
+      "description": "Personal message from sender"
+    },
+    "theme": {
+      "type": "string",
+      "description": "Gift card theme selected"
+    },
+    "redeemed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the gift has been redeemed"
+    },
+    "redeemed_by": {
+      "type": "string",
+      "description": "Email of user who redeemed the gift"
+    },
+    "redeemed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the gift was redeemed"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the gift code expires"
+    },
+    "stripe_payment_intent_id": {
+      "type": "string",
+      "description": "Stripe payment ID for purchase verification"
+    }
+  },
+  "required": [
+    "code",
+    "plan",
+    "sender_email"
+  ]
+}

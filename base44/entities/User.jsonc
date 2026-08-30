@@ -1,0 +1,127 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "support_agent",
+        "content_manager",
+        "trainer",
+        "influencer_manager",
+        "user"
+      ],
+      "default": "user",
+      "description": "User role with specific permissions"
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Custom permissions for this user"
+    },
+    "bio": {
+      "type": "string",
+      "description": "User biography"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Profile picture URL"
+    },
+    "location": {
+      "type": "string",
+      "description": "User's city and country"
+    },
+    "timezone": {
+      "type": "string",
+      "description": "User's timezone"
+    },
+    "language": {
+      "type": "string",
+      "default": "en",
+      "description": "Preferred language"
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "email_notifications": {
+          "type": "boolean",
+          "default": true
+        },
+        "push_notifications": {
+          "type": "boolean",
+          "default": true
+        },
+        "marketing_emails": {
+          "type": "boolean",
+          "default": false
+        },
+        "weekly_digest": {
+          "type": "boolean",
+          "default": true
+        },
+        "security_alerts": {
+          "type": "boolean",
+          "default": true
+        },
+        "theme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark",
+            "auto"
+          ],
+          "default": "auto"
+        },
+        "analysis_auto_save": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "description": "User preferences"
+    },
+    "communication_settings": {
+      "type": "object",
+      "properties": {
+        "contact_phone": {
+          "type": "string"
+        },
+        "contact_email_secondary": {
+          "type": "string"
+        },
+        "preferred_contact_method": {
+          "type": "string",
+          "enum": [
+            "email",
+            "phone",
+            "both"
+          ],
+          "default": "email"
+        },
+        "contact_hours": {
+          "type": "string",
+          "enum": [
+            "anytime",
+            "business_hours",
+            "evenings",
+            "weekends"
+          ],
+          "default": "anytime"
+        }
+      }
+    },
+    "profile_visibility": {
+      "type": "string",
+      "enum": [
+        "public",
+        "private",
+        "connections_only"
+      ],
+      "default": "private",
+      "description": "Who can view user's profile"
+    }
+  },
+  "required": []
+}

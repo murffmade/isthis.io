@@ -1,0 +1,50 @@
+{
+  "name": "PromoCode",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Unique promo code (stored uppercase)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "disabled"
+      ],
+      "default": "active",
+      "description": "Current status of the promo code"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When promo becomes valid"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When promo expires"
+    },
+    "max_redemptions_total": {
+      "type": "number",
+      "description": "Total redemption limit (null = unlimited)"
+    },
+    "max_redemptions_per_account": {
+      "type": "number",
+      "default": 1,
+      "description": "Per-account redemption limit"
+    },
+    "affiliate_partner_id": {
+      "type": "string",
+      "description": "Associated affiliate partner ID"
+    },
+    "benefit_payload": {
+      "type": "object",
+      "description": "Structured benefits definition"
+    }
+  },
+  "required": [
+    "code",
+    "status"
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "name": "AnalysisRecord",
+  "type": "object",
+  "properties": {
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video",
+        "url"
+      ],
+      "description": "Type of content analyzed"
+    },
+    "source_url": {
+      "type": "string",
+      "description": "Original URL if provided"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "twitter",
+        "instagram",
+        "facebook",
+        "tiktok",
+        "youtube",
+        "unknown",
+        "direct_upload"
+      ],
+      "description": "Detected platform source"
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "likely_real",
+        "likely_ai",
+        "uncertain"
+      ],
+      "description": "Primary analysis result"
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Confidence percentage 0-100"
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "signal_type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        }
+      },
+      "description": "Detected signals and their descriptions"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "Uploaded file URL if applicable"
+    },
+    "thumbnail_url": {
+      "type": "string",
+      "description": "Thumbnail for display"
+    },
+    "claims_to_be_real": {
+      "type": "boolean",
+      "description": "Whether content presents itself as authentic"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief human-readable summary"
+    },
+    "exif_summary": {
+      "type": "string",
+      "description": "JSON string of EXIF metadata (v2 enhancement)"
+    },
+    "patch_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs of image patches analyzed (v2 enhancement)"
+    },
+    "forensics": {
+      "type": "object",
+      "description": "Forensics API response data (v2 enhancement)"
+    },
+    "ensemble": {
+      "type": "object",
+      "description": "Ensemble scoring result (v2 enhancement)"
+    },
+    "patch_votes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Individual patch analysis votes (v2 enhancement)"
+    },
+    "classification": {
+      "type": "string",
+      "description": "Image type classification (v2 enhancement)"
+    }
+  },
+  "required": [
+    "content_type",
+    "result",
+    "confidence"
+  ]
+}

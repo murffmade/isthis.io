@@ -1,0 +1,38 @@
+{
+  "name": "PromoRedemption",
+  "type": "object",
+  "properties": {
+    "promo_code_id": {
+      "type": "string",
+      "description": "PromoCode entity ID"
+    },
+    "redeemed_by_user_id": {
+      "type": "string",
+      "description": "User ID from auth system"
+    },
+    "redeemed_by_email": {
+      "type": "string",
+      "description": "User email at redemption time"
+    },
+    "affiliate_partner_id": {
+      "type": "string",
+      "description": "Affiliate partner ID if applicable"
+    },
+    "gift_code_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "GiftCode IDs created by this redemption"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "promo_code_id",
+    "redeemed_by_user_id",
+    "redeemed_by_email"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "ResultFeedback",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Session identifier"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User ID if authenticated"
+    },
+    "result_id": {
+      "type": "string",
+      "description": "Analysis result ID"
+    },
+    "helpful": {
+      "type": "boolean",
+      "description": "Was the result helpful"
+    },
+    "comment": {
+      "type": "string",
+      "description": "Optional feedback comment (max 300 chars)"
+    },
+    "page": {
+      "type": "string",
+      "description": "Page where feedback was given"
+    }
+  },
+  "required": [
+    "session_id",
+    "helpful"
+  ]
+}

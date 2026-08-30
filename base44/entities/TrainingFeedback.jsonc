@@ -1,0 +1,105 @@
+{
+  "name": "TrainingFeedback",
+  "type": "object",
+  "properties": {
+    "analysis_id": {
+      "type": "string",
+      "description": "ID of the AnalysisRecord being labeled"
+    },
+    "actual_label": {
+      "type": "string",
+      "enum": [
+        "real",
+        "ai_generated",
+        "uncertain"
+      ],
+      "description": "Trainer's assessment of the content"
+    },
+    "ai_prediction": {
+      "type": "string",
+      "enum": [
+        "likely_real",
+        "likely_ai",
+        "likely_deepfake",
+        "uncertain"
+      ],
+      "description": "What the AI predicted"
+    },
+    "confidence_match": {
+      "type": "boolean",
+      "description": "Whether trainer agrees with AI assessment"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional explanation from trainer"
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video",
+        "url"
+      ],
+      "description": "Type of content labeled"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL of the content for reference"
+    },
+    "observed_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specific AI artifacts observed by trainer"
+    },
+    "artifact_notes": {
+      "type": "string",
+      "description": "Detailed notes about observed artifacts"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "under_review",
+        "approved",
+        "rejected",
+        "utilized"
+      ],
+      "default": "pending",
+      "description": "Feedback review status"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Email of trainer assigned to review/refine this feedback"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "Email of admin who reviewed this feedback"
+    },
+    "review_notes": {
+      "type": "string",
+      "description": "Admin notes on feedback quality or decision"
+    },
+    "reviewed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When feedback was reviewed"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium",
+      "description": "Priority level for review"
+    }
+  },
+  "required": [
+    "analysis_id",
+    "actual_label",
+    "ai_prediction"
+  ]
+}

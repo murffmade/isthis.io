@@ -1,0 +1,60 @@
+{
+  "name": "AffiliatePartner",
+  "type": "object",
+  "properties": {
+    "affiliate_code": {
+      "type": "string",
+      "description": "Unique affiliate code for tracking"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Company or individual name"
+    },
+    "website": {
+      "type": "string",
+      "description": "Affiliate's website"
+    },
+    "payment_email": {
+      "type": "string",
+      "description": "Email for payments"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "suspended"
+      ],
+      "default": "pending",
+      "description": "Affiliate status"
+    },
+    "commission_rate": {
+      "type": "number",
+      "default": 30,
+      "description": "Commission percentage"
+    },
+    "total_referrals": {
+      "type": "number",
+      "default": 0,
+      "description": "Total referred users"
+    },
+    "total_conversions": {
+      "type": "number",
+      "default": 0,
+      "description": "Total paid conversions"
+    },
+    "total_earnings": {
+      "type": "number",
+      "default": 0,
+      "description": "Total earnings in dollars"
+    },
+    "pending_payout": {
+      "type": "number",
+      "default": 0,
+      "description": "Pending payout amount"
+    }
+  },
+  "required": [
+    "affiliate_code"
+  ]
+}

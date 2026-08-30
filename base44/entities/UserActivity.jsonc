@@ -1,0 +1,53 @@
+{
+  "name": "UserActivity",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who performed the action"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "login",
+        "logout",
+        "analysis_created",
+        "subscription_purchased",
+        "subscription_cancelled",
+        "profile_updated",
+        "settings_changed",
+        "password_changed",
+        "content_flagged",
+        "report_generated",
+        "feedback_submitted",
+        "achievement_unlocked",
+        "module_completed"
+      ],
+      "description": "Type of action performed"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the action"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional data about the action"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "IP address from which action was performed"
+    },
+    "user_agent": {
+      "type": "string",
+      "description": "Browser/device information"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "User session identifier"
+    }
+  },
+  "required": [
+    "user_email",
+    "action_type"
+  ]
+}

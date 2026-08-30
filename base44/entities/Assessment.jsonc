@@ -1,0 +1,75 @@
+{
+  "name": "Assessment",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of user who created the assessment"
+    },
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID if applicable"
+    },
+    "input_text_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of input text for deduplication"
+    },
+    "input_text_encrypted": {
+      "type": "string",
+      "description": "Encrypted raw text (opt-in only)"
+    },
+    "store_raw_text": {
+      "type": "boolean",
+      "default": false,
+      "description": "User consent to store raw text"
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "text",
+        "document",
+        "url"
+      ],
+      "default": "text",
+      "description": "Type of content assessed"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "email",
+            "article",
+            "student_work",
+            "marketing",
+            "legal",
+            "other"
+          ]
+        },
+        "language": {
+          "type": "string"
+        },
+        "industry": {
+          "type": "string"
+        },
+        "intended_use": {
+          "type": "string"
+        }
+      },
+      "description": "Contextual metadata for assessment"
+    },
+    "comparative_mode": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether comparative analysis was used"
+    },
+    "baseline_text_hash": {
+      "type": "string",
+      "description": "Hash of baseline text for comparison"
+    }
+  },
+  "required": [
+    "input_text_hash"
+  ]
+}

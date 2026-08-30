@@ -1,0 +1,68 @@
+{
+  "name": "AIAnalysisHistory",
+  "type": "object",
+  "properties": {
+    "analysis_type": {
+      "type": "string",
+      "enum": [
+        "bias",
+        "sentiment",
+        "moderation",
+        "summary"
+      ],
+      "description": "Type of AI analysis performed"
+    },
+    "content_preview": {
+      "type": "string",
+      "description": "Preview of analyzed content (first 200 chars)"
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "text",
+        "image",
+        "video",
+        "url"
+      ],
+      "description": "Type of content analyzed"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL of analyzed file if applicable"
+    },
+    "result": {
+      "type": "object",
+      "description": "Complete analysis result"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "flagged",
+        "rejected",
+        "neutral",
+        "positive",
+        "negative",
+        "low_risk",
+        "medium_risk",
+        "high_risk"
+      ],
+      "description": "Primary outcome of analysis"
+    },
+    "confidence_score": {
+      "type": "number",
+      "description": "Confidence score 0-100"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Searchable tags for filtering"
+    }
+  },
+  "required": [
+    "analysis_type",
+    "outcome"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "ReportArtifact",
+  "type": "object",
+  "properties": {
+    "result_id": {
+      "type": "string",
+      "description": "Reference to assessment result"
+    },
+    "batch_job_id": {
+      "type": "string",
+      "description": "Reference to batch job if applicable"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "PDF",
+        "JSON",
+        "CSV"
+      ],
+      "description": "Report format"
+    },
+    "storage_url": {
+      "type": "string",
+      "description": "URL to stored report file"
+    },
+    "file_size": {
+      "type": "number",
+      "description": "File size in bytes"
+    }
+  },
+  "required": [
+    "type",
+    "storage_url"
+  ]
+}

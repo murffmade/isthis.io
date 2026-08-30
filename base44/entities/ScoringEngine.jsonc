@@ -1,0 +1,80 @@
+{
+  "name": "ScoringEngine",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Engine name"
+    },
+    "version": {
+      "type": "string",
+      "description": "Current version"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "deprecated"
+      ],
+      "default": "active",
+      "description": "Engine status"
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "weights": {
+          "type": "object",
+          "description": "Signal weights"
+        },
+        "thresholds": {
+          "type": "object",
+          "properties": {
+            "low_risk_max": {
+              "type": "number",
+              "default": 35
+            },
+            "medium_risk_max": {
+              "type": "number",
+              "default": 65
+            },
+            "high_risk_min": {
+              "type": "number",
+              "default": 65
+            }
+          }
+        },
+        "confidence_rules": {
+          "type": "object",
+          "description": "Rules for meta-confidence calculation"
+        }
+      },
+      "description": "Engine configuration"
+    },
+    "scoring_profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "use_case": {
+            "type": "string"
+          },
+          "weight_overrides": {
+            "type": "object"
+          }
+        }
+      },
+      "description": "Available scoring profiles for this engine"
+    }
+  },
+  "required": [
+    "name",
+    "version"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "name": "InfluencerCoupon",
+  "type": "object",
+  "properties": {
+    "influencer_id": {
+      "type": "string",
+      "description": "ID of the influencer partner"
+    },
+    "influencer_code": {
+      "type": "string",
+      "description": "Influencer's tracking code"
+    },
+    "coupon_code": {
+      "type": "string",
+      "description": "Unique coupon code"
+    },
+    "discount_percentage": {
+      "type": "number",
+      "default": 10,
+      "description": "Discount percentage (0-100)"
+    },
+    "discount_amount": {
+      "type": "number",
+      "description": "Fixed discount amount in dollars"
+    },
+    "usage_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times used"
+    },
+    "usage_limit": {
+      "type": "number",
+      "description": "Maximum number of uses (null = unlimited)"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Expiration date"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether coupon is active"
+    },
+    "description": {
+      "type": "string",
+      "description": "Internal description"
+    }
+  },
+  "required": [
+    "influencer_id",
+    "coupon_code"
+  ]
+}

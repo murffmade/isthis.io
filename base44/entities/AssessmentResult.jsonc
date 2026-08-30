@@ -1,0 +1,124 @@
+{
+  "name": "AssessmentResult",
+  "type": "object",
+  "properties": {
+    "assessment_id": {
+      "type": "string",
+      "description": "Reference to Assessment"
+    },
+    "engine_id": {
+      "type": "string",
+      "description": "Reference to scoring engine used"
+    },
+    "engine_version": {
+      "type": "string",
+      "description": "Version of engine at time of scoring"
+    },
+    "scoring_version": {
+      "type": "string",
+      "description": "Version of scoring profile used"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "description": "Overall risk assessment"
+    },
+    "likelihood_min": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Lower bound of AI likelihood range"
+    },
+    "likelihood_max": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Upper bound of AI likelihood range"
+    },
+    "meta_confidence": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "description": "Confidence in the likelihood range itself"
+    },
+    "narrative_explanation": {
+      "type": "string",
+      "description": "Plain-language explanation of assessment"
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "AI",
+              "HUMAN",
+              "NEUTRAL"
+            ]
+          },
+          "weight": {
+            "type": "number"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "false_positive_notes": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Array of detection signals with scores and explanations"
+    },
+    "key_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "2-3 bullet highlights"
+    },
+    "interpretation_notes": {
+      "type": "string",
+      "description": "How to interpret this score"
+    },
+    "what_could_change": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "What would affect the score"
+    },
+    "rescored_from_result_id": {
+      "type": "string",
+      "description": "If this is a rescore, reference to original"
+    },
+    "comparative_data": {
+      "type": "object",
+      "description": "Data from comparative mode if used"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "engine_version",
+    "scoring_version",
+    "risk_level",
+    "likelihood_min",
+    "likelihood_max",
+    "meta_confidence",
+    "signals"
+  ]
+}

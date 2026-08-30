@@ -1,0 +1,131 @@
+{
+  "name": "LearningModule",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Module title"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly identifier"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of the module"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "default": "beginner",
+      "description": "Difficulty level"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order"
+    },
+    "content": {
+      "type": "object",
+      "description": "Module content with steps",
+      "properties": {
+        "introduction": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "image_url": {
+                "type": "string"
+              },
+              "interactive_task": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "upload",
+                      "identify",
+                      "compare"
+                    ]
+                  },
+                  "instructions": {
+                    "type": "string"
+                  },
+                  "correct_answer": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "quiz": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correct_answer": {
+            "type": "number"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Quiz questions for the module"
+    },
+    "points": {
+      "type": "number",
+      "default": 100,
+      "description": "Points awarded for completion"
+    },
+    "estimated_time": {
+      "type": "number",
+      "description": "Estimated time in minutes"
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of required modules"
+    },
+    "badge_icon": {
+      "type": "string",
+      "description": "Icon for achievement badge"
+    },
+    "published": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether module is live"
+    }
+  },
+  "required": [
+    "title",
+    "slug",
+    "category"
+  ]
+}

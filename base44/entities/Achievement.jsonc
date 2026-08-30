@@ -1,0 +1,55 @@
+{
+  "name": "Achievement",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Achievement name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Achievement description"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Icon identifier"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "module_complete",
+        "quiz_perfect",
+        "streak",
+        "speed",
+        "master"
+      ],
+      "description": "Achievement type"
+    },
+    "requirement": {
+      "type": "object",
+      "description": "Criteria for unlocking",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      }
+    },
+    "earned_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When achievement was earned"
+    },
+    "points": {
+      "type": "number",
+      "default": 50,
+      "description": "Bonus points for achievement"
+    }
+  },
+  "required": [
+    "name",
+    "type"
+  ]
+}

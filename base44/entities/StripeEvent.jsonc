@@ -1,0 +1,43 @@
+{
+  "name": "StripeEvent",
+  "type": "object",
+  "properties": {
+    "stripe_event_id": {
+      "type": "string",
+      "description": "Stripe event ID (for idempotency)"
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Stripe event type"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "received",
+        "processed",
+        "ignored",
+        "error"
+      ],
+      "default": "received",
+      "description": "Processing status"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error message if processing failed"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event payload"
+    },
+    "processed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When event was processed"
+    }
+  },
+  "required": [
+    "stripe_event_id",
+    "event_type",
+    "status"
+  ]
+}

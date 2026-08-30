@@ -1,0 +1,58 @@
+{
+  "name": "WebhookEndpoint",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Owner of this webhook"
+    },
+    "api_key_id": {
+      "type": "string",
+      "description": "Associated API key"
+    },
+    "url": {
+      "type": "string",
+      "description": "Webhook endpoint URL"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "assessment.completed",
+          "batch.completed",
+          "batch.failed"
+        ]
+      },
+      "description": "Events to subscribe to"
+    },
+    "secret": {
+      "type": "string",
+      "description": "Webhook signing secret"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether webhook is active"
+    },
+    "failure_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Consecutive failure count"
+    },
+    "last_success": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last successful delivery"
+    },
+    "last_failure": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last failed delivery"
+    }
+  },
+  "required": [
+    "url",
+    "events"
+  ]
+}

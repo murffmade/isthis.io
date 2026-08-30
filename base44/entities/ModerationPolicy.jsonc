@@ -1,0 +1,120 @@
+{
+  "name": "ModerationPolicy",
+  "type": "object",
+  "properties": {
+    "policy_name": {
+      "type": "string",
+      "description": "Name of the moderation policy"
+    },
+    "organization_id": {
+      "type": "string",
+      "description": "Organization this policy belongs to"
+    },
+    "description": {
+      "type": "string",
+      "description": "Policy description"
+    },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "nudity": {
+          "type": "object",
+          "properties": {
+            "approve_below": {
+              "type": "number",
+              "default": 0.3
+            },
+            "flag_above": {
+              "type": "number",
+              "default": 0.3
+            },
+            "reject_above": {
+              "type": "number",
+              "default": 0.7
+            }
+          }
+        },
+        "violence": {
+          "type": "object",
+          "properties": {
+            "approve_below": {
+              "type": "number",
+              "default": 0.4
+            },
+            "flag_above": {
+              "type": "number",
+              "default": 0.4
+            },
+            "reject_above": {
+              "type": "number",
+              "default": 0.8
+            }
+          }
+        },
+        "hate_speech": {
+          "type": "object",
+          "properties": {
+            "approve_below": {
+              "type": "number",
+              "default": 0.2
+            },
+            "flag_above": {
+              "type": "number",
+              "default": 0.2
+            },
+            "reject_above": {
+              "type": "number",
+              "default": 0.6
+            }
+          }
+        },
+        "profanity": {
+          "type": "object",
+          "properties": {
+            "approve_below": {
+              "type": "number",
+              "default": 0.5
+            },
+            "flag_above": {
+              "type": "number",
+              "default": 0.5
+            },
+            "reject_above": {
+              "type": "number",
+              "default": 0.8
+            }
+          }
+        }
+      },
+      "description": "Category-specific thresholds"
+    },
+    "auto_action": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically take action or flag for review"
+    },
+    "whitelist_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Domains to always approve"
+    },
+    "blacklist_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keywords to always flag"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this policy is active"
+    }
+  },
+  "required": [
+    "policy_name",
+    "organization_id"
+  ]
+}

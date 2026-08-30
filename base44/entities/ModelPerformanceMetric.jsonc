@@ -1,0 +1,106 @@
+{
+  "name": "ModelPerformanceMetric",
+  "type": "object",
+  "properties": {
+    "metric_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the metric snapshot"
+    },
+    "total_predictions": {
+      "type": "number",
+      "description": "Total number of predictions made"
+    },
+    "correct_predictions": {
+      "type": "number",
+      "description": "Number of correct predictions (matches trainer labels)"
+    },
+    "accuracy_percentage": {
+      "type": "number",
+      "description": "Overall accuracy percentage"
+    },
+    "false_positive_rate": {
+      "type": "number",
+      "description": "Rate of incorrectly flagging real as AI"
+    },
+    "false_negative_rate": {
+      "type": "number",
+      "description": "Rate of incorrectly flagging AI as real"
+    },
+    "accuracy_by_content_type": {
+      "type": "object",
+      "description": "Accuracy breakdown by content type",
+      "properties": {
+        "image": {
+          "type": "number"
+        },
+        "video": {
+          "type": "number"
+        },
+        "url": {
+          "type": "number"
+        }
+      }
+    },
+    "challenging_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "artifact_type": {
+            "type": "string"
+          },
+          "misdetection_count": {
+            "type": "number"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        }
+      },
+      "description": "Artifacts that the model struggles with"
+    },
+    "drift_score": {
+      "type": "number",
+      "description": "Drift score compared to baseline (0-100, higher = more drift)"
+    },
+    "confidence_calibration": {
+      "type": "object",
+      "description": "How well model confidence matches actual accuracy",
+      "properties": {
+        "low_confidence_accuracy": {
+          "type": "number"
+        },
+        "medium_confidence_accuracy": {
+          "type": "number"
+        },
+        "high_confidence_accuracy": {
+          "type": "number"
+        }
+      }
+    },
+    "requires_retraining": {
+      "type": "boolean",
+      "default": false,
+      "description": "Flag if metrics indicate retraining needed"
+    },
+    "retraining_reason": {
+      "type": "string",
+      "description": "Explanation of why retraining is recommended"
+    },
+    "sample_size": {
+      "type": "number",
+      "description": "Number of trainer feedback samples used"
+    }
+  },
+  "required": [
+    "metric_date",
+    "total_predictions",
+    "accuracy_percentage"
+  ]
+}

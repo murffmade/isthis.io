@@ -1,0 +1,56 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "content_created",
+        "content_updated",
+        "content_deleted",
+        "user_role_changed",
+        "settings_updated",
+        "payout_processed",
+        "analysis_created",
+        "feedback_submitted",
+        "article_published",
+        "user_invited",
+        "subscription_changed"
+      ],
+      "description": "Type of action performed"
+    },
+    "resource_type": {
+      "type": "string",
+      "description": "Type of resource affected (e.g., User, Article, AnalysisRecord)"
+    },
+    "resource_id": {
+      "type": "string",
+      "description": "ID of the affected resource"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of user who performed the action"
+    },
+    "user_role": {
+      "type": "string",
+      "description": "Role of user at time of action"
+    },
+    "details": {
+      "type": "object",
+      "description": "Additional action details (before/after values, metadata)"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "IP address of user"
+    },
+    "user_agent": {
+      "type": "string",
+      "description": "Browser user agent"
+    }
+  },
+  "required": [
+    "action",
+    "resource_type",
+    "user_email"
+  ]
+}

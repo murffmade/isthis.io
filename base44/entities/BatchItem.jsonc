@@ -1,0 +1,35 @@
+{
+  "name": "BatchItem",
+  "type": "object",
+  "properties": {
+    "batch_job_id": {
+      "type": "string",
+      "description": "Reference to parent batch job"
+    },
+    "assessment_id": {
+      "type": "string",
+      "description": "Reference to assessment"
+    },
+    "result_id": {
+      "type": "string",
+      "description": "Reference to result"
+    },
+    "item_index": {
+      "type": "number",
+      "description": "Position in batch"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "batch_job_id",
+    "item_index"
+  ]
+}

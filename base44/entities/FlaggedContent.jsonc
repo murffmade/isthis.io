@@ -1,0 +1,64 @@
+{
+  "name": "FlaggedContent",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of user who uploaded content"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL to the flagged file"
+    },
+    "content_type": {
+      "type": "string",
+      "description": "Type of content flagged"
+    },
+    "moderation_result": {
+      "type": "object",
+      "description": "Complete AI moderation analysis"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "flagged",
+        "blocked",
+        "approved",
+        "rejected",
+        "under_review"
+      ],
+      "default": "flagged",
+      "description": "Current status"
+    },
+    "flagged_reason": {
+      "type": "string",
+      "description": "Primary reason for flagging"
+    },
+    "admin_decision": {
+      "type": "string",
+      "enum": [
+        "approve",
+        "reject",
+        "review_further"
+      ],
+      "description": "Admin's final decision"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Admin review notes"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "Admin who reviewed"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When reviewed"
+    }
+  },
+  "required": [
+    "content_type",
+    "status"
+  ]
+}

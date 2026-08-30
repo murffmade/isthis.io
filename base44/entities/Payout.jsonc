@@ -1,0 +1,70 @@
+{
+  "name": "Payout",
+  "type": "object",
+  "properties": {
+    "influencer_id": {
+      "type": "string",
+      "description": "ID of the influencer partner"
+    },
+    "influencer_email": {
+      "type": "string",
+      "description": "Email of the influencer"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Payout amount in dollars"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "completed",
+        "failed"
+      ],
+      "default": "pending",
+      "description": "Payout status"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "paypal",
+        "stripe",
+        "bank_transfer"
+      ],
+      "default": "paypal",
+      "description": "Payment method"
+    },
+    "transaction_id": {
+      "type": "string",
+      "description": "External transaction ID"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Admin notes"
+    },
+    "processed_by": {
+      "type": "string",
+      "description": "Admin who processed the payout"
+    },
+    "processed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When payout was processed"
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date",
+      "description": "Start of earnings period"
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date",
+      "description": "End of earnings period"
+    }
+  },
+  "required": [
+    "influencer_id",
+    "amount"
+  ]
+}

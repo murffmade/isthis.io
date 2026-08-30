@@ -1,0 +1,48 @@
+{
+  "name": "UserProgress",
+  "type": "object",
+  "properties": {
+    "module_id": {
+      "type": "string",
+      "description": "ID of the learning module"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether module is completed"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When module was completed"
+    },
+    "quiz_score": {
+      "type": "number",
+      "description": "Quiz score percentage"
+    },
+    "quiz_attempts": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of quiz attempts"
+    },
+    "steps_completed": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "Indices of completed steps"
+    },
+    "time_spent": {
+      "type": "number",
+      "description": "Time spent in minutes"
+    },
+    "points_earned": {
+      "type": "number",
+      "default": 0,
+      "description": "Points earned from this module"
+    }
+  },
+  "required": [
+    "module_id"
+  ]
+}
