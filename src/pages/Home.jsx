@@ -2816,8 +2816,8 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
               {/* Pricing */}
               <section className="py-12 sm:py-20">
                 <div className="text-center mb-10 sm:mb-16 px-4">
-                  <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Ready to Take a Look?</h2>
-                  <p className="text-lg sm:text-xl text-slate-600 font-light">See what the signals suggest and understand the result in plain language</p>
+                  <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Pick the plan that fits how you check</h2>
+                  <p className="text-lg sm:text-xl text-slate-600 font-light">Friendly options that keep the explanations clear and practical</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6 max-w-6xl mx-auto">
@@ -2828,15 +2828,15 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>5 assessments/month</span>
+                        <span>Check up to 5 items each month</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Likelihood-based analysis</span>
+                        <span>Plain-language likelihood and tips</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Image & video support</span>
+                        <span>Covers photos and short videos</span>
                       </li>
                     </ul>
                     <button className="w-full py-2.5 sm:py-3 border border-slate-300 rounded-xl text-slate-700 font-medium text-sm sm:text-base touch-manipulation">
@@ -2852,19 +2852,19 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>25 assessments/month</span>
+                        <span>Check up to 25 items each month</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Detailed signal analysis</span>
+                        <span>Clear breakdowns with helpful tips</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Priority support</span>
+                        <span>Priority replies when you need help</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Cancel anytime</span>
+                        <span>Pause or cancel anytime</span>
                       </li>
                     </ul>
                     <div onClick={() => track('pricing_upgrade_clicked', { plan: 'monthly' })}>
@@ -2885,19 +2885,19 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                     <ul className="space-y-2 sm:space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span><strong>Unlimited</strong> assessments</span>
+                        <span><strong>Unlimited</strong> items to check</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Priority analysis speed</span>
+                        <span>Faster analysis when things are busy</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Shareable PDF reports</span>
+                        <span>Downloadable PDF summaries to share</span>
                       </li>
                       <li className="flex items-start gap-2 text-xs sm:text-sm text-slate-600">
                         <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>Bulk analysis</span>
+                        <span>Upload folders or batches together</span>
                       </li>
                     </ul>
                     <div onClick={() => track('pricing_upgrade_clicked', { plan: 'annual' })}>
@@ -2936,19 +2936,19 @@ Remember: Generic descriptions are unacceptable. Every signal needs specific tec
                       <ul className="space-y-2 sm:space-y-3 mb-4">
                         <li className="flex items-start gap-2 text-xs sm:text-sm">
                           <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                          <span>Everything in Premium</span>
+                          <span>Everything in Premium with no renewals</span>
                         </li>
                         <li className="flex items-start gap-2 text-xs sm:text-sm">
                           <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                          <span>Lifetime access forever</span>
+                          <span>Access stays active forever</span>
                         </li>
                         <li className="flex items-start gap-2 text-xs sm:text-sm">
                           <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                          <span>Early feature access</span>
+                          <span>Early looks at new tools</span>
                         </li>
                         <li className="flex items-start gap-2 text-xs sm:text-sm">
                           <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                          <span>Premium support</span>
+                          <span>Dedicated support when you need it</span>
                         </li>
                       </ul>
 
